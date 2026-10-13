@@ -42,6 +42,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por tesseract-ocr-eng
           tesseract --version
+          echo "::notice title=Tesseract (ubuntu-24.04)::$(tesseract --version 2>&1 | head -n 1)"
           tesseract --list-langs
           tesseract --list-langs | grep -qx por
           tesseract --list-langs | grep -qx eng
@@ -140,8 +141,11 @@ jobs:
       - name: Image runs as a non-root user
         run: test "$(docker run --rm --entrypoint id know-your-fan:ci -u)" != "0"
 
-      - name: Tesseract languages inside the image
-        run: docker run --rm --entrypoint tesseract know-your-fan:ci --list-langs
+      - name: Tesseract version and languages inside the image
+        run: |
+          version="$(docker run --rm --entrypoint tesseract know-your-fan:ci --version 2>&1 | head -n 1)"
+          echo "::notice title=Tesseract (Docker image)::${version}"
+          docker run --rm --entrypoint tesseract know-your-fan:ci --list-langs
 
       - name: Real OCR on a synthetic specimen inside the image
         run: |
