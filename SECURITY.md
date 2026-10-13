@@ -44,11 +44,17 @@ Please do **not** include real personal data in reports.
   locked dependencies and gitleaks on the full Git history. GitHub Actions are pinned to commit
   SHAs and run with a read-only token. Pre-commit runs gitleaks before each local commit.
 - **Container.** The optional Docker image runs as a non-root user.
+- **Resource limits.** OCR requests are rate-limited (per session and per process) and limited to
+  2 concurrent jobs per process; Tesseract runs with one thread per process. Profile writes are
+  rate-limited per session, and the dataset cap is enforced in SQLite transactions. See
+  [docs/operations.md](docs/operations.md).
+- **Privacy-safe logging.** Logs contain event types and error codes only.
 
 The full analysis is in [docs/threat-model.md](docs/threat-model.md).
 
 ## Known gaps
 
-- The app does no rate limiting. OCR requests are bounded per request (image size, 15-second
-  timeout) but not per visitor.
-- Dependency audits run only when CI runs; there are no scheduled audits yet.
+- Limits are enforced per process and per browser session, not per client IP. Several replicas
+  multiply the limits, and new sessions bypass the per-session limits.
+- The weekly scheduled dependency audit activates only once the workflow reaches the default
+  branch; until then, audits run on every push.

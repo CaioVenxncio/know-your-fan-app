@@ -37,6 +37,8 @@ flowchart TD
     services --> storage[storage.py<br/>SQLite repository]
     services --> ocr[ocr.py<br/>render, degrade, preprocess, OCR]
     services --> matching[text_matching.py]
+    services --> limits[limits.py<br/>rate + concurrency limits]
+    limits --> observability[observability.py<br/>logging policy]
     storage --> synthetic
     storage --> sqlite[(SQLite file<br/>.data/kyf_demo.db)]
     ocr --> tesseract[[Tesseract binary<br/>por + eng data]]
@@ -50,8 +52,10 @@ flowchart TD
 |---|---|---|
 | `main.py` | Entry point for `streamlit run`. Falls back to `src/` on the import path when the package is not installed. | `app` |
 | `app.py` | Streamlit pages, widgets, and user-facing messages. No business rules. | `services`, `config`, error types |
-| `services.py` | Workflows: open and seed the repository, filter profiles, render cards, run OCR plus matching. | domain modules |
-| `config.py` | Builds `Settings` from environment variables (`KYF_DB_PATH`). | — |
+| `services.py` | Workflows: build the process-wide `Runtime`, open and seed the repository, filter profiles, render cards, run OCR plus matching through admission control, rate-limit dataset additions. | domain modules, `limits` |
+| `config.py` | Builds and validates `Settings` (database path and every operational limit) from environment variables; invalid values raise `ConfigurationError`. | — |
+| `limits.py` | Sliding-window rate limiter, bounded concurrency limiter, and `OCRGuard` (per-session rate, global rate, then a concurrency slot). In-process only. | `config`, `observability` |
+| `observability.py` | Logger setup and `ThrottledEvent`; defines the privacy-safe logging policy. | — |
 | `models.py` | `FanProfile`, a frozen dataclass. | — |
 | `synthetic.py` | Deterministic profile generator and the synthetic-data allowlist (`synthetic_violations`). | `models` |
 | `storage.py` | SQLite repository: schema, insert, count, list. Enforces the allowlist and the size cap. | `models`, `synthetic` |
@@ -85,15 +89,19 @@ flowchart TD
 
 ## Storage lifecycle
 
-- `services.open_repository` runs once per process, cached with `st.cache_resource`. It creates
-  the schema if needed and seeds 25 profiles (seed 2025) when the table is empty.
-- Each repository method opens its own connection (`sqlite3.connect(..., timeout=5)`), runs inside
-  a transaction (commit on success, rollback on error), and **always closes** it. No connection
-  outlives a Streamlit rerun.
+- `services.build_runtime` runs once per process, cached with `st.cache_resource`. It opens the
+  repository, creates the schema if needed, and seeds 25 profiles (seed 2025) in **one
+  transaction**, so concurrent processes seed exactly once.
+- Each repository method opens its own connection in autocommit mode (busy timeout 5 s by
+  default) and **always closes** it. No connection outlives a Streamlit rerun.
+- Writes use explicit **`BEGIN IMMEDIATE`** transactions. The write lock is taken before the
+  duplicate and capacity checks, so the 500-profile cap holds across threads and processes. Any
+  error rolls the transaction back.
 - `add()` refuses profiles that fail the allowlist (`UnsafeProfileError`) before opening a
-  connection. It also enforces the 500-profile cap (`StorageLimitError`) and ignores duplicate IDs.
-- `sqlite3` and filesystem errors are wrapped in `StorageError`, and the UI shows a friendly
-  message instead of a traceback.
+  connection, enforces the cap (`StorageLimitError`), and returns `False` for duplicate IDs.
+- `SQLITE_BUSY` and `SQLITE_LOCKED` become `StorageBusyError`; other `sqlite3` and filesystem
+  errors become `StorageError`. The UI shows friendly messages and logs record error codes only.
+  See [operations.md](operations.md#sqlite-concurrency-storagepy).
 - The database file is local and disposable. It is git-ignored, and its location is set by
   `KYF_DB_PATH` (default `.data/kyf_demo.db`) ([ADR 0003](decisions/0003-sqlite-demo-storage.md)).
 
@@ -137,6 +145,8 @@ character errors.
 | Item | Source |
 |---|---|
 | Database path | `KYF_DB_PATH` environment variable |
+| Operational limits | `KYF_OCR_*`, `KYF_MAX_*`, and `KYF_SQLITE_BUSY_TIMEOUT_SECONDS`, validated at start-up ([operations.md](operations.md#3-configuration)) |
+| Tesseract threads | `OMP_THREAD_LIMIT`, set to 1 at start-up if absent |
 | Streamlit behaviour | `.streamlit/config.toml`: error details hidden, usage stats off, upload limit 1 MB |
 | Python dependencies | `pyproject.toml` (lower bounds) and `uv.lock` (exact versions); `requirements.txt` is exported from the lock |
 | System dependency | Tesseract 5.x with `por` and `eng` data (`packages.txt`, CI, `Dockerfile`) |
@@ -148,11 +158,15 @@ See [ADR 0004](decisions/0004-packaging-and-dependencies.md) and
 
 | Error | Raised by | Shown to the visitor as |
 |---|---|---|
-| `StorageError` | storage | "The demo dataset is unavailable …" (the app stops cleanly) |
+| `ConfigurationError` | config | "The demo is misconfigured …" (the app stops; values are not shown) |
+| `StorageError` | storage | "The demo dataset is unavailable …" at start-up (the app stops cleanly), or "temporarily unavailable" while rendering a page |
+| `StorageBusyError` | storage | Warning: "The demo database is busy. Please try again." |
 | `StorageLimitError` | storage | Warning on the generator page |
+| `RateLimitedError` | limits | Warning: "Too many requests. Please wait about N seconds …" (no OCR started) |
+| `CapacityExceededError` | limits | Warning: "The OCR engine is busy …" (no OCR started) |
 | `UnsafeProfileError` | storage | Never expected from the UI; it guards against programming errors |
 | `ValueError` (name) | text_matching | Error message, and OCR is not run |
-| `InvalidImageError`, `OCRFailedError` | ocr | "OCR failed: …" |
+| `InvalidImageError`, `OCRFailedError`, `OCRTimeoutError` | ocr | "OCR failed: …" |
 | `OCRUnavailableError` | ocr | "OCR is unavailable in this environment: …" |
 
 Anything unexpected is still caught by Streamlit, which is configured not to show stack traces
@@ -162,9 +176,10 @@ Anything unexpected is still caught by Streamlit, which is configured not to sho
 
 | Layer | Location | Notes |
 |---|---|---|
-| Unit | `tests/unit/` | Generator, allowlist, matching, config, services, and OCR preprocessing. The Tesseract call is replaced only where the test is about error mapping. |
-| Integration | `tests/integration/test_storage.py` | Real SQLite files in per-test temporary directories: transactions, connection closing, corrupt files, caps. |
-| UI | `tests/integration/test_app.py` | `streamlit.testing.AppTest` runs the real `main.py`. It checks pages, the absence of sensitive inputs and misleading claims, and error paths. |
+| Unit | `tests/unit/` | Generator, allowlist, matching, config validation, services, OCR preprocessing and error mapping, rate and concurrency limits (fake clock; threads synchronized with barriers and events, no sleeps), throttled logging, and log privacy. The Tesseract call is replaced only where the test is about error mapping or admission control. |
+| Integration | `tests/integration/test_storage.py` | Real SQLite files in per-test temporary directories: transactions and rollback, connection closing, corrupt files, caps under concurrent writers, concurrent seeding, held-lock busy handling, and log privacy. |
+| UI | `tests/integration/test_app.py` | `streamlit.testing.AppTest` runs the real `main.py`. It checks pages, the absence of sensitive inputs and misleading claims, error paths, rate-limit and busy-engine messages, fail-closed configuration, and that UI flows never log names or OCR text. |
+| Operational validation | `scripts/validate_limits.py` | Bounded workloads with invariant checks; run in CI with real Tesseract ([operations.md](operations.md#5-bounded-operational-validation)). |
 | End-to-end OCR | `tests/integration/test_ocr_e2e.py` | Runs the real Tesseract engine, with nothing mocked. Invariants (engine, languages, card labels, no false match for an absent name, pipeline) are strict. Name recognition is an aggregate token-recall threshold of at least 90% on 11 clean cards ([ADR 0005](decisions/0005-ocr-engine-and-environment.md)). Skipped locally if Tesseract is missing; **required in CI** (`KYF_REQUIRE_OCR=1`). |
 
 Coverage is measured with branch coverage. CI enforces at least 90% overall, and separately at
@@ -172,7 +187,8 @@ least 90% for non-UI code. Coverage shows which code ran, not that it is correct
 
 ## Known limitations
 
-- Visitors can trigger OCR as often as they like; there is no rate limiting.
+- Resource limits are per process, and per-session limits are a fairness measure only; see
+  [operations.md](operations.md#6-limitations-and-remaining-denial-of-service-risks).
 - SQLite on hosts with temporary filesystems loses generator-added profiles on restart.
 - Name matching does not tolerate OCR character errors, and its accuracy has not been measured
   (planned for the research phase).

@@ -54,9 +54,11 @@ flowchart LR
 | **Information disclosure** | Stack traces reveal paths or internals. | `client.showErrorDetails = "none"`; storage and OCR errors become friendly messages. | Host-level logs may still contain tracebacks (operator-only). |
 | **Information disclosure** | Real data is committed to Git. | `.gitignore` covers databases, `.env`, and secrets; gitleaks runs in pre-commit and on full history in CI. | gitleaks is pattern-based. Personal data that doesn't look like a secret (e.g. names) is not detected. |
 | **Information disclosure** | Telemetry about visitors. | `browser.gatherUsageStats = false`. | The hosting platform's own logs. |
-| **Denial of service** | Repeated OCR requests exhaust CPU. | Images are capped at 4 MP; Tesseract timeout is 15 s; blur and rotation are bounded; uploads are not possible. | **No rate limiting**: concurrent sessions can each run Tesseract. Acceptable for a demo; see Phase 3. |
-| **Denial of service** | Unbounded dataset growth fills the disk. | 500-profile cap, enforced in a transaction, and duplicate IDs are ignored. | — |
-| **Denial of service** | Locked SQLite database under concurrent writes. | Short transactions and a 5 s busy timeout; failures become `StorageError`. | Heavy concurrency could still produce visible errors. |
+| **Denial of service** | Repeated OCR requests exhaust CPU. | *(Phase 3)* Per-session (5/60 s) and process-wide (30/60 s) sliding-window rate limits, checked before Tesseract starts; invalid input is rejected without spending budget. Images are capped at 4 MP and 8,000 px per side; timeout is 15 s; uploads are not possible. | Limits are per process; replicas multiply them. Session limits can be bypassed with new sessions. One abuser can use up the global budget for one window, refusing other visitors. |
+| **Denial of service** | Many simultaneous OCR jobs oversubscribe the CPU. | *(Phase 3)* At most 2 concurrent jobs per process (semaphore, 2 s bounded wait, no queue, always released). `OMP_THREAD_LIMIT=1` per Tesseract process: in CI, two concurrent jobs dropped from about 6.3 s to about 0.36 s each. | Per process only. A Tesseract process that ignores SIGTERM after a timeout could outlive its slot (not observed). |
+| **Denial of service** | Unbounded dataset growth fills the disk. | 500-profile cap. *(Phase 3)* The cap check and the insert now run in one `BEGIN IMMEDIATE` transaction. **Correction:** the Phase 2 version of this document said the cap was "enforced in a transaction", but the check ran outside one; concurrent writers exceeded the cap in 20 of 20 measured trials. Per-session write limit of 10 per 10 min. | One visitor using many sessions can still fill the dataset up to the cap (which blocks further additions, not the app). |
+| **Denial of service** | Locked SQLite database under concurrent writes. | Short write transactions; 5 s busy timeout (configurable); `StorageBusyError` with a friendly message; storage errors while rendering a page are caught. | Heavy concurrency could still produce "busy" messages. |
+| **Information disclosure** | Operational logs reveal names, OCR text, or paths. | *(Phase 3)* Logs record event types, exit statuses, and SQLite error codes only; abuse-triggerable events are throttled. Tests assert that OCR text, names, profile data, and paths never appear in logs. | Third-party libraries (Streamlit, Tornado) log independently of this policy. |
 | **Elevation of privilege** | The container process escapes or modifies the image. | The Docker image runs as an unprivileged user (UID 10001), and only `/app/.data` is writable by it. | Host and container runtime security are outside this project. |
 | **Elevation of privilege** | CI token abuse. | The workflow token has `contents: read` only; checkout does not persist credentials; no secrets are used. | — |
 
@@ -75,15 +77,21 @@ flowchart LR
 | Failure | Effect | Handling |
 |---|---|---|
 | Tesseract or language data missing | No OCR possible | `OCRUnavailableError` and a friendly message; CI fails if this happens there. |
-| Engine timeout or crash | No text | `OCRFailedError` and a friendly message. |
+| Engine timeout | No text | *(Phase 3)* `OCRTimeoutError`; pytesseract terminates the subprocess and removes temp files; the concurrency slot is released (verified in CI with real timeouts: 0 slots held, 0 temp files left). |
+| Engine crash or unexpected error | No text | `OCRFailedError` and a friendly message; no automatic retry. |
 | Recognition errors (blur, rotation, fonts) | False "missing" words | Shown as a partial or no match. No threshold tuning exists yet (research phase). |
 | Recognized text coincidentally containing the name | False "found" | Whole-word matching reduces this. It cannot be ruled out. |
 
 ## Residual risks summary
 
-1. There is no rate limiting on OCR, so CPU exhaustion is possible under abuse.
-2. The meaning of a text match can still be misunderstood despite the disclaimers.
-3. There is a window of dependency vulnerability between lock refreshes. CI audits on every
-   push, but nothing schedules audits when there are no pushes.
-4. The historical password remains in Git history; it is compromised and must not be reused.
-5. The behaviour on Streamlit Community Cloud is unverified because nothing has been deployed.
+1. OCR limits are per process and not per client. Replicas multiply them, new sessions bypass
+   session limits, and one abuser can use up the global budget for a window. See
+   [operations.md](operations.md#6-limitations-and-remaining-denial-of-service-risks).
+2. The Streamlit server itself (websockets, reruns, per-session memory) and network-level floods
+   are not covered by application limits.
+3. The meaning of a text match can still be misunderstood despite the disclaimers.
+4. There is a window of dependency vulnerability between lock refreshes. CI audits on every push,
+   and a weekly scheduled audit is configured, but it activates only after the workflow reaches
+   the default branch (the final merge).
+5. The historical password remains in Git history; it is compromised and must not be reused.
+6. The behaviour on Streamlit Community Cloud is unverified because nothing has been deployed.

@@ -63,8 +63,7 @@ accuracy has not been measured yet.
 Later modernization phases are expected to add the following. **None of it exists yet.**
 
 - a reproducible OCR evaluation harness: preprocessing ablations, engine comparisons, and
-  name-matching error rates on synthetic documents;
-- further hardening of the public demo (for example, rate limiting).
+  name-matching error rates on synthetic documents.
 
 ## Architecture
 
@@ -74,21 +73,25 @@ infrastructure modules.
 
 - [docs/architecture.md](docs/architecture.md): modules, workflows, data and OCR flows, error handling, testing strategy
 - [docs/threat-model.md](docs/threat-model.md): STRIDE analysis, mitigations, residual risks
+- [docs/operations.md](docs/operations.md): resource limits, configuration, logging policy, validation results
 - [docs/decisions/](docs/decisions/): architecture decision records
 
 ```
 main.py                     Streamlit entry point
 src/know_your_fan/
   app.py                    Streamlit pages (presentation only)
-  services.py               Workflows: seeding, filtering, OCR + matching
-  config.py                 Settings from environment variables
+  services.py               Workflows: runtime, seeding, filtering, OCR + matching
+  config.py                 Validated settings from environment variables
+  limits.py                 OCR rate limits and concurrency limit (per process)
+  observability.py          Privacy-safe logging
   synthetic.py              Deterministic generator and synthetic-data allowlist
   storage.py                SQLite repository (synthetic profiles only)
   ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
   text_matching.py          Accent-insensitive whole-word name matching
   models.py                 FanProfile dataclass
 tests/unit/, tests/integration/
-docs/                       Architecture, threat model, ADRs
+scripts/validate_limits.py  Bounded operational validation
+docs/                       Architecture, threat model, operations, ADRs
 pyproject.toml, uv.lock     Packaging, dependencies, tool configuration
 requirements.txt            Generated from uv.lock for pip-only hosts
 packages.txt, Dockerfile    Tesseract system dependency
@@ -155,6 +158,7 @@ location. Database files are ignored by Git.
 | Tests with coverage | `uv run pytest --cov` (fails below 90%) |
 | Non-UI coverage | `uv run coverage report --omit=src/know_your_fan/app.py --fail-under=90` |
 | Dependency audit | `uv run pip-audit --skip-editable` |
+| Operational validation | `uv run python scripts/validate_limits.py` (add `--real-ocr` if Tesseract is installed) |
 | Pre-commit hooks | `uv run pre-commit install`, then `uv run pre-commit run --all-files` |
 | Update dependencies | `uv lock --upgrade`, then regenerate `requirements.txt` with the `uv export` command in its header |
 
@@ -165,13 +169,17 @@ missing engine fail the run instead, which is how CI runs them.
 ## Continuous integration
 
 GitHub Actions (`.github/workflows/ci.yml`) runs on pushes to the development branch, on pull
-requests to `main`, and on manual dispatch. It has four jobs:
+requests to `main`, on manual dispatch, and weekly (Mondays 06:23 UTC, dependency audit only).
+GitHub activates the weekly schedule only from the default branch, so it takes effect after the
+final merge into `main`. The workflow has four jobs:
 
 - **quality:**
   - install from `uv.lock`, and check that `requirements.txt` matches it;
   - Ruff lint and format check, and mypy;
   - real-Tesseract OCR tests (which must not skip), and the full test suite;
-  - coverage thresholds.
+  - coverage thresholds;
+  - bounded operational validation with real Tesseract, run with default threading and with
+    `OMP_THREAD_LIMIT=1` (results are published as run annotations).
 - **dependency-audit:** `pip-audit` on the locked environment.
 - **secret-scan:** gitleaks on the full Git history (the binary's checksum is verified).
 - **docker:** builds the image, checks it runs as non-root, runs real OCR inside it, and checks
@@ -191,6 +199,10 @@ project is not production software.
 - The only free-text inputs (search box, expected name) are length-limited and never stored.
 - Stored profiles must pass an allowlist (every value comes from the generator), and the dataset is capped at 500 profiles.
 - User-visible values are rendered as plain text, never as Markdown or HTML.
+- OCR is rate-limited (per session and per process) and limited to 2 concurrent jobs per process,
+  and each Tesseract process uses one thread. All limits are configurable and validated; see
+  [docs/operations.md](docs/operations.md).
+- Logs record technical events only, never OCR text, names, or profile data.
 
 See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](docs/threat-model.md).
 
@@ -203,7 +215,9 @@ See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](
 - The degradations (blur, rotation) are illustrative, not a realistic capture model.
 - The local SQLite file isn't persistent on hosts with temporary filesystems. The demo reseeds itself,
   so only profiles added through the generator would be lost.
-- There is no rate limiting. Writes are bounded only by the 500-profile cap.
+- Resource limits are per process, not per client. Replicas multiply them, and per-session limits
+  can be bypassed by opening new sessions (the process-wide limits still apply). One visitor can
+  use up the process-wide OCR budget for one window (60 s by default).
 
 ## History
 
