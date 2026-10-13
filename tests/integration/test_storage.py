@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import dataclasses
+import logging
 import sqlite3
+import threading
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +15,7 @@ import pytest
 from know_your_fan import storage
 from know_your_fan.models import FanProfile
 from know_your_fan.storage import (
+    StorageBusyError,
     StorageError,
     StorageLimitError,
     SyntheticProfileRepository,
@@ -133,7 +137,7 @@ def test_failed_write_rolls_back(repo: SyntheticProfileRepository) -> None:
     repo.add(generate_profiles(1, seed=20)[0])
 
     def delete_then_fail() -> None:
-        with repo._connect() as conn:
+        with repo._write_transaction() as conn:
             conn.execute("DELETE FROM synthetic_profiles")
             conn.execute("SELECT * FROM no_such_table")
 
@@ -166,3 +170,123 @@ def test_corrupt_database_file_raises_storage_error(tmp_path: Path) -> None:
 def test_uninitialized_database_raises_storage_error(tmp_path: Path) -> None:
     with pytest.raises(StorageError):
         SyntheticProfileRepository(tmp_path / "empty.db").count()
+
+
+# ------------------------------------------------------------------ Phase 3: concurrency
+
+
+def _run_concurrently(workers: int, target: Callable[[int], None]) -> None:
+    """Start ``workers`` threads together (barrier) and wait for all of them."""
+    start = threading.Barrier(workers)
+
+    def run(index: int) -> None:
+        start.wait()
+        target(index)
+
+    threads = [threading.Thread(target=run, args=(i,)) for i in range(workers)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+
+def test_concurrent_writers_cannot_exceed_the_cap(tmp_path: Path) -> None:
+    cap, workers, per_worker = 30, 8, 10
+    path = tmp_path / "demo.db"
+    SyntheticProfileRepository(path).initialize()
+    profiles = generate_profiles(workers * per_worker, seed=31)
+    outcomes: list[str] = []
+    lock = threading.Lock()
+
+    def writer(index: int) -> None:
+        repo = SyntheticProfileRepository(path, max_profiles=cap, busy_timeout_seconds=10)
+        for profile in profiles[index * per_worker : (index + 1) * per_worker]:
+            try:
+                outcome = "added" if repo.add(profile) else "duplicate"
+            except StorageLimitError:
+                outcome = "limit"
+            with lock:
+                outcomes.append(outcome)
+
+    _run_concurrently(workers, writer)
+    assert SyntheticProfileRepository(path).count() == cap
+    assert outcomes.count("added") == cap
+    assert outcomes.count("limit") == workers * per_worker - cap
+
+
+def test_concurrent_seeding_inserts_exactly_once(tmp_path: Path) -> None:
+    path = tmp_path / "demo.db"
+    SyntheticProfileRepository(path).initialize()
+    seeds = generate_profiles(25, seed=2025)
+    results: list[bool] = []
+    lock = threading.Lock()
+
+    def seeder(_: int) -> None:
+        seeded = SyntheticProfileRepository(path, busy_timeout_seconds=10).seed_if_empty(seeds)
+        with lock:
+            results.append(seeded)
+
+    _run_concurrently(6, seeder)
+    assert results.count(True) == 1
+    assert SyntheticProfileRepository(path).count() == 25
+
+
+def test_locked_database_raises_busy_error_after_timeout(tmp_path: Path) -> None:
+    path = tmp_path / "demo.db"
+    repo = SyntheticProfileRepository(path, busy_timeout_seconds=0.1)
+    repo.initialize()
+    blocker = sqlite3.connect(path, isolation_level=None)
+    try:
+        blocker.execute("BEGIN EXCLUSIVE")  # another writer holds the database
+        with pytest.raises(StorageBusyError, match="busy"):
+            repo.add(generate_profiles(1, seed=32)[0])
+    finally:
+        blocker.execute("ROLLBACK")
+        blocker.close()
+    assert repo.add(generate_profiles(1, seed=32)[0])  # usable again once the lock is gone
+
+
+def test_seed_rejects_non_synthetic_profiles_without_writing(
+    repo: SyntheticProfileRepository, profile: FanProfile
+) -> None:
+    with pytest.raises(UnsafeProfileError):
+        repo.seed_if_empty([profile, dataclasses.replace(profile, city="Rua Real, 1")])
+    assert repo.count() == 0
+
+
+def test_seed_larger_than_cap_is_refused(tmp_path: Path) -> None:
+    repository = SyntheticProfileRepository(tmp_path / "demo.db", max_profiles=3)
+    repository.initialize()
+    with pytest.raises(StorageLimitError):
+        repository.seed_if_empty(generate_profiles(4, seed=33))
+    assert repository.count() == 0
+
+
+def test_duplicate_at_capacity_reports_duplicate_not_limit(tmp_path: Path) -> None:
+    repository = SyntheticProfileRepository(tmp_path / "demo.db", max_profiles=1)
+    repository.initialize()
+    only = generate_profiles(1, seed=34)[0]
+    assert repository.add(only)
+    assert repository.add(only) is False
+
+
+def test_storage_logs_contain_error_codes_but_no_profile_data(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture, profile: FanProfile
+) -> None:
+    path = tmp_path / "demo.db"
+    repo = SyntheticProfileRepository(path, busy_timeout_seconds=0.1)
+    repo.initialize()
+    blocker = sqlite3.connect(path, isolation_level=None)
+    blocker.execute("BEGIN EXCLUSIVE")
+    try:
+        with caplog.at_level(logging.DEBUG, logger="know_your_fan"):
+            with pytest.raises(StorageBusyError):
+                repo.add(profile)
+            with pytest.raises(UnsafeProfileError):
+                repo.add(dataclasses.replace(profile, city="Rua Secreta 42"))
+    finally:
+        blocker.execute("ROLLBACK")
+        blocker.close()
+    assert "SQLITE_BUSY" in caplog.text
+    for sensitive in (profile.name, profile.demo_id, "Rua Secreta", str(path)):
+        assert sensitive not in caplog.text
