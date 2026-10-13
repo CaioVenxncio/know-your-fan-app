@@ -35,8 +35,12 @@ RUN useradd --create-home --uid 10001 kyf \
     && chown kyf /app/.data
 
 USER kyf
+# OMP_THREAD_LIMIT=1: each Tesseract process uses one CPU thread, so total OCR
+# CPU use stays proportional to KYF_OCR_MAX_CONCURRENCY instead of
+# concurrency x cores.
 ENV PATH="/opt/venv/bin:${PATH}" \
-    KYF_DB_PATH=/app/.data/kyf_demo.db
+    KYF_DB_PATH=/app/.data/kyf_demo.db \
+    OMP_THREAD_LIMIT=1
 
 EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
