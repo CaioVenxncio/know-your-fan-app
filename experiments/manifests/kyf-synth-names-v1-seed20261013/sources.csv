@@ -1,0 +1,321 @@
+source_id,split,name,pattern,demo_id,city,game,has_accent,n_tokens,name_length
+dev-0001,dev,Simone Roche Bairros,three,KYF-DEMO-TM43-CH56,Porto Celeste,League of Legends,False,3,20
+dev-0002,dev,Anastácia Ximenes Ximenes,repeated,KYF-DEMO-Z9Y4-7FNS,Lago Prateado,Rocket League,True,3,25
+dev-0003,dev,Guilhermino Barros Barros,repeated,KYF-DEMO-SBXX-DGCW,Lago Prateado,Dota 2,False,3,25
+dev-0004,dev,Ivo Roche,two,KYF-DEMO-2TD5-MYYD,Porto Celeste,Valorant,False,2,9
+dev-0005,dev,Mariana Leal,two,KYF-DEMO-M7KX-C6TC,Vila Aurora,Rainbow Six Siege,False,2,12
+dev-0006,dev,Anastásia Bittencourt Bittencourt,repeated,KYF-DEMO-SF3Z-GXX5,Nova Esmeralda,Rainbow Six Siege,True,3,33
+dev-0007,dev,Elisa Roche Bitencourt,three,KYF-DEMO-B99C-TYKK,Campo Sereno,Rocket League,False,3,22
+dev-0008,dev,Anastácia Joana Bittencourt Quintanilha,compound,KYF-DEMO-QCWK-3Z8Q,Serra Dourada,Rocket League,True,4,39
+dev-0009,dev,Simona de Bitencourt Ximenes,particle,KYF-DEMO-MBKQ-JAQM,Campo Sereno,Counter-Strike 2,False,4,28
+dev-0010,dev,Mariana da Assunção Leal,particle,KYF-DEMO-QS4B-QJAR,Serra Dourada,Dota 2,True,4,24
+dev-0011,dev,Eloísa Barros Barros,repeated,KYF-DEMO-C63J-NE6F,Lago Prateado,League of Legends,True,3,20
+dev-0012,dev,Anastácia Ferreira Ferreira,repeated,KYF-DEMO-TESD-ESJP,Nova Esmeralda,Valorant,True,3,27
+dev-0013,dev,Tais Roche,two,KYF-DEMO-F9F2-3NTC,Porto Celeste,Rocket League,False,2,10
+dev-0014,dev,Heloísa Anastácia Roche Assunção,compound,KYF-DEMO-8XX3-HXHP,Campo Sereno,Valorant,True,4,32
+dev-0015,dev,Anastásia Simona Bairros Assunção,compound,KYF-DEMO-R2E8-7T5S,Nova Esmeralda,League of Legends,True,4,33
+dev-0016,dev,Marina Barros Barros,repeated,KYF-DEMO-86BJ-8M8B,Porto Celeste,Dota 2,False,3,20
+dev-0017,dev,Mariana Leão Leão,repeated,KYF-DEMO-HH7C-XZQ4,Campo Sereno,Dota 2,True,3,17
+dev-0018,dev,João Quintanilha Quintanilha,repeated,KYF-DEMO-4V87-J4JS,Campo Sereno,League of Legends,True,3,28
+dev-0019,dev,Mariana Mello,two,KYF-DEMO-P8EP-DJPA,Serra Dourada,Valorant,False,2,13
+dev-0020,dev,Simona da Leão Ferreira,particle,KYF-DEMO-D537-8N2N,Nova Esmeralda,Counter-Strike 2,True,4,23
+dev-0021,dev,Noé Leal Leal,repeated,KYF-DEMO-B2A2-S7TS,Nova Esmeralda,Valorant,True,3,13
+dev-0022,dev,Ivo Leão Leão,repeated,KYF-DEMO-GPF7-6SR5,Serra Dourada,Counter-Strike 2,True,3,13
+dev-0023,dev,Guilhermina Melo,two,KYF-DEMO-FG4Q-YYDY,Serra Dourada,Rocket League,False,2,16
+dev-0024,dev,Anastácia Bitencourt,two,KYF-DEMO-5E57-Q4D5,Campo Sereno,Rainbow Six Siege,True,2,20
+dev-0025,dev,Heloísa Roche Roche,repeated,KYF-DEMO-5T5Y-3VQW,Vila Aurora,Valorant,True,3,19
+dev-0026,dev,Simona Mello Rocha,three,KYF-DEMO-3W27-4BFH,Vila Aurora,Dota 2,False,3,18
+dev-0027,dev,Tais Mariana Pereira Melo,compound,KYF-DEMO-76DC-WKP8,Campo Sereno,Rocket League,False,4,25
+dev-0028,dev,Heloísa Mello Mello,repeated,KYF-DEMO-Y82P-VX8E,Nova Esmeralda,Rainbow Six Siege,True,3,19
+dev-0029,dev,Anastácia Assumpção Leão,three,KYF-DEMO-8NGB-SPR5,Serra Dourada,League of Legends,True,3,24
+dev-0030,dev,Heloísa Bitencourt Bairros,three,KYF-DEMO-TPVS-ASE9,Campo Sereno,Rocket League,True,3,26
+dev-0031,dev,Heloísa Simone Leão Melo,compound,KYF-DEMO-PKPE-578V,Serra Dourada,Counter-Strike 2,True,4,24
+dev-0032,dev,Tais Assunção Roche,three,KYF-DEMO-F43H-ZEQ4,Campo Sereno,Counter-Strike 2,True,3,19
+dev-0033,dev,João Mello Mello,repeated,KYF-DEMO-J6C5-DX4T,Nova Esmeralda,Rocket League,True,3,16
+dev-0034,dev,Guilhermina da Melo Leal,particle,KYF-DEMO-G3BA-FP3D,Nova Esmeralda,Rainbow Six Siege,False,4,24
+dev-0035,dev,Elisa Mello Bairros,three,KYF-DEMO-V294-P4AE,Vila Aurora,Counter-Strike 2,False,3,19
+dev-0036,dev,Anastásia Mello Quintanilha,three,KYF-DEMO-EHTD-2YKX,Porto Celeste,Dota 2,True,3,27
+dev-0037,dev,Noé Melo Assunção,three,KYF-DEMO-AW32-35GY,Porto Celeste,Counter-Strike 2,True,3,17
+dev-0038,dev,Marina das Assunção Rocha,particle,KYF-DEMO-TKNM-MEPT,Nova Esmeralda,Valorant,True,4,25
+dev-0039,dev,Simona Simone Quintanilha Roche,compound,KYF-DEMO-ZVPG-BF3S,Porto Celeste,League of Legends,False,4,31
+dev-0040,dev,Eloísa das Barros Bittencourt,particle,KYF-DEMO-B2PM-YB4Y,Campo Sereno,League of Legends,True,4,29
+dev-0041,dev,Bruno Ferreira Assunção,three,KYF-DEMO-RFMM-GXKE,Lago Prateado,Counter-Strike 2,True,3,23
+dev-0042,dev,Guilhermina Ivo Bittencourt Ferreira,compound,KYF-DEMO-9M43-PW2Y,Campo Sereno,League of Legends,False,4,36
+dev-0043,dev,Anastácia Bitencourt Assunção,three,KYF-DEMO-D87D-ZC5P,Nova Esmeralda,Valorant,True,3,29
+dev-0044,dev,Marina Ximenes Ximenes,repeated,KYF-DEMO-6GX5-X47V,Lago Prateado,Dota 2,False,3,22
+dev-0045,dev,Noé Bitencourt Bitencourt,repeated,KYF-DEMO-E75M-RM55,Serra Dourada,League of Legends,True,3,25
+dev-0046,dev,Simona Ximenes Mello,three,KYF-DEMO-QFJ5-QXBH,Lago Prateado,Valorant,False,3,20
+dev-0047,dev,Bruno Eliza Mello Bairros,compound,KYF-DEMO-AX9T-T5DE,Serra Dourada,Counter-Strike 2,False,4,25
+dev-0048,dev,Simona Roche,two,KYF-DEMO-NR2E-Q3Z6,Campo Sereno,Rainbow Six Siege,False,2,12
+dev-0049,dev,Simona Bittencourt Bittencourt,repeated,KYF-DEMO-QWDE-8P8S,Campo Sereno,Dota 2,False,3,30
+dev-0050,dev,Heloísa Bitencourt Leal,three,KYF-DEMO-2SZN-RBST,Nova Esmeralda,Valorant,True,3,23
+dev-0051,dev,Ivo do Assunção Ferreira,particle,KYF-DEMO-ZHP9-P4WZ,Porto Celeste,League of Legends,True,4,24
+dev-0052,dev,Eliza Barros,two,KYF-DEMO-CMJ8-334R,Campo Sereno,League of Legends,False,2,12
+dev-0053,dev,Simone de Ferreira Mello,particle,KYF-DEMO-PJCD-8YQH,Lago Prateado,League of Legends,False,4,24
+dev-0054,dev,Thaís Ferreira Ferreira,repeated,KYF-DEMO-BE8K-XMCB,Campo Sereno,Dota 2,True,3,23
+dev-0055,dev,Anastácia do Ferreira Barros,particle,KYF-DEMO-B3PD-DRTK,Nova Esmeralda,League of Legends,True,4,28
+dev-0056,dev,Bruna Bitencourt Bitencourt,repeated,KYF-DEMO-25MF-FTGB,Porto Celeste,Rainbow Six Siege,False,3,27
+dev-0057,dev,Mariana Ferreira Assunção,three,KYF-DEMO-KTXM-GACH,Porto Celeste,Valorant,True,3,25
+dev-0058,dev,Bruna Noel Ximenes Assumpção,compound,KYF-DEMO-VRGS-7VW4,Vila Aurora,Rainbow Six Siege,True,4,28
+dev-0059,dev,Thaís da Sá Barros,particle,KYF-DEMO-ZW32-CQKB,Campo Sereno,Counter-Strike 2,True,4,18
+dev-0060,dev,Eloísa Rocha,two,KYF-DEMO-9HDZ-GNEM,Porto Celeste,Dota 2,True,2,12
+dev-0061,dev,Guilhermina Bitencourt Bitencourt,repeated,KYF-DEMO-EE34-XBQX,Serra Dourada,Dota 2,False,3,33
+dev-0062,dev,Heloísa Guilhermina Ximenes Leão,compound,KYF-DEMO-FX48-2RHF,Porto Celeste,Valorant,True,4,32
+dev-0063,dev,Ivan Heloísa Bitencourt Melo,compound,KYF-DEMO-TKSN-8R63,Campo Sereno,Counter-Strike 2,True,4,28
+dev-0064,dev,Ivan Roche,two,KYF-DEMO-RKSE-XJPC,Porto Celeste,Dota 2,False,2,10
+dev-0065,dev,Marina Assunção Leal,three,KYF-DEMO-3G45-Q7YT,Campo Sereno,Dota 2,True,3,20
+dev-0066,dev,João Assumpção Rocha,three,KYF-DEMO-N468-DFC3,Lago Prateado,League of Legends,True,3,20
+dev-0067,dev,Anastásia das Melo Assumpção,particle,KYF-DEMO-CP4S-3JJG,Porto Celeste,League of Legends,True,4,28
+dev-0068,dev,Mariana Roche,two,KYF-DEMO-ZZ62-X73D,Lago Prateado,Valorant,False,2,13
+dev-0069,dev,Simone do Bitencourt Bittencourt,particle,KYF-DEMO-3MMT-5HF6,Porto Celeste,Rainbow Six Siege,False,4,32
+dev-0070,dev,Eloísa Marina Ximenes Bitencourt,compound,KYF-DEMO-NFAA-FQDV,Vila Aurora,League of Legends,True,4,32
+dev-0071,dev,Guilhermina Roche,two,KYF-DEMO-RJD4-P523,Serra Dourada,Counter-Strike 2,False,2,17
+dev-0072,dev,Heloísa Mello,two,KYF-DEMO-N6QV-T4YE,Serra Dourada,League of Legends,True,2,13
+dev-0073,dev,Ivan Joana Roche Melo,compound,KYF-DEMO-747P-A5A6,Nova Esmeralda,League of Legends,False,4,21
+dev-0074,dev,Simona Leal Leal,repeated,KYF-DEMO-8QHN-TYCE,Vila Aurora,League of Legends,False,3,16
+dev-0075,dev,Bruno Ferreira Ferreira,repeated,KYF-DEMO-574W-FTPP,Lago Prateado,Rocket League,False,3,23
+dev-0076,dev,Elisa Melo,two,KYF-DEMO-79ZS-KEWG,Vila Aurora,Rainbow Six Siege,False,2,10
+dev-0077,dev,Bruno Roche Bitencourt,three,KYF-DEMO-RXQ6-W28X,Lago Prateado,Valorant,False,3,22
+dev-0078,dev,Tais Barros Barros,repeated,KYF-DEMO-8SY5-3XN3,Campo Sereno,League of Legends,False,3,18
+dev-0079,dev,Tais Quintanilha Assunção,three,KYF-DEMO-7XB4-4C5A,Serra Dourada,Dota 2,True,3,25
+dev-0080,dev,Bruna Heloísa Rocha Ferreira,compound,KYF-DEMO-RJKR-4GR6,Porto Celeste,Dota 2,True,4,28
+val-0001,val,Ruy Simões,two,KYF-DEMO-8ZHW-TD37,Vila Aurora,Rainbow Six Siege,True,2,10
+val-0002,val,Ítalo das Mendez Prado,particle,KYF-DEMO-NKJV-G43K,Lago Prateado,League of Legends,True,4,22
+val-0003,val,Cristóvão Brandt,two,KYF-DEMO-PGDA-Z7VX,Vila Aurora,Valorant,True,2,16
+val-0004,val,Raul do Simões Luz,particle,KYF-DEMO-4BTX-9HZC,Serra Dourada,Dota 2,True,4,18
+val-0005,val,Ícaro Brandão Luz,three,KYF-DEMO-7TBK-A86J,Porto Celeste,Counter-Strike 2,True,3,17
+val-0006,val,Ítalo Cristóvão Pardo Mendez,compound,KYF-DEMO-EZXS-5HMW,Lago Prateado,Rocket League,True,4,28
+val-0007,val,Victor Souza,two,KYF-DEMO-RMGY-SWEE,Nova Esmeralda,League of Legends,False,2,12
+val-0008,val,Vítor Sousa,two,KYF-DEMO-SESQ-93WJ,Porto Celeste,Valorant,True,2,11
+val-0009,val,Iara das Brandt Simão,particle,KYF-DEMO-S2NC-Y2YB,Nova Esmeralda,League of Legends,True,4,21
+val-0010,val,Otávia Luz Sousa,three,KYF-DEMO-GAA4-4SB2,Vila Aurora,Rainbow Six Siege,True,3,16
+val-0011,val,Maximiliano Otávia Pardo Vasconcelos,compound,KYF-DEMO-BXTW-GC5A,Campo Sereno,Rocket League,True,4,36
+val-0012,val,Ícaro Cavalcante,two,KYF-DEMO-6PW8-ETNF,Campo Sereno,Counter-Strike 2,True,2,16
+val-0013,val,Léa Souza Simão,three,KYF-DEMO-EHCQ-Z4SK,Nova Esmeralda,Rocket League,True,3,15
+val-0014,val,Vítor Prado,two,KYF-DEMO-D5YZ-NSJD,Lago Prateado,Counter-Strike 2,True,2,11
+val-0015,val,Rui Cavalcante,two,KYF-DEMO-KXEH-KDVF,Campo Sereno,League of Legends,False,2,14
+val-0016,val,Otávia Ruy Vasconcelos Cavalcanti,compound,KYF-DEMO-S474-AWV9,Porto Celeste,Counter-Strike 2,True,4,33
+val-0017,val,Otávia dos Fontes Souza,particle,KYF-DEMO-NB9W-G7PW,Porto Celeste,Rocket League,True,4,23
+val-0018,val,Lara dos Magalhães Prado,particle,KYF-DEMO-JGKV-P49Y,Porto Celeste,Rocket League,True,4,24
+val-0019,val,Rui do Simões Vasconcellos,particle,KYF-DEMO-K4J8-TYGF,Vila Aurora,Rocket League,True,4,26
+val-0020,val,Victor de Magalhães Mendez,particle,KYF-DEMO-8KBV-EYKK,Vila Aurora,Dota 2,True,4,26
+val-0021,val,Cristóvão Otávia Brandão Mendes,compound,KYF-DEMO-AFNW-8M3G,Porto Celeste,League of Legends,True,4,31
+val-0022,val,Saul Ruy Cavalcante Vasconcellos,compound,KYF-DEMO-5JCK-BBVD,Nova Esmeralda,Counter-Strike 2,False,4,32
+val-0023,val,Saul Sousa Sousa,repeated,KYF-DEMO-CXAV-GMDJ,Vila Aurora,Rocket League,False,3,16
+val-0024,val,Ane Brandt,two,KYF-DEMO-YFDZ-MF5C,Porto Celeste,Rocket League,False,2,10
+val-0025,val,Lia Simões Magalhães,three,KYF-DEMO-6EZP-H33G,Vila Aurora,League of Legends,True,3,20
+val-0026,val,Ana Sousa Brandt,three,KYF-DEMO-TDDB-8F8J,Porto Celeste,Rainbow Six Siege,False,3,16
+val-0027,val,Otávia dos Simão Pardo,particle,KYF-DEMO-W9CD-YTVM,Serra Dourada,Dota 2,True,4,22
+val-0028,val,Ítalo Cavalcanti Vasconcelos,three,KYF-DEMO-X223-RGXV,Lago Prateado,Rocket League,True,3,28
+val-0029,val,Victor Simões,two,KYF-DEMO-7XPJ-FWC7,Campo Sereno,Rocket League,True,2,13
+val-0030,val,Cristóvão Iara Prado Cavalcante,compound,KYF-DEMO-3HK9-NTQ7,Nova Esmeralda,Rainbow Six Siege,True,4,31
+val-0031,val,Raul Fontes Mendes,three,KYF-DEMO-J5M5-XCRR,Serra Dourada,Rocket League,False,3,18
+val-0032,val,Lia Souza,two,KYF-DEMO-53GJ-TZGG,Porto Celeste,Rocket League,False,2,9
+val-0033,val,Caio Otávio Souza Simões,compound,KYF-DEMO-RSJD-SZD5,Lago Prateado,Valorant,True,4,24
+val-0034,val,Cristóvão Luz Luz,repeated,KYF-DEMO-JKYG-KWCT,Campo Sereno,Rainbow Six Siege,True,3,17
+val-0035,val,Lia Brandt Brandão,three,KYF-DEMO-Y93E-46WH,Campo Sereno,Rainbow Six Siege,True,3,18
+val-0036,val,Saul Vasconcelos Vasconcelos,repeated,KYF-DEMO-Q5M3-YQRB,Lago Prateado,Counter-Strike 2,False,3,28
+val-0037,val,Ítalo do Luz Vasconcelos,particle,KYF-DEMO-JWRQ-GPCC,Serra Dourada,Valorant,True,4,24
+val-0038,val,Otávio Otávia Simões Mendes,compound,KYF-DEMO-5MN2-55TW,Campo Sereno,League of Legends,True,4,27
+val-0039,val,Ítalo Simões,two,KYF-DEMO-QMB4-MBSF,Serra Dourada,League of Legends,True,2,12
+val-0040,val,Victor Sousa Sousa,repeated,KYF-DEMO-Y6J9-4TZJ,Serra Dourada,League of Legends,False,3,18
+val-0041,val,Ítalo Magalhães,two,KYF-DEMO-C2FN-NRJG,Nova Esmeralda,Rocket League,True,2,15
+val-0042,val,Léa Souza,two,KYF-DEMO-NMV2-22HD,Lago Prateado,Rocket League,True,2,9
+val-0043,val,Ane Mendes Simão,three,KYF-DEMO-RT7N-3VJD,Serra Dourada,Counter-Strike 2,True,3,16
+val-0044,val,Ruy Maximiliano Brandão Magalhães,compound,KYF-DEMO-66XA-TE48,Serra Dourada,League of Legends,True,4,33
+val-0045,val,Otávia Luz,two,KYF-DEMO-EWTX-YYQP,Lago Prateado,Rocket League,True,2,10
+val-0046,val,Ane dos Brandt Vasconcelos,particle,KYF-DEMO-VXBY-45MV,Serra Dourada,Rainbow Six Siege,False,4,26
+val-0047,val,Otávia do Prado Luz,particle,KYF-DEMO-ZT8A-CCAZ,Porto Celeste,Counter-Strike 2,True,4,19
+val-0048,val,Saul Vasconcellos Sousa,three,KYF-DEMO-SKJJ-99Z9,Vila Aurora,Valorant,False,3,23
+val-0049,val,Rui Sousa Vasconcelos,three,KYF-DEMO-Z2AM-JZSJ,Vila Aurora,Rainbow Six Siege,False,3,21
+val-0050,val,Cristóvão Cavalcante Pardo,three,KYF-DEMO-MCJP-2HC9,Serra Dourada,Valorant,True,3,26
+val-0051,val,Cristóvão Vasconcelos Vasconcelos,repeated,KYF-DEMO-Q69F-EETJ,Lago Prateado,League of Legends,True,3,33
+val-0052,val,Ruy dos Sousa Mendes,particle,KYF-DEMO-WS7F-G27B,Porto Celeste,Rocket League,False,4,20
+val-0053,val,Léa Raul Fontes Sousa,compound,KYF-DEMO-G33E-R4K6,Porto Celeste,Rocket League,True,4,21
+val-0054,val,Lia Vasconcelos,two,KYF-DEMO-Q7AT-YNFS,Campo Sereno,Valorant,False,2,15
+val-0055,val,Vítor Mendez Mendez,repeated,KYF-DEMO-Q83W-WEAR,Serra Dourada,Rainbow Six Siege,True,3,19
+val-0056,val,Ítalo Sousa Vasconcellos,three,KYF-DEMO-6YWS-GQY4,Nova Esmeralda,Rocket League,True,3,24
+val-0057,val,Ana Magalhães,two,KYF-DEMO-ASTJ-CAVH,Vila Aurora,Dota 2,True,2,13
+val-0058,val,Caio Vasconcellos Magalhães,three,KYF-DEMO-8EG4-92CT,Vila Aurora,Rocket League,True,3,27
+val-0059,val,Lia Cavalcanti Simões,three,KYF-DEMO-ZC5E-P5Q7,Lago Prateado,Dota 2,True,3,21
+val-0060,val,Ruy Otávia Mendes Cavalcante,compound,KYF-DEMO-W9GF-CY6T,Campo Sereno,Valorant,True,4,28
+val-0061,val,Ruy de Mendez Souza,particle,KYF-DEMO-2DR6-A7KS,Serra Dourada,Valorant,False,4,19
+val-0062,val,Lara Luz Souza,three,KYF-DEMO-DXST-V4AK,Vila Aurora,League of Legends,False,3,14
+val-0063,val,Ítalo Pardo,two,KYF-DEMO-VJCQ-RZXX,Lago Prateado,Counter-Strike 2,True,2,11
+val-0064,val,Caio das Simão Simões,particle,KYF-DEMO-WNBN-FGF3,Lago Prateado,Dota 2,True,4,21
+val-0065,val,Cristóvão Rui Brandão Vasconcellos,compound,KYF-DEMO-2KR4-242R,Vila Aurora,Dota 2,True,4,34
+val-0066,val,Otávia Souza Souza,repeated,KYF-DEMO-GC2B-G4N5,Serra Dourada,Rocket League,True,3,18
+val-0067,val,Kaio Sousa,two,KYF-DEMO-6X4D-R47M,Nova Esmeralda,Dota 2,False,2,10
+val-0068,val,Léa Brandt Brandt,repeated,KYF-DEMO-N3KB-TGTB,Lago Prateado,League of Legends,True,3,17
+val-0069,val,Léa Rui Luz Brandt,compound,KYF-DEMO-B4D2-WA25,Nova Esmeralda,Valorant,True,4,18
+val-0070,val,Otávia Vasconcelos,two,KYF-DEMO-QHRW-DQFJ,Vila Aurora,Rainbow Six Siege,True,2,18
+val-0071,val,Otávia Vítor Magalhães Sousa,compound,KYF-DEMO-YKHT-7GN7,Vila Aurora,Dota 2,True,4,28
+val-0072,val,Ícaro Mendez Simões,three,KYF-DEMO-6Q95-YJXS,Lago Prateado,Rainbow Six Siege,True,3,19
+val-0073,val,Vítor de Simão Cavalcante,particle,KYF-DEMO-R3XY-QEWE,Serra Dourada,Rainbow Six Siege,True,4,25
+val-0074,val,Victor Iara Magalhães Fontes,compound,KYF-DEMO-5VMC-MT9A,Lago Prateado,Dota 2,True,4,28
+val-0075,val,Otávio Souza,two,KYF-DEMO-8JCX-KGH9,Lago Prateado,Counter-Strike 2,True,2,12
+val-0076,val,Ruy Simão,two,KYF-DEMO-ANCR-XHRR,Serra Dourada,Rainbow Six Siege,True,2,9
+val-0077,val,Ana Cavalcante,two,KYF-DEMO-DJND-NJM7,Lago Prateado,Rocket League,False,2,14
+val-0078,val,Ruy Brandt Brandt,repeated,KYF-DEMO-6VE3-X2FZ,Campo Sereno,Rocket League,False,3,17
+val-0079,val,Raul Cavalcante Vasconcelos,three,KYF-DEMO-NRBW-X5FG,Porto Celeste,Valorant,False,3,27
+val-0080,val,Ítalo Luz Luz,repeated,KYF-DEMO-WA5H-2WNP,Nova Esmeralda,Dota 2,True,3,13
+test-0001,test,Rosemeire Gonçalvez,two,KYF-DEMO-GWJY-GK6E,Nova Esmeralda,Valorant,True,2,19
+test-0002,test,Renato Nogueira Telles,three,KYF-DEMO-7HEV-R9CQ,Serra Dourada,Dota 2,False,3,22
+test-0003,test,Lúcia Reis,two,KYF-DEMO-7CS4-TS8W,Vila Aurora,Dota 2,True,2,10
+test-0004,test,Edu Lima Gonçalvez,three,KYF-DEMO-VQ6B-XZMX,Vila Aurora,Rainbow Six Siege,True,3,18
+test-0005,test,Lúcia Gonçalves,two,KYF-DEMO-DDJM-D3XC,Vila Aurora,Rocket League,True,2,15
+test-0006,test,Edu Lúcia Lima Gonçalvez,compound,KYF-DEMO-58BP-VVNX,Serra Dourada,League of Legends,True,4,24
+test-0007,test,Ísis Morais,two,KYF-DEMO-8QYC-WPDQ,Serra Dourada,Valorant,True,2,11
+test-0008,test,Tânia Lima Morais,three,KYF-DEMO-2RG5-56WP,Campo Sereno,Rocket League,True,3,17
+test-0009,test,Luciana Renato Wanderley Lima,compound,KYF-DEMO-D2DJ-QSZ2,Porto Celeste,Dota 2,False,4,29
+test-0010,test,Davi Rios,two,KYF-DEMO-45NM-6R3F,Nova Esmeralda,Rainbow Six Siege,False,2,9
+test-0011,test,Lúcia Nogueira Nogueira,repeated,KYF-DEMO-E2MG-QH3H,Vila Aurora,Valorant,True,3,23
+test-0012,test,Ilda Gonçalves,two,KYF-DEMO-PMCQ-M585,Campo Sereno,Rocket League,True,2,14
+test-0013,test,Luciana Ísis Nogueira Wanderley,compound,KYF-DEMO-YEMJ-YRSF,Lago Prateado,Valorant,True,4,31
+test-0014,test,Isa Nogueira Wanderley,three,KYF-DEMO-J66P-6EQM,Porto Celeste,Valorant,False,3,22
+test-0015,test,Érika da Lima Wanderley,particle,KYF-DEMO-TYPE-QDYZ,Serra Dourada,Dota 2,True,4,23
+test-0016,test,Ilma Rosemeire Reis Lima,compound,KYF-DEMO-ZGYA-3FPS,Lago Prateado,Counter-Strike 2,False,4,24
+test-0017,test,Renato Nogueira Albuquerque,three,KYF-DEMO-7XHH-CFCD,Nova Esmeralda,Rainbow Six Siege,False,3,27
+test-0018,test,Ilma Isa Gonçalvez Rios,compound,KYF-DEMO-9DAA-XP8F,Nova Esmeralda,Valorant,True,4,23
+test-0019,test,Renato Mourão Moraes,three,KYF-DEMO-BBGY-Z5P7,Serra Dourada,Dota 2,True,3,20
+test-0020,test,Tânia do Nogueira Gonçalves,particle,KYF-DEMO-ZDVS-WJDF,Vila Aurora,League of Legends,True,4,27
+test-0021,test,Edu Telles Reis,three,KYF-DEMO-N67S-TCWF,Serra Dourada,Rocket League,False,3,15
+test-0022,test,Ísis Renato Vanderlei Paz,compound,KYF-DEMO-SPSH-P6DJ,Lago Prateado,Rainbow Six Siege,True,4,25
+test-0023,test,Ísis das Gonçalves Wanderley,particle,KYF-DEMO-58N4-D5FG,Porto Celeste,Valorant,True,4,28
+test-0024,test,Edu de Vanderlei Nogueira,particle,KYF-DEMO-RAFG-Q2XX,Vila Aurora,League of Legends,False,4,25
+test-0025,test,Renan Tânia Telles Teles,compound,KYF-DEMO-BG3N-ZXK7,Campo Sereno,Dota 2,True,4,24
+test-0026,test,Renan das Moraes Rios,particle,KYF-DEMO-9D73-4Q2R,Nova Esmeralda,League of Legends,False,4,21
+test-0027,test,Ilda Mourão,two,KYF-DEMO-YCFG-V7FK,Vila Aurora,Rainbow Six Siege,True,2,11
+test-0028,test,Edu Rios Rios,repeated,KYF-DEMO-ANQ7-FW22,Lago Prateado,Dota 2,False,3,13
+test-0029,test,Rosimeire Reis,two,KYF-DEMO-2QJP-5QQA,Vila Aurora,Counter-Strike 2,False,2,14
+test-0030,test,Ilma Mourão Paz,three,KYF-DEMO-TYAH-YEP2,Porto Celeste,Rainbow Six Siege,True,3,15
+test-0031,test,Bartolomeu Tânia Moraes Paz,compound,KYF-DEMO-95X2-ERHM,Lago Prateado,Rocket League,True,4,27
+test-0032,test,Lúcia Luciana Paz Moura,compound,KYF-DEMO-9WF6-24QN,Porto Celeste,League of Legends,True,4,23
+test-0033,test,Davi Rosemeire Reis Nogueira,compound,KYF-DEMO-AXNE-5XVJ,Serra Dourada,Rainbow Six Siege,False,4,28
+test-0034,test,Érika Paz,two,KYF-DEMO-4ETP-5YBA,Porto Celeste,Rainbow Six Siege,True,2,9
+test-0035,test,Renan Tainá Paz Gonçalves,compound,KYF-DEMO-FRKS-2KJN,Lago Prateado,Valorant,True,4,25
+test-0036,test,Dani Telles,two,KYF-DEMO-FK5C-T726,Nova Esmeralda,Counter-Strike 2,False,2,11
+test-0037,test,Ilda Telles,two,KYF-DEMO-Z7YY-XSCM,Campo Sereno,League of Legends,False,2,11
+test-0038,test,Rosemeire da Vanderlei Moraes,particle,KYF-DEMO-DVJD-HTGV,Nova Esmeralda,Rocket League,False,4,29
+test-0039,test,Edu Telles,two,KYF-DEMO-WCPG-2E9T,Campo Sereno,Rainbow Six Siege,False,2,10
+test-0040,test,Rosimeire Érica Albuquerque Gonçalvez,compound,KYF-DEMO-YBTY-T3TJ,Vila Aurora,League of Legends,True,4,37
+test-0041,test,Érica Telles Mourão,three,KYF-DEMO-H83S-HJAB,Campo Sereno,Rainbow Six Siege,True,3,19
+test-0042,test,Rosemeire das Gonçalvez Teles,particle,KYF-DEMO-7TM4-9REJ,Vila Aurora,League of Legends,True,4,29
+test-0043,test,Tânia Tainá Rios Moraes,compound,KYF-DEMO-88N3-SKX2,Nova Esmeralda,League of Legends,True,4,23
+test-0044,test,Dani Morais Nogueira,three,KYF-DEMO-ZPHE-NXH4,Campo Sereno,Valorant,False,3,20
+test-0045,test,Isa Paz Gonçalves,three,KYF-DEMO-RJD7-MTED,Nova Esmeralda,Dota 2,True,3,17
+test-0046,test,Tainá Mourão Telles,three,KYF-DEMO-R3D2-GJVB,Porto Celeste,League of Legends,True,3,19
+test-0047,test,Isa Wanderley Paz,three,KYF-DEMO-K96S-4PTP,Porto Celeste,Counter-Strike 2,False,3,17
+test-0048,test,Tainá Moura Telles,three,KYF-DEMO-J2VH-VHNE,Lago Prateado,Rainbow Six Siege,True,3,18
+test-0049,test,Érika Mourão Mourão,repeated,KYF-DEMO-W6XA-B7HM,Campo Sereno,League of Legends,True,3,19
+test-0050,test,Luciana Paz Paz,repeated,KYF-DEMO-ANVJ-2SSR,Campo Sereno,Rocket League,False,3,15
+test-0051,test,Tainá Mourão,two,KYF-DEMO-7EN3-G4WF,Nova Esmeralda,Dota 2,True,2,12
+test-0052,test,Érika Rios,two,KYF-DEMO-34X8-A7MF,Porto Celeste,Rocket League,True,2,10
+test-0053,test,Érika Moura Nogueira,three,KYF-DEMO-JZP6-Q9RC,Porto Celeste,Rocket League,True,3,20
+test-0054,test,Rosemeire da Vanderlei Gonçalves,particle,KYF-DEMO-FQ53-CH68,Serra Dourada,Rainbow Six Siege,True,4,32
+test-0055,test,Ísis Vanderlei,two,KYF-DEMO-PPQQ-BYC2,Campo Sereno,Rainbow Six Siege,True,2,14
+test-0056,test,Renan Albuquerque Teles,three,KYF-DEMO-B44K-R2CJ,Serra Dourada,Valorant,False,3,23
+test-0057,test,Rosemeire Gonçalves,two,KYF-DEMO-K7YY-66XC,Campo Sereno,Counter-Strike 2,True,2,19
+test-0058,test,Ísis da Vanderlei Lima,particle,KYF-DEMO-A3F2-E764,Porto Celeste,Counter-Strike 2,True,4,22
+test-0059,test,Isa Paz Morais,three,KYF-DEMO-NGC9-89BT,Serra Dourada,Rocket League,False,3,14
+test-0060,test,Lúcia Moraes Moraes,repeated,KYF-DEMO-4YMC-KT6W,Campo Sereno,Rainbow Six Siege,True,3,19
+test-0061,test,Ilma da Reis Lima,particle,KYF-DEMO-YVXK-5PCW,Vila Aurora,League of Legends,False,4,17
+test-0062,test,Tainá Gonçalves Gonçalves,repeated,KYF-DEMO-NSBN-J9DQ,Lago Prateado,Rainbow Six Siege,True,3,25
+test-0063,test,Lúcia Ilma Mourão Rios,compound,KYF-DEMO-467G-KY3K,Nova Esmeralda,Dota 2,True,4,22
+test-0064,test,Bartolomeu Moraes Wanderley,three,KYF-DEMO-TZTJ-MB2H,Vila Aurora,League of Legends,False,3,27
+test-0065,test,Renan Morais Vanderlei,three,KYF-DEMO-4JFN-DDJ3,Nova Esmeralda,Dota 2,False,3,22
+test-0066,test,Renan Mourão Mourão,repeated,KYF-DEMO-ZET9-SEBE,Vila Aurora,Rocket League,True,3,19
+test-0067,test,Rosimeire do Teles Moraes,particle,KYF-DEMO-Z3S8-4QKZ,Nova Esmeralda,Rocket League,False,4,25
+test-0068,test,Tânia das Vanderlei Moura,particle,KYF-DEMO-F7G9-2WZE,Nova Esmeralda,Valorant,True,4,25
+test-0069,test,Lúcia Paz Paz,repeated,KYF-DEMO-VCN5-BG49,Campo Sereno,Counter-Strike 2,True,3,13
+test-0070,test,Edu Teles,two,KYF-DEMO-EQ7D-B5JC,Campo Sereno,Valorant,False,2,9
+test-0071,test,Dani Luciana Reis Moraes,compound,KYF-DEMO-52J4-MMYK,Nova Esmeralda,League of Legends,False,4,24
+test-0072,test,Érika Albuquerque,two,KYF-DEMO-ESGW-V4H4,Vila Aurora,Rocket League,True,2,17
+test-0073,test,Rosemeire Tainá Morais Gonçalvez,compound,KYF-DEMO-274J-SY5B,Lago Prateado,Valorant,True,4,32
+test-0074,test,Renato Gonçalvez Nogueira,three,KYF-DEMO-72KT-35SQ,Nova Esmeralda,Counter-Strike 2,True,3,25
+test-0075,test,Rosimeire Telles Teles,three,KYF-DEMO-SC4Q-EZJW,Campo Sereno,Dota 2,False,3,22
+test-0076,test,Ísis Vanderlei Morais,three,KYF-DEMO-E9WE-VNXZ,Lago Prateado,Counter-Strike 2,True,3,21
+test-0077,test,Bartolomeu Gonçalves Gonçalves,repeated,KYF-DEMO-PWP3-ZH87,Vila Aurora,Valorant,True,3,30
+test-0078,test,Dani Telles Moura,three,KYF-DEMO-2EZH-8Q75,Campo Sereno,League of Legends,False,3,17
+test-0079,test,Lúcia Albuquerque,two,KYF-DEMO-8QXS-N4AQ,Campo Sereno,Dota 2,True,2,17
+test-0080,test,Davi Telles Telles,repeated,KYF-DEMO-E2QA-XTPH,Nova Esmeralda,Dota 2,False,3,18
+test-0081,test,Edu Gonçalves,two,KYF-DEMO-JMKV-KDVZ,Porto Celeste,Rainbow Six Siege,True,2,13
+test-0082,test,Tânia dos Vanderlei Albuquerque,particle,KYF-DEMO-BZEH-2HRN,Lago Prateado,Dota 2,True,4,31
+test-0083,test,Bartolomeu Nogueira Nogueira,repeated,KYF-DEMO-GWWT-96G2,Lago Prateado,Counter-Strike 2,False,3,28
+test-0084,test,Ilda de Telles Moura,particle,KYF-DEMO-2PFR-G3K4,Serra Dourada,Valorant,False,4,20
+test-0085,test,Rosemeire Ilma Lima Telles,compound,KYF-DEMO-WQX5-7K5B,Lago Prateado,Counter-Strike 2,False,4,26
+test-0086,test,Dani Gonçalves,two,KYF-DEMO-94F3-8E4X,Vila Aurora,Dota 2,True,2,14
+test-0087,test,Ísis das Lima Rios,particle,KYF-DEMO-S8R3-4PJV,Lago Prateado,Rocket League,True,4,18
+test-0088,test,Ilma das Albuquerque Wanderley,particle,KYF-DEMO-DEVD-WVCH,Vila Aurora,Rocket League,False,4,30
+test-0089,test,Lúcia Tânia Paz Moura,compound,KYF-DEMO-4A9C-BX52,Nova Esmeralda,Dota 2,True,4,21
+test-0090,test,Ísis Rios,two,KYF-DEMO-C6TF-5HW5,Campo Sereno,Rainbow Six Siege,True,2,9
+test-0091,test,Ilda Nogueira Reis,three,KYF-DEMO-WHVN-GX2Z,Vila Aurora,Dota 2,False,3,18
+test-0092,test,Edu das Telles Mourão,particle,KYF-DEMO-X4SB-GKJJ,Serra Dourada,Counter-Strike 2,True,4,21
+test-0093,test,Dani Paz,two,KYF-DEMO-2C3S-HBF4,Campo Sereno,Counter-Strike 2,False,2,8
+test-0094,test,Renato Nogueira Lima,three,KYF-DEMO-Y6T5-X4E8,Campo Sereno,League of Legends,False,3,20
+test-0095,test,Érica do Albuquerque Telles,particle,KYF-DEMO-4FR7-6H43,Porto Celeste,League of Legends,True,4,27
+test-0096,test,Ilma Gonçalves,two,KYF-DEMO-WBTV-GZY2,Campo Sereno,Valorant,True,2,14
+test-0097,test,Luciana dos Albuquerque Rios,particle,KYF-DEMO-ESFA-F3ZB,Vila Aurora,Valorant,False,4,28
+test-0098,test,Ilda Bartolomeu Mourão Teles,compound,KYF-DEMO-FG7S-DWP3,Serra Dourada,Valorant,True,4,28
+test-0099,test,Tânia Mourão Telles,three,KYF-DEMO-PHTH-G672,Serra Dourada,Rainbow Six Siege,True,3,19
+test-0100,test,Luciana Vanderlei,two,KYF-DEMO-HSN5-ZF7S,Vila Aurora,Rainbow Six Siege,False,2,17
+test-0101,test,Edu Wanderley Wanderley,repeated,KYF-DEMO-M4N8-HGR8,Campo Sereno,Rocket League,False,3,23
+test-0102,test,Rosimeire Telles Telles,repeated,KYF-DEMO-B6V9-D6YQ,Campo Sereno,Rainbow Six Siege,False,3,23
+test-0103,test,Rosimeire Albuquerque,two,KYF-DEMO-S5XB-89X7,Vila Aurora,Rainbow Six Siege,False,2,21
+test-0104,test,Ilda Paz,two,KYF-DEMO-R8X6-6TBS,Nova Esmeralda,Counter-Strike 2,False,2,8
+test-0105,test,Isa Rios Rios,repeated,KYF-DEMO-JXXD-TYWE,Vila Aurora,Dota 2,False,3,13
+test-0106,test,Tânia Albuquerque Paz,three,KYF-DEMO-DG73-AAZW,Campo Sereno,League of Legends,True,3,21
+test-0107,test,Renato Mourão Nogueira,three,KYF-DEMO-MM3B-D33W,Lago Prateado,Rocket League,True,3,22
+test-0108,test,Ísis do Nogueira Lima,particle,KYF-DEMO-Y4WN-GVBF,Porto Celeste,League of Legends,True,4,21
+test-0109,test,Rosimeire do Vanderlei Moura,particle,KYF-DEMO-792N-CEPF,Campo Sereno,Dota 2,False,4,28
+test-0110,test,Isa Lima Moraes,three,KYF-DEMO-XYXK-JTFA,Nova Esmeralda,Rocket League,False,3,15
+test-0111,test,Érika Lima Wanderley,three,KYF-DEMO-4D3A-BZ46,Vila Aurora,League of Legends,True,3,20
+test-0112,test,Dani Teles Moraes,three,KYF-DEMO-34QM-XYXG,Serra Dourada,Rainbow Six Siege,False,3,17
+test-0113,test,Ísis Teles Rios,three,KYF-DEMO-9QSW-JZAS,Campo Sereno,League of Legends,True,3,15
+test-0114,test,Érika Reis,two,KYF-DEMO-PXTB-GYS7,Porto Celeste,Rainbow Six Siege,True,2,10
+test-0115,test,Ilma Mourão Mourão,repeated,KYF-DEMO-Y77T-R8D4,Nova Esmeralda,Rocket League,True,3,18
+test-0116,test,Ilma das Gonçalves Telles,particle,KYF-DEMO-7J8X-4VDQ,Lago Prateado,Counter-Strike 2,True,4,25
+test-0117,test,Rosimeire Telles Mourão,three,KYF-DEMO-Y87V-8N32,Nova Esmeralda,Dota 2,True,3,23
+test-0118,test,Rosemeire Reis,two,KYF-DEMO-ACXZ-3CBV,Vila Aurora,Rainbow Six Siege,False,2,14
+test-0119,test,Tainá Moura,two,KYF-DEMO-MKZ8-2N4Q,Lago Prateado,Counter-Strike 2,True,2,11
+test-0120,test,Ilma das Teles Wanderley,particle,KYF-DEMO-QJYW-BRR2,Porto Celeste,Valorant,False,4,24
+test-0121,test,Tainá dos Paz Wanderley,particle,KYF-DEMO-A8JS-GF9R,Lago Prateado,Rainbow Six Siege,True,4,23
+test-0122,test,Érica das Moraes Albuquerque,particle,KYF-DEMO-FRC6-RASY,Vila Aurora,Valorant,True,4,28
+test-0123,test,Tânia Reis,two,KYF-DEMO-VW9E-D8P8,Lago Prateado,League of Legends,True,2,10
+test-0124,test,Ilma Reis,two,KYF-DEMO-N8EM-W4KK,Campo Sereno,Counter-Strike 2,False,2,9
+test-0125,test,Bartolomeu Teles,two,KYF-DEMO-DQCF-45TK,Serra Dourada,Valorant,False,2,16
+test-0126,test,Bartolomeu Rios,two,KYF-DEMO-VMW8-WGV4,Vila Aurora,Rainbow Six Siege,False,2,15
+test-0127,test,Edu Mourão Mourão,repeated,KYF-DEMO-GNZK-94H2,Lago Prateado,Dota 2,True,3,17
+test-0128,test,Ísis Reis Reis,repeated,KYF-DEMO-5G5N-EK5R,Lago Prateado,Counter-Strike 2,True,3,14
+test-0129,test,Renan Isa Moraes Reis,compound,KYF-DEMO-HP6J-3YJX,Campo Sereno,Dota 2,False,4,21
+test-0130,test,Isa Gonçalves Gonçalves,repeated,KYF-DEMO-MAXK-C9ZZ,Serra Dourada,Counter-Strike 2,True,3,23
+test-0131,test,Ilda Nogueira Gonçalves,three,KYF-DEMO-544X-6VBA,Lago Prateado,Rainbow Six Siege,True,3,23
+test-0132,test,Ísis Vanderlei Gonçalvez,three,KYF-DEMO-E674-7AEJ,Vila Aurora,Valorant,True,3,24
+test-0133,test,Lúcia de Vanderlei Morais,particle,KYF-DEMO-GDF6-A29E,Lago Prateado,League of Legends,True,4,25
+test-0134,test,Edu Moura Moura,repeated,KYF-DEMO-WEEN-AP9Q,Vila Aurora,Rainbow Six Siege,False,3,15
+test-0135,test,Renato Moraes Moraes,repeated,KYF-DEMO-JYA9-YZ2J,Porto Celeste,Counter-Strike 2,False,3,20
+test-0136,test,Isa de Mourão Reis,particle,KYF-DEMO-CKCP-X94X,Vila Aurora,Rainbow Six Siege,True,4,18
+test-0137,test,Davi Moraes Moraes,repeated,KYF-DEMO-YERQ-VMB4,Porto Celeste,Counter-Strike 2,False,3,18
+test-0138,test,Isa Teles Reis,three,KYF-DEMO-E637-W7BZ,Lago Prateado,League of Legends,False,3,14
+test-0139,test,Érika Lúcia Rios Moraes,compound,KYF-DEMO-9VCZ-TFWV,Porto Celeste,Counter-Strike 2,True,4,23
+test-0140,test,Isa do Gonçalvez Reis,particle,KYF-DEMO-3T65-A5HE,Lago Prateado,Valorant,True,4,21
+test-0141,test,Renato Lima Morais,three,KYF-DEMO-2YS8-SCFW,Serra Dourada,Dota 2,False,3,18
+test-0142,test,Rosimeire Ilma Gonçalvez Lima,compound,KYF-DEMO-DSZ2-E8F6,Serra Dourada,Rainbow Six Siege,True,4,29
+test-0143,test,Edu Telles Telles,repeated,KYF-DEMO-P6D6-J88Y,Vila Aurora,Dota 2,False,3,17
+test-0144,test,Rosimeire Rosemeire Moraes Albuquerque,compound,KYF-DEMO-YV4J-A2ZV,Vila Aurora,Counter-Strike 2,False,4,38
+test-0145,test,Edu Wanderley Moraes,three,KYF-DEMO-MMDW-JNGV,Campo Sereno,League of Legends,False,3,20
+test-0146,test,Ilma da Morais Nogueira,particle,KYF-DEMO-K366-4E3Z,Campo Sereno,Counter-Strike 2,False,4,23
+test-0147,test,Rosemeire Érika Gonçalves Moura,compound,KYF-DEMO-A6KG-YNED,Campo Sereno,Dota 2,True,4,31
+test-0148,test,Edu Moura Mourão,three,KYF-DEMO-BNRK-GBGR,Vila Aurora,Valorant,True,3,16
+test-0149,test,Érica Isa Wanderley Telles,compound,KYF-DEMO-C8ZG-DAJK,Lago Prateado,Valorant,True,4,26
+test-0150,test,Ísis Isa Morais Telles,compound,KYF-DEMO-TQ99-M3FV,Nova Esmeralda,Valorant,True,4,22
+test-0151,test,Renan Mourão Albuquerque,three,KYF-DEMO-Z4W2-3Y2T,Porto Celeste,Counter-Strike 2,True,3,24
+test-0152,test,Dani Gonçalvez Albuquerque,three,KYF-DEMO-8E99-P28P,Nova Esmeralda,Counter-Strike 2,True,3,26
+test-0153,test,Rosemeire Lima,two,KYF-DEMO-QWXX-9QSH,Nova Esmeralda,Valorant,False,2,14
+test-0154,test,Isa Lúcia Lima Telles,compound,KYF-DEMO-SF6R-S3W4,Vila Aurora,Counter-Strike 2,True,4,21
+test-0155,test,Renato Gonçalves Albuquerque,three,KYF-DEMO-DTD6-CHFQ,Porto Celeste,Dota 2,True,3,28
+test-0156,test,Isa Lima Teles,three,KYF-DEMO-56FA-9MVQ,Vila Aurora,Counter-Strike 2,False,3,14
+test-0157,test,Ilma de Albuquerque Teles,particle,KYF-DEMO-BFKF-PF5P,Vila Aurora,League of Legends,False,4,25
+test-0158,test,Isa Vanderlei Teles,three,KYF-DEMO-3WCP-4EBK,Lago Prateado,Dota 2,False,3,19
+test-0159,test,Luciana Gonçalvez Gonçalvez,repeated,KYF-DEMO-DNFE-WN49,Serra Dourada,Dota 2,True,3,27
+test-0160,test,Tânia de Paz Reis,particle,KYF-DEMO-HQYC-DNZ3,Campo Sereno,League of Legends,True,4,17

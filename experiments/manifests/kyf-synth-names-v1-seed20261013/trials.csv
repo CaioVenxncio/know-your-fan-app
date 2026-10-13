@@ -1,0 +1,1281 @@
+trial_id,source_id,split,kind,candidate
+dev-0001/positive,dev-0001,dev,positive,Simone Roche Bairros
+dev-0001/easy,dev-0001,dev,easy,Guilhermina Melo
+dev-0001/token_swap,dev-0001,dev,token_swap,Simone Pereira Bairros
+dev-0001/near_miss,dev-0001,dev,near_miss,Simone Roche Barros
+dev-0002/positive,dev-0002,dev,positive,Anastácia Ximenes Ximenes
+dev-0002/easy,dev-0002,dev,easy,Tais Roche
+dev-0002/token_swap,dev-0002,dev,token_swap,Simona Ximenes Ximenes
+dev-0002/near_miss,dev-0002,dev,near_miss,Anastácia Ximenes Ximencs
+dev-0003/positive,dev-0003,dev,positive,Guilhermino Barros Barros
+dev-0003/easy,dev-0003,dev,easy,Heloísa Mello Mello
+dev-0003/token_swap,dev-0003,dev,token_swap,Guilhermino Barros Leão
+dev-0003/near_miss,dev-0003,dev,near_miss,Guilhermino Bairros Barros
+dev-0004/positive,dev-0004,dev,positive,Ivo Roche
+dev-0004/easy,dev-0004,dev,easy,Tais Barros Barros
+dev-0004/token_swap,dev-0004,dev,token_swap,Ivo Leão
+dev-0004/near_miss,dev-0004,dev,near_miss,Ivo Rocha
+dev-0005/positive,dev-0005,dev,positive,Mariana Leal
+dev-0005/easy,dev-0005,dev,easy,Bruna Heloísa Rocha Ferreira
+dev-0005/token_swap,dev-0005,dev,token_swap,Guilhermino Leal
+dev-0005/near_miss,dev-0005,dev,near_miss,Marina Leal
+dev-0006/positive,dev-0006,dev,positive,Anastásia Bittencourt Bittencourt
+dev-0006/easy,dev-0006,dev,easy,Ivan Roche
+dev-0006/token_swap,dev-0006,dev,token_swap,Anastásia Bittencourt Assunção
+dev-0006/near_miss,dev-0006,dev,near_miss,Anastásia Bittencourt Bitencourt
+dev-0007/positive,dev-0007,dev,positive,Elisa Roche Bitencourt
+dev-0007/easy,dev-0007,dev,easy,Guilhermina Melo
+dev-0007/token_swap,dev-0007,dev,token_swap,Anastácia Roche Bitencourt
+dev-0007/near_miss,dev-0007,dev,near_miss,Elisa Roche Bittencourt
+dev-0008/positive,dev-0008,dev,positive,Anastácia Joana Bittencourt Quintanilha
+dev-0008/easy,dev-0008,dev,easy,Mariana Mello
+dev-0008/token_swap,dev-0008,dev,token_swap,Eliza Joana Bittencourt Quintanilha
+dev-0008/near_miss,dev-0008,dev,near_miss,Anastácia Joana Bittencourt Quintaniiha
+dev-0009/positive,dev-0009,dev,positive,Simona de Bitencourt Ximenes
+dev-0009/easy,dev-0009,dev,easy,Anastácia do Ferreira Barros
+dev-0009/token_swap,dev-0009,dev,token_swap,Simona de Bitencourt Quintanilha
+dev-0009/near_miss,dev-0009,dev,near_miss,Simona de Bittencourt Ximenes
+dev-0010/positive,dev-0010,dev,positive,Mariana da Assunção Leal
+dev-0010/easy,dev-0010,dev,easy,Ivo Roche
+dev-0010/token_swap,dev-0010,dev,token_swap,Mariana da Ximenes Leal
+dev-0010/near_miss,dev-0010,dev,near_miss,Mariana da Assunção Leão
+dev-0011/positive,dev-0011,dev,positive,Eloísa Barros Barros
+dev-0011/easy,dev-0011,dev,easy,Anastácia Bitencourt Assunção
+dev-0011/token_swap,dev-0011,dev,token_swap,Eloísa Melo Barros
+dev-0011/near_miss,dev-0011,dev,near_miss,Eloísa Bairros Barros
+dev-0012/positive,dev-0012,dev,positive,Anastácia Ferreira Ferreira
+dev-0012/easy,dev-0012,dev,easy,Heloísa Roche Roche
+dev-0012/token_swap,dev-0012,dev,token_swap,Simona Ferreira Ferreira
+dev-0012/near_miss,dev-0012,dev,near_miss,Anastácia Ferreira Pereira
+dev-0013/positive,dev-0013,dev,positive,Tais Roche
+dev-0013/easy,dev-0013,dev,easy,Noé Melo Assunção
+dev-0013/token_swap,dev-0013,dev,token_swap,Joana Roche
+dev-0013/near_miss,dev-0013,dev,near_miss,Tais Rocha
+dev-0014/positive,dev-0014,dev,positive,Heloísa Anastácia Roche Assunção
+dev-0014/easy,dev-0014,dev,easy,Thaís da Sá Barros
+dev-0014/token_swap,dev-0014,dev,token_swap,Heloísa Anastácia Bittencourt Assunção
+dev-0014/near_miss,dev-0014,dev,near_miss,Heloísa Anastásia Roche Assunção
+dev-0015/positive,dev-0015,dev,positive,Anastásia Simona Bairros Assunção
+dev-0015/easy,dev-0015,dev,easy,Guilhermina da Melo Leal
+dev-0015/token_swap,dev-0015,dev,token_swap,Tais Simona Bairros Assunção
+dev-0015/near_miss,dev-0015,dev,near_miss,Anastásia Simone Bairros Assunção
+dev-0016/positive,dev-0016,dev,positive,Marina Barros Barros
+dev-0016/easy,dev-0016,dev,easy,Ivan Roche
+dev-0016/token_swap,dev-0016,dev,token_swap,Marina Barros Assunção
+dev-0016/near_miss,dev-0016,dev,near_miss,Mariana Barros Barros
+dev-0017/positive,dev-0017,dev,positive,Mariana Leão Leão
+dev-0017/easy,dev-0017,dev,easy,Eloísa Rocha
+dev-0017/token_swap,dev-0017,dev,token_swap,Thaís Leão Leão
+dev-0017/near_miss,dev-0017,dev,near_miss,Mariana Leal Leão
+dev-0018/positive,dev-0018,dev,positive,João Quintanilha Quintanilha
+dev-0018/easy,dev-0018,dev,easy,Simona Mello Rocha
+dev-0018/token_swap,dev-0018,dev,token_swap,João Quintanilha Melo
+dev-0018/near_miss,dev-0018,dev,near_miss,João Quintanilha Qvintanilha
+dev-0019/positive,dev-0019,dev,positive,Mariana Mello
+dev-0019/easy,dev-0019,dev,easy,Ivo Roche
+dev-0019/token_swap,dev-0019,dev,token_swap,Heloísa Mello
+dev-0019/near_miss,dev-0019,dev,near_miss,Marina Mello
+dev-0020/positive,dev-0020,dev,positive,Simona da Leão Ferreira
+dev-0020/easy,dev-0020,dev,easy,Heloísa Mello Mello
+dev-0020/token_swap,dev-0020,dev,token_swap,Thaís da Leão Ferreira
+dev-0020/near_miss,dev-0020,dev,near_miss,Simona da Leal Ferreira
+dev-0021/positive,dev-0021,dev,positive,Noé Leal Leal
+dev-0021/easy,dev-0021,dev,easy,Simone do Bitencourt Bittencourt
+dev-0021/token_swap,dev-0021,dev,token_swap,Noé Leal Pereira
+dev-0021/near_miss,dev-0021,dev,near_miss,Noé Leão Leal
+dev-0022/positive,dev-0022,dev,positive,Ivo Leão Leão
+dev-0022/easy,dev-0022,dev,easy,Thaís da Sá Barros
+dev-0022/token_swap,dev-0022,dev,token_swap,Simona Leão Leão
+dev-0022/near_miss,dev-0022,dev,near_miss,Ivan Leão Leão
+dev-0023/positive,dev-0023,dev,positive,Guilhermina Melo
+dev-0023/easy,dev-0023,dev,easy,João Assumpção Rocha
+dev-0023/token_swap,dev-0023,dev,token_swap,Guilhermina Leal
+dev-0023/near_miss,dev-0023,dev,near_miss,Guilhermina Mello
+dev-0024/positive,dev-0024,dev,positive,Anastácia Bitencourt
+dev-0024/easy,dev-0024,dev,easy,Thaís da Sá Barros
+dev-0024/token_swap,dev-0024,dev,token_swap,Guilhermina Bitencourt
+dev-0024/near_miss,dev-0024,dev,near_miss,Anastásia Bitencourt
+dev-0025/positive,dev-0025,dev,positive,Heloísa Roche Roche
+dev-0025/easy,dev-0025,dev,easy,Mariana Ferreira Assunção
+dev-0025/token_swap,dev-0025,dev,token_swap,Heloísa Roche Mello
+dev-0025/near_miss,dev-0025,dev,near_miss,Heloísa Rocha Roche
+dev-0026/positive,dev-0026,dev,positive,Simona Mello Rocha
+dev-0026/easy,dev-0026,dev,easy,Anastácia do Ferreira Barros
+dev-0026/token_swap,dev-0026,dev,token_swap,Simona Bittencourt Rocha
+dev-0026/near_miss,dev-0026,dev,near_miss,Simone Mello Rocha
+dev-0027/positive,dev-0027,dev,positive,Tais Mariana Pereira Melo
+dev-0027/easy,dev-0027,dev,easy,Eloísa Rocha
+dev-0027/token_swap,dev-0027,dev,token_swap,Tais Mariana Quintanilha Melo
+dev-0027/near_miss,dev-0027,dev,near_miss,Tais Mariana Ferreira Melo
+dev-0028/positive,dev-0028,dev,positive,Heloísa Mello Mello
+dev-0028/easy,dev-0028,dev,easy,Anastácia Assumpção Leão
+dev-0028/token_swap,dev-0028,dev,token_swap,Thaís Mello Mello
+dev-0028/near_miss,dev-0028,dev,near_miss,Heloísa Melo Mello
+dev-0029/positive,dev-0029,dev,positive,Anastácia Assumpção Leão
+dev-0029/easy,dev-0029,dev,easy,Bruno Roche Bitencourt
+dev-0029/token_swap,dev-0029,dev,token_swap,Anastácia Melo Leão
+dev-0029/near_miss,dev-0029,dev,near_miss,Anastásia Assumpção Leão
+dev-0030/positive,dev-0030,dev,positive,Heloísa Bitencourt Bairros
+dev-0030/easy,dev-0030,dev,easy,Bruna Noel Ximenes Assumpção
+dev-0030/token_swap,dev-0030,dev,token_swap,Heloísa Melo Bairros
+dev-0030/near_miss,dev-0030,dev,near_miss,Heloísa Bitencourt Barros
+dev-0031/positive,dev-0031,dev,positive,Heloísa Simone Leão Melo
+dev-0031/easy,dev-0031,dev,easy,João Quintanilha Quintanilha
+dev-0031/token_swap,dev-0031,dev,token_swap,Heloísa Simone Bitencourt Melo
+dev-0031/near_miss,dev-0031,dev,near_miss,Eloísa Simone Leão Melo
+dev-0032/positive,dev-0032,dev,positive,Tais Assunção Roche
+dev-0032/easy,dev-0032,dev,easy,Guilhermina Melo
+dev-0032/token_swap,dev-0032,dev,token_swap,Guilhermina Assunção Roche
+dev-0032/near_miss,dev-0032,dev,near_miss,Tais Assunção Rocha
+dev-0033/positive,dev-0033,dev,positive,João Mello Mello
+dev-0033/easy,dev-0033,dev,easy,Heloísa Bitencourt Leal
+dev-0033/token_swap,dev-0033,dev,token_swap,Thaís Mello Mello
+dev-0033/near_miss,dev-0033,dev,near_miss,João Mello Melo
+dev-0034/positive,dev-0034,dev,positive,Guilhermina da Melo Leal
+dev-0034/easy,dev-0034,dev,easy,Marina Ximenes Ximenes
+dev-0034/token_swap,dev-0034,dev,token_swap,Heloísa da Melo Leal
+dev-0034/near_miss,dev-0034,dev,near_miss,Guilhermino da Melo Leal
+dev-0035/positive,dev-0035,dev,positive,Elisa Mello Bairros
+dev-0035/easy,dev-0035,dev,easy,Heloísa Roche Roche
+dev-0035/token_swap,dev-0035,dev,token_swap,Mariana Mello Bairros
+dev-0035/near_miss,dev-0035,dev,near_miss,Eliza Mello Bairros
+dev-0036/positive,dev-0036,dev,positive,Anastásia Mello Quintanilha
+dev-0036/easy,dev-0036,dev,easy,Eliza Barros
+dev-0036/token_swap,dev-0036,dev,token_swap,Mariana Mello Quintanilha
+dev-0036/near_miss,dev-0036,dev,near_miss,Anastácia Mello Quintanilha
+dev-0037/positive,dev-0037,dev,positive,Noé Melo Assunção
+dev-0037/easy,dev-0037,dev,easy,Thaís da Sá Barros
+dev-0037/token_swap,dev-0037,dev,token_swap,Elisa Melo Assunção
+dev-0037/near_miss,dev-0037,dev,near_miss,Noé Mello Assunção
+dev-0038/positive,dev-0038,dev,positive,Marina das Assunção Rocha
+dev-0038/easy,dev-0038,dev,easy,Eliza Barros
+dev-0038/token_swap,dev-0038,dev,token_swap,Bruno das Assunção Rocha
+dev-0038/near_miss,dev-0038,dev,near_miss,Mariana das Assunção Rocha
+dev-0039/positive,dev-0039,dev,positive,Simona Simone Quintanilha Roche
+dev-0039/easy,dev-0039,dev,easy,Ivan Heloísa Bitencourt Melo
+dev-0039/token_swap,dev-0039,dev,token_swap,Simona Eloísa Quintanilha Roche
+dev-0039/near_miss,dev-0039,dev,near_miss,Simona Simona Quintanilha Roche
+dev-0040/positive,dev-0040,dev,positive,Eloísa das Barros Bittencourt
+dev-0040/easy,dev-0040,dev,easy,Mariana Ferreira Assunção
+dev-0040/token_swap,dev-0040,dev,token_swap,Eloísa das Barros Melo
+dev-0040/near_miss,dev-0040,dev,near_miss,Heloísa das Barros Bittencourt
+dev-0041/positive,dev-0041,dev,positive,Bruno Ferreira Assunção
+dev-0041/easy,dev-0041,dev,easy,Mariana Leão Leão
+dev-0041/token_swap,dev-0041,dev,token_swap,Guilhermina Ferreira Assunção
+dev-0041/near_miss,dev-0041,dev,near_miss,Bruna Ferreira Assunção
+dev-0042/positive,dev-0042,dev,positive,Guilhermina Ivo Bittencourt Ferreira
+dev-0042/easy,dev-0042,dev,easy,Anastásia Mello Quintanilha
+dev-0042/token_swap,dev-0042,dev,token_swap,Guilhermina Ivo Rocha Ferreira
+dev-0042/near_miss,dev-0042,dev,near_miss,Guilhermina Ivan Bittencourt Ferreira
+dev-0043/positive,dev-0043,dev,positive,Anastácia Bitencourt Assunção
+dev-0043/easy,dev-0043,dev,easy,Mariana Leal
+dev-0043/token_swap,dev-0043,dev,token_swap,Guilhermina Bitencourt Assunção
+dev-0043/near_miss,dev-0043,dev,near_miss,Anastácia Bitencourt Assumpção
+dev-0044/positive,dev-0044,dev,positive,Marina Ximenes Ximenes
+dev-0044/easy,dev-0044,dev,easy,João Quintanilha Quintanilha
+dev-0044/token_swap,dev-0044,dev,token_swap,Ivan Ximenes Ximenes
+dev-0044/near_miss,dev-0044,dev,near_miss,Marina Ximemes Ximenes
+dev-0045/positive,dev-0045,dev,positive,Noé Bitencourt Bitencourt
+dev-0045/easy,dev-0045,dev,easy,Tais Mariana Pereira Melo
+dev-0045/token_swap,dev-0045,dev,token_swap,Noé Melo Bitencourt
+dev-0045/near_miss,dev-0045,dev,near_miss,Noé Bitencourt Bittencourt
+dev-0046/positive,dev-0046,dev,positive,Simona Ximenes Mello
+dev-0046/easy,dev-0046,dev,easy,João Quintanilha Quintanilha
+dev-0046/token_swap,dev-0046,dev,token_swap,Simona Ximenes Bittencourt
+dev-0046/near_miss,dev-0046,dev,near_miss,Simona Ximenes Melo
+dev-0047/positive,dev-0047,dev,positive,Bruno Eliza Mello Bairros
+dev-0047/easy,dev-0047,dev,easy,Noé Leal Leal
+dev-0047/token_swap,dev-0047,dev,token_swap,Bruno Eliza Bitencourt Bairros
+dev-0047/near_miss,dev-0047,dev,near_miss,Bruna Eliza Mello Bairros
+dev-0048/positive,dev-0048,dev,positive,Simona Roche
+dev-0048/easy,dev-0048,dev,easy,Anastácia Joana Bittencourt Quintanilha
+dev-0048/token_swap,dev-0048,dev,token_swap,Ivan Roche
+dev-0048/near_miss,dev-0048,dev,near_miss,Simone Roche
+dev-0049/positive,dev-0049,dev,positive,Simona Bittencourt Bittencourt
+dev-0049/easy,dev-0049,dev,easy,Thaís da Sá Barros
+dev-0049/token_swap,dev-0049,dev,token_swap,Simona Ximenes Bittencourt
+dev-0049/near_miss,dev-0049,dev,near_miss,Simona Bitencourt Bittencourt
+dev-0050/positive,dev-0050,dev,positive,Heloísa Bitencourt Leal
+dev-0050/easy,dev-0050,dev,easy,Simona Simone Quintanilha Roche
+dev-0050/token_swap,dev-0050,dev,token_swap,Heloísa Mello Leal
+dev-0050/near_miss,dev-0050,dev,near_miss,Heloísa Bitencourt Leão
+dev-0051/positive,dev-0051,dev,positive,Ivo do Assunção Ferreira
+dev-0051/easy,dev-0051,dev,easy,Noé Leal Leal
+dev-0051/token_swap,dev-0051,dev,token_swap,Heloísa do Assunção Ferreira
+dev-0051/near_miss,dev-0051,dev,near_miss,Ivan do Assunção Ferreira
+dev-0052/positive,dev-0052,dev,positive,Eliza Barros
+dev-0052/easy,dev-0052,dev,easy,Simona Bittencourt Bittencourt
+dev-0052/token_swap,dev-0052,dev,token_swap,Eliza Ferreira
+dev-0052/near_miss,dev-0052,dev,near_miss,Elisa Barros
+dev-0053/positive,dev-0053,dev,positive,Simone de Ferreira Mello
+dev-0053/easy,dev-0053,dev,easy,Noé Bitencourt Bitencourt
+dev-0053/token_swap,dev-0053,dev,token_swap,Simone de Ferreira Leão
+dev-0053/near_miss,dev-0053,dev,near_miss,Simona de Ferreira Mello
+dev-0054/positive,dev-0054,dev,positive,Thaís Ferreira Ferreira
+dev-0054/easy,dev-0054,dev,easy,Marina Ximenes Ximenes
+dev-0054/token_swap,dev-0054,dev,token_swap,Thaís Ximenes Ferreira
+dev-0054/near_miss,dev-0054,dev,near_miss,Tais Ferreira Ferreira
+dev-0055/positive,dev-0055,dev,positive,Anastácia do Ferreira Barros
+dev-0055/easy,dev-0055,dev,easy,Ivo Roche
+dev-0055/token_swap,dev-0055,dev,token_swap,Anastácia do Ferreira Bittencourt
+dev-0055/near_miss,dev-0055,dev,near_miss,Anastácia do Pereira Barros
+dev-0056/positive,dev-0056,dev,positive,Bruna Bitencourt Bitencourt
+dev-0056/easy,dev-0056,dev,easy,Ivo Roche
+dev-0056/token_swap,dev-0056,dev,token_swap,Bruna Bitencourt Mello
+dev-0056/near_miss,dev-0056,dev,near_miss,Bruna Bittencourt Bitencourt
+dev-0057/positive,dev-0057,dev,positive,Mariana Ferreira Assunção
+dev-0057/easy,dev-0057,dev,easy,Tais Barros Barros
+dev-0057/token_swap,dev-0057,dev,token_swap,Mariana Bittencourt Assunção
+dev-0057/near_miss,dev-0057,dev,near_miss,Marina Ferreira Assunção
+dev-0058/positive,dev-0058,dev,positive,Bruna Noel Ximenes Assumpção
+dev-0058/easy,dev-0058,dev,easy,Ivo Roche
+dev-0058/token_swap,dev-0058,dev,token_swap,Bruna Noel Ximenes Pereira
+dev-0058/near_miss,dev-0058,dev,near_miss,Bruno Noel Ximenes Assumpção
+dev-0059/positive,dev-0059,dev,positive,Thaís da Sá Barros
+dev-0059/easy,dev-0059,dev,easy,Mariana Leal
+dev-0059/token_swap,dev-0059,dev,token_swap,Guilhermina da Sá Barros
+dev-0059/near_miss,dev-0059,dev,near_miss,Thaís da Sá Bairros
+dev-0060/positive,dev-0060,dev,positive,Eloísa Rocha
+dev-0060/easy,dev-0060,dev,easy,Simona da Leão Ferreira
+dev-0060/token_swap,dev-0060,dev,token_swap,Mariana Rocha
+dev-0060/near_miss,dev-0060,dev,near_miss,Eloísa Roche
+dev-0061/positive,dev-0061,dev,positive,Guilhermina Bitencourt Bitencourt
+dev-0061/easy,dev-0061,dev,easy,Marina Assunção Leal
+dev-0061/token_swap,dev-0061,dev,token_swap,Guilhermina Bitencourt Bairros
+dev-0061/near_miss,dev-0061,dev,near_miss,Guilhermina Bittencourt Bitencourt
+dev-0062/positive,dev-0062,dev,positive,Heloísa Guilhermina Ximenes Leão
+dev-0062/easy,dev-0062,dev,easy,Tais Roche
+dev-0062/token_swap,dev-0062,dev,token_swap,Heloísa João Ximenes Leão
+dev-0062/near_miss,dev-0062,dev,near_miss,Heloísa Guilhermina Ximenes Leal
+dev-0063/positive,dev-0063,dev,positive,Ivan Heloísa Bitencourt Melo
+dev-0063/easy,dev-0063,dev,easy,Simona da Leão Ferreira
+dev-0063/token_swap,dev-0063,dev,token_swap,Ivan Heloísa Roche Melo
+dev-0063/near_miss,dev-0063,dev,near_miss,Ivan Heloísa Bitencourt Mello
+dev-0064/positive,dev-0064,dev,positive,Ivan Roche
+dev-0064/easy,dev-0064,dev,easy,Heloísa Bitencourt Bairros
+dev-0064/token_swap,dev-0064,dev,token_swap,Ivan Bairros
+dev-0064/near_miss,dev-0064,dev,near_miss,Ivan Rocha
+dev-0065/positive,dev-0065,dev,positive,Marina Assunção Leal
+dev-0065/easy,dev-0065,dev,easy,Eloísa das Barros Bittencourt
+dev-0065/token_swap,dev-0065,dev,token_swap,Heloísa Assunção Leal
+dev-0065/near_miss,dev-0065,dev,near_miss,Marina Assumpção Leal
+dev-0066/positive,dev-0066,dev,positive,João Assumpção Rocha
+dev-0066/easy,dev-0066,dev,easy,Simona Bittencourt Bittencourt
+dev-0066/token_swap,dev-0066,dev,token_swap,Marina Assumpção Rocha
+dev-0066/near_miss,dev-0066,dev,near_miss,João Assumpção Roche
+dev-0067/positive,dev-0067,dev,positive,Anastásia das Melo Assumpção
+dev-0067/easy,dev-0067,dev,easy,Eloísa Marina Ximenes Bitencourt
+dev-0067/token_swap,dev-0067,dev,token_swap,Simone das Melo Assumpção
+dev-0067/near_miss,dev-0067,dev,near_miss,Anastásia das Mello Assumpção
+dev-0068/positive,dev-0068,dev,positive,Mariana Roche
+dev-0068/easy,dev-0068,dev,easy,Anastácia Joana Bittencourt Quintanilha
+dev-0068/token_swap,dev-0068,dev,token_swap,Anastácia Roche
+dev-0068/near_miss,dev-0068,dev,near_miss,Marina Roche
+dev-0069/positive,dev-0069,dev,positive,Simone do Bitencourt Bittencourt
+dev-0069/easy,dev-0069,dev,easy,Eliza Barros
+dev-0069/token_swap,dev-0069,dev,token_swap,Simone do Quintanilha Bittencourt
+dev-0069/near_miss,dev-0069,dev,near_miss,Simone do Bitencourt Bitencourt
+dev-0070/positive,dev-0070,dev,positive,Eloísa Marina Ximenes Bitencourt
+dev-0070/easy,dev-0070,dev,easy,Ivan Joana Roche Melo
+dev-0070/token_swap,dev-0070,dev,token_swap,Eloísa Ivo Ximenes Bitencourt
+dev-0070/near_miss,dev-0070,dev,near_miss,Eloísa Mariana Ximenes Bitencourt
+dev-0071/positive,dev-0071,dev,positive,Guilhermina Roche
+dev-0071/easy,dev-0071,dev,easy,Anastásia das Melo Assumpção
+dev-0071/token_swap,dev-0071,dev,token_swap,Guilhermina Pereira
+dev-0071/near_miss,dev-0071,dev,near_miss,Guilhermino Roche
+dev-0072/positive,dev-0072,dev,positive,Heloísa Mello
+dev-0072/easy,dev-0072,dev,easy,Ivo Roche
+dev-0072/token_swap,dev-0072,dev,token_swap,Noé Mello
+dev-0072/near_miss,dev-0072,dev,near_miss,Eloísa Mello
+dev-0073/positive,dev-0073,dev,positive,Ivan Joana Roche Melo
+dev-0073/easy,dev-0073,dev,easy,Eliza Barros
+dev-0073/token_swap,dev-0073,dev,token_swap,Anastásia Joana Roche Melo
+dev-0073/near_miss,dev-0073,dev,near_miss,Ivo Joana Roche Melo
+dev-0074/positive,dev-0074,dev,positive,Simona Leal Leal
+dev-0074/easy,dev-0074,dev,easy,Thaís Ferreira Ferreira
+dev-0074/token_swap,dev-0074,dev,token_swap,Simona Ferreira Leal
+dev-0074/near_miss,dev-0074,dev,near_miss,Simona Leal Leão
+dev-0075/positive,dev-0075,dev,positive,Bruno Ferreira Ferreira
+dev-0075/easy,dev-0075,dev,easy,Anastácia Ximenes Ximenes
+dev-0075/token_swap,dev-0075,dev,token_swap,Simone Ferreira Ferreira
+dev-0075/near_miss,dev-0075,dev,near_miss,Bruno Ferreira Pereira
+dev-0076/positive,dev-0076,dev,positive,Elisa Melo
+dev-0076/easy,dev-0076,dev,easy,Marina Ximenes Ximenes
+dev-0076/token_swap,dev-0076,dev,token_swap,Elisa Bittencourt
+dev-0076/near_miss,dev-0076,dev,near_miss,Eliza Melo
+dev-0077/positive,dev-0077,dev,positive,Bruno Roche Bitencourt
+dev-0077/easy,dev-0077,dev,easy,Eloísa Barros Barros
+dev-0077/token_swap,dev-0077,dev,token_swap,Bruno Mello Bitencourt
+dev-0077/near_miss,dev-0077,dev,near_miss,Bruna Roche Bitencourt
+dev-0078/positive,dev-0078,dev,positive,Tais Barros Barros
+dev-0078/easy,dev-0078,dev,easy,Ivo do Assunção Ferreira
+dev-0078/token_swap,dev-0078,dev,token_swap,Tais Leal Barros
+dev-0078/near_miss,dev-0078,dev,near_miss,Tais Barros Bairros
+dev-0079/positive,dev-0079,dev,positive,Tais Quintanilha Assunção
+dev-0079/easy,dev-0079,dev,easy,Eloísa Marina Ximenes Bitencourt
+dev-0079/token_swap,dev-0079,dev,token_swap,Tais Sá Assunção
+dev-0079/near_miss,dev-0079,dev,near_miss,Tais Quinfanilha Assunção
+dev-0080/positive,dev-0080,dev,positive,Bruna Heloísa Rocha Ferreira
+dev-0080/easy,dev-0080,dev,easy,Tais Quintanilha Assunção
+dev-0080/token_swap,dev-0080,dev,token_swap,Mariana Heloísa Rocha Ferreira
+dev-0080/near_miss,dev-0080,dev,near_miss,Bruna Eloísa Rocha Ferreira
+val-0001/positive,val-0001,val,positive,Ruy Simões
+val-0001/easy,val-0001,val,easy,Raul Fontes Mendes
+val-0001/token_swap,val-0001,val,token_swap,Ruy Prado
+val-0001/near_miss,val-0001,val,near_miss,Ruy Simão
+val-0002/positive,val-0002,val,positive,Ítalo das Mendez Prado
+val-0002/easy,val-0002,val,easy,Léa Souza Simão
+val-0002/token_swap,val-0002,val,token_swap,Kaio das Mendez Prado
+val-0002/near_miss,val-0002,val,near_miss,Ítalo das Mendes Prado
+val-0003/positive,val-0003,val,positive,Cristóvão Brandt
+val-0003/easy,val-0003,val,easy,Otávia Luz Sousa
+val-0003/token_swap,val-0003,val,token_swap,Ruy Brandt
+val-0003/near_miss,val-0003,val,near_miss,Cnistóvão Brandt
+val-0004/positive,val-0004,val,positive,Raul do Simões Luz
+val-0004/easy,val-0004,val,easy,Lia Souza
+val-0004/token_swap,val-0004,val,token_swap,Raul do Simões Fontes
+val-0004/near_miss,val-0004,val,near_miss,Raul do Simão Luz
+val-0005/positive,val-0005,val,positive,Ícaro Brandão Luz
+val-0005/easy,val-0005,val,easy,Otávia dos Fontes Souza
+val-0005/token_swap,val-0005,val,token_swap,Ícaro Souza Luz
+val-0005/near_miss,val-0005,val,near_miss,Ítalo Brandão Luz
+val-0006/positive,val-0006,val,positive,Ítalo Cristóvão Pardo Mendez
+val-0006/easy,val-0006,val,easy,Lia Cavalcanti Simões
+val-0006/token_swap,val-0006,val,token_swap,Ítalo Cristóvão Brandt Mendez
+val-0006/near_miss,val-0006,val,near_miss,Ícaro Cristóvão Pardo Mendez
+val-0007/positive,val-0007,val,positive,Victor Souza
+val-0007/easy,val-0007,val,easy,Otávia dos Simão Pardo
+val-0007/token_swap,val-0007,val,token_swap,Victor Brandt
+val-0007/near_miss,val-0007,val,near_miss,Vítor Souza
+val-0008/positive,val-0008,val,positive,Vítor Sousa
+val-0008/easy,val-0008,val,easy,Iara das Brandt Simão
+val-0008/token_swap,val-0008,val,token_swap,Lia Sousa
+val-0008/near_miss,val-0008,val,near_miss,Vítor Souza
+val-0009/positive,val-0009,val,positive,Iara das Brandt Simão
+val-0009/easy,val-0009,val,easy,Maximiliano Otávia Pardo Vasconcelos
+val-0009/token_swap,val-0009,val,token_swap,Iara das Souza Simão
+val-0009/near_miss,val-0009,val,near_miss,Iara das Brandt Simões
+val-0010/positive,val-0010,val,positive,Otávia Luz Sousa
+val-0010/easy,val-0010,val,easy,Rui Cavalcante
+val-0010/token_swap,val-0010,val,token_swap,Otávia Simões Sousa
+val-0010/near_miss,val-0010,val,near_miss,Otávia Lvz Sousa
+val-0011/positive,val-0011,val,positive,Maximiliano Otávia Pardo Vasconcelos
+val-0011/easy,val-0011,val,easy,Ruy Simões
+val-0011/token_swap,val-0011,val,token_swap,Maximiliano Lara Pardo Vasconcelos
+val-0011/near_miss,val-0011,val,near_miss,Maximiiiano Otávia Pardo Vasconcelos
+val-0012/positive,val-0012,val,positive,Ícaro Cavalcante
+val-0012/easy,val-0012,val,easy,Lia Brandt Brandão
+val-0012/token_swap,val-0012,val,token_swap,Caio Cavalcante
+val-0012/near_miss,val-0012,val,near_miss,Ítalo Cavalcante
+val-0013/positive,val-0013,val,positive,Léa Souza Simão
+val-0013/easy,val-0013,val,easy,Cristóvão Vasconcelos Vasconcelos
+val-0013/token_swap,val-0013,val,token_swap,Léa Souza Magalhães
+val-0013/near_miss,val-0013,val,near_miss,Léa Sousa Simão
+val-0014/positive,val-0014,val,positive,Vítor Prado
+val-0014/easy,val-0014,val,easy,Lia Vasconcelos
+val-0014/token_swap,val-0014,val,token_swap,Vítor Brandt
+val-0014/near_miss,val-0014,val,near_miss,Vítor Pardo
+val-0015/positive,val-0015,val,positive,Rui Cavalcante
+val-0015/easy,val-0015,val,easy,Otávia Vítor Magalhães Sousa
+val-0015/token_swap,val-0015,val,token_swap,Rui Vasconcelos
+val-0015/near_miss,val-0015,val,near_miss,Rui Cavalcanti
+val-0016/positive,val-0016,val,positive,Otávia Ruy Vasconcelos Cavalcanti
+val-0016/easy,val-0016,val,easy,Léa Raul Fontes Sousa
+val-0016/token_swap,val-0016,val,token_swap,Ícaro Ruy Vasconcelos Cavalcanti
+val-0016/near_miss,val-0016,val,near_miss,Otávia Ruy Vasconcellos Cavalcanti
+val-0017/positive,val-0017,val,positive,Otávia dos Fontes Souza
+val-0017/easy,val-0017,val,easy,Léa Brandt Brandt
+val-0017/token_swap,val-0017,val,token_swap,Otávia dos Fontes Vasconcellos
+val-0017/near_miss,val-0017,val,near_miss,Otávia dos Fonfes Souza
+val-0018/positive,val-0018,val,positive,Lara dos Magalhães Prado
+val-0018/easy,val-0018,val,easy,Ruy Otávia Mendes Cavalcante
+val-0018/token_swap,val-0018,val,token_swap,Lara dos Magalhães Brandt
+val-0018/near_miss,val-0018,val,near_miss,Lara dos Magalhães Pardo
+val-0019/positive,val-0019,val,positive,Rui do Simões Vasconcellos
+val-0019/easy,val-0019,val,easy,Otávia do Prado Luz
+val-0019/token_swap,val-0019,val,token_swap,Maximiliano do Simões Vasconcellos
+val-0019/near_miss,val-0019,val,near_miss,Rui do Simões Vasconcelos
+val-0020/positive,val-0020,val,positive,Victor de Magalhães Mendez
+val-0020/easy,val-0020,val,easy,Ruy Simões
+val-0020/token_swap,val-0020,val,token_swap,Ícaro de Magalhães Mendez
+val-0020/near_miss,val-0020,val,near_miss,Victor de Magalhães Mendes
+val-0021/positive,val-0021,val,positive,Cristóvão Otávia Brandão Mendes
+val-0021/easy,val-0021,val,easy,Ana Magalhães
+val-0021/token_swap,val-0021,val,token_swap,Cristóvão Otávia Simão Mendes
+val-0021/near_miss,val-0021,val,near_miss,Cristóvão Otávia Brandão Mendez
+val-0022/positive,val-0022,val,positive,Saul Ruy Cavalcante Vasconcellos
+val-0022/easy,val-0022,val,easy,Lara Luz Souza
+val-0022/token_swap,val-0022,val,token_swap,Kaio Ruy Cavalcante Vasconcellos
+val-0022/near_miss,val-0022,val,near_miss,Raul Ruy Cavalcante Vasconcellos
+val-0023/positive,val-0023,val,positive,Saul Sousa Sousa
+val-0023/easy,val-0023,val,easy,Lara dos Magalhães Prado
+val-0023/token_swap,val-0023,val,token_swap,Saul Sousa Prado
+val-0023/near_miss,val-0023,val,near_miss,Saul Souza Sousa
+val-0024/positive,val-0024,val,positive,Ane Brandt
+val-0024/easy,val-0024,val,easy,Rui Sousa Vasconcelos
+val-0024/token_swap,val-0024,val,token_swap,Lia Brandt
+val-0024/near_miss,val-0024,val,near_miss,Ana Brandt
+val-0025/positive,val-0025,val,positive,Lia Simões Magalhães
+val-0025/easy,val-0025,val,easy,Vítor Mendez Mendez
+val-0025/token_swap,val-0025,val,token_swap,Lia Luz Magalhães
+val-0025/near_miss,val-0025,val,near_miss,Lia Simões Magalbães
+val-0026/positive,val-0026,val,positive,Ana Sousa Brandt
+val-0026/easy,val-0026,val,easy,Ícaro Cavalcante
+val-0026/token_swap,val-0026,val,token_swap,Ana Simão Brandt
+val-0026/near_miss,val-0026,val,near_miss,Ane Sousa Brandt
+val-0027/positive,val-0027,val,positive,Otávia dos Simão Pardo
+val-0027/easy,val-0027,val,easy,Lia Brandt Brandão
+val-0027/token_swap,val-0027,val,token_swap,Otávia dos Cavalcanti Pardo
+val-0027/near_miss,val-0027,val,near_miss,Otávia dos Simão Prado
+val-0028/positive,val-0028,val,positive,Ítalo Cavalcanti Vasconcelos
+val-0028/easy,val-0028,val,easy,Otávia dos Simão Pardo
+val-0028/token_swap,val-0028,val,token_swap,Ítalo Cavalcanti Luz
+val-0028/near_miss,val-0028,val,near_miss,Ítalo Cavalcante Vasconcelos
+val-0029/positive,val-0029,val,positive,Victor Simões
+val-0029/easy,val-0029,val,easy,Ítalo Luz Luz
+val-0029/token_swap,val-0029,val,token_swap,Victor Brandt
+val-0029/near_miss,val-0029,val,near_miss,Victor Simão
+val-0030/positive,val-0030,val,positive,Cristóvão Iara Prado Cavalcante
+val-0030/easy,val-0030,val,easy,Otávia Souza Souza
+val-0030/token_swap,val-0030,val,token_swap,Cristóvão Iara Brandão Cavalcante
+val-0030/near_miss,val-0030,val,near_miss,Cristóvão Iara Prado Cavalcanti
+val-0031/positive,val-0031,val,positive,Raul Fontes Mendes
+val-0031/easy,val-0031,val,easy,Lia Cavalcanti Simões
+val-0031/token_swap,val-0031,val,token_swap,Ruy Fontes Mendes
+val-0031/near_miss,val-0031,val,near_miss,Raul Fontez Mendes
+val-0032/positive,val-0032,val,positive,Lia Souza
+val-0032/easy,val-0032,val,easy,Otávia Vasconcelos
+val-0032/token_swap,val-0032,val,token_swap,Ícaro Souza
+val-0032/near_miss,val-0032,val,near_miss,Léa Souza
+val-0033/positive,val-0033,val,positive,Caio Otávio Souza Simões
+val-0033/easy,val-0033,val,easy,Ícaro Brandão Luz
+val-0033/token_swap,val-0033,val,token_swap,Ícaro Otávio Souza Simões
+val-0033/near_miss,val-0033,val,near_miss,Caio Otávio Sousa Simões
+val-0034/positive,val-0034,val,positive,Cristóvão Luz Luz
+val-0034/easy,val-0034,val,easy,Ícaro Cavalcante
+val-0034/token_swap,val-0034,val,token_swap,Cristóvão Luz Cavalcanti
+val-0034/near_miss,val-0034,val,near_miss,Criztóvão Luz Luz
+val-0035/positive,val-0035,val,positive,Lia Brandt Brandão
+val-0035/easy,val-0035,val,easy,Cristóvão Cavalcante Pardo
+val-0035/token_swap,val-0035,val,token_swap,Iara Brandt Brandão
+val-0035/near_miss,val-0035,val,near_miss,Lia Brandt Brandt
+val-0036/positive,val-0036,val,positive,Saul Vasconcelos Vasconcelos
+val-0036/easy,val-0036,val,easy,Otávio Otávia Simões Mendes
+val-0036/token_swap,val-0036,val,token_swap,Saul Cavalcanti Vasconcelos
+val-0036/near_miss,val-0036,val,near_miss,Saul Vasconcellos Vasconcelos
+val-0037/positive,val-0037,val,positive,Ítalo do Luz Vasconcelos
+val-0037/easy,val-0037,val,easy,Cristóvão Cavalcante Pardo
+val-0037/token_swap,val-0037,val,token_swap,Otávia do Luz Vasconcelos
+val-0037/near_miss,val-0037,val,near_miss,Ítalo do Luz Vasconcellos
+val-0038/positive,val-0038,val,positive,Otávio Otávia Simões Mendes
+val-0038/easy,val-0038,val,easy,Ícaro Brandão Luz
+val-0038/token_swap,val-0038,val,token_swap,Otávio Otávia Brandt Mendes
+val-0038/near_miss,val-0038,val,near_miss,Otávia Otávia Simões Mendes
+val-0039/positive,val-0039,val,positive,Ítalo Simões
+val-0039/easy,val-0039,val,easy,Raul Cavalcante Vasconcelos
+val-0039/token_swap,val-0039,val,token_swap,Saul Simões
+val-0039/near_miss,val-0039,val,near_miss,Ítalo Simão
+val-0040/positive,val-0040,val,positive,Victor Sousa Sousa
+val-0040/easy,val-0040,val,easy,Ane Mendes Simão
+val-0040/token_swap,val-0040,val,token_swap,Victor Sousa Mendes
+val-0040/near_miss,val-0040,val,near_miss,Vítor Sousa Sousa
+val-0041/positive,val-0041,val,positive,Ítalo Magalhães
+val-0041/easy,val-0041,val,easy,Raul Fontes Mendes
+val-0041/token_swap,val-0041,val,token_swap,Rui Magalhães
+val-0041/near_miss,val-0041,val,near_miss,Ícaro Magalhães
+val-0042/positive,val-0042,val,positive,Léa Souza
+val-0042/easy,val-0042,val,easy,Ane dos Brandt Vasconcelos
+val-0042/token_swap,val-0042,val,token_swap,Otávio Souza
+val-0042/near_miss,val-0042,val,near_miss,Lia Souza
+val-0043/positive,val-0043,val,positive,Ane Mendes Simão
+val-0043/easy,val-0043,val,easy,Otávia Ruy Vasconcelos Cavalcanti
+val-0043/token_swap,val-0043,val,token_swap,Ane Luz Simão
+val-0043/near_miss,val-0043,val,near_miss,Ane Mendes Simões
+val-0044/positive,val-0044,val,positive,Ruy Maximiliano Brandão Magalhães
+val-0044/easy,val-0044,val,easy,Otávia do Prado Luz
+val-0044/token_swap,val-0044,val,token_swap,Ruy Kaio Brandão Magalhães
+val-0044/near_miss,val-0044,val,near_miss,Ruy Maximiliano Brandt Magalhães
+val-0045/positive,val-0045,val,positive,Otávia Luz
+val-0045/easy,val-0045,val,easy,Cristóvão Brandt
+val-0045/token_swap,val-0045,val,token_swap,Otávia Cavalcante
+val-0045/near_miss,val-0045,val,near_miss,Otávia Lus
+val-0046/positive,val-0046,val,positive,Ane dos Brandt Vasconcelos
+val-0046/easy,val-0046,val,easy,Ícaro Cavalcante
+val-0046/token_swap,val-0046,val,token_swap,Ane dos Simões Vasconcelos
+val-0046/near_miss,val-0046,val,near_miss,Ane dos Brandão Vasconcelos
+val-0047/positive,val-0047,val,positive,Otávia do Prado Luz
+val-0047/easy,val-0047,val,easy,Ane Brandt
+val-0047/token_swap,val-0047,val,token_swap,Maximiliano do Prado Luz
+val-0047/near_miss,val-0047,val,near_miss,Otávia do Pardo Luz
+val-0048/positive,val-0048,val,positive,Saul Vasconcellos Sousa
+val-0048/easy,val-0048,val,easy,Ane Mendes Simão
+val-0048/token_swap,val-0048,val,token_swap,Saul Luz Sousa
+val-0048/near_miss,val-0048,val,near_miss,Saul Vasconcelos Sousa
+val-0049/positive,val-0049,val,positive,Rui Sousa Vasconcelos
+val-0049/easy,val-0049,val,easy,Victor Simões
+val-0049/token_swap,val-0049,val,token_swap,Léa Sousa Vasconcelos
+val-0049/near_miss,val-0049,val,near_miss,Rui Sousa Vasconcellos
+val-0050/positive,val-0050,val,positive,Cristóvão Cavalcante Pardo
+val-0050/easy,val-0050,val,easy,Vítor Mendez Mendez
+val-0050/token_swap,val-0050,val,token_swap,Iara Cavalcante Pardo
+val-0050/near_miss,val-0050,val,near_miss,Cristóvão Cavalcanti Pardo
+val-0051/positive,val-0051,val,positive,Cristóvão Vasconcelos Vasconcelos
+val-0051/easy,val-0051,val,easy,Ane Mendes Simão
+val-0051/token_swap,val-0051,val,token_swap,Léa Vasconcelos Vasconcelos
+val-0051/near_miss,val-0051,val,near_miss,Cnistóvão Vasconcelos Vasconcelos
+val-0052/positive,val-0052,val,positive,Ruy dos Sousa Mendes
+val-0052/easy,val-0052,val,easy,Saul Vasconcelos Vasconcelos
+val-0052/token_swap,val-0052,val,token_swap,Lia dos Sousa Mendes
+val-0052/near_miss,val-0052,val,near_miss,Ruy dos Souza Mendes
+val-0053/positive,val-0053,val,positive,Léa Raul Fontes Sousa
+val-0053/easy,val-0053,val,easy,Otávia dos Simão Pardo
+val-0053/token_swap,val-0053,val,token_swap,Léa Raul Fontes Cavalcante
+val-0053/near_miss,val-0053,val,near_miss,Léa Saul Fontes Sousa
+val-0054/positive,val-0054,val,positive,Lia Vasconcelos
+val-0054/easy,val-0054,val,easy,Ane Mendes Simão
+val-0054/token_swap,val-0054,val,token_swap,Lia Cavalcante
+val-0054/near_miss,val-0054,val,near_miss,Lia Vasconcellos
+val-0055/positive,val-0055,val,positive,Vítor Mendez Mendez
+val-0055/easy,val-0055,val,easy,Ítalo Luz Luz
+val-0055/token_swap,val-0055,val,token_swap,Vítor Fontes Mendez
+val-0055/near_miss,val-0055,val,near_miss,Vítor Mendez Mendes
+val-0056/positive,val-0056,val,positive,Ítalo Sousa Vasconcellos
+val-0056/easy,val-0056,val,easy,Vítor Prado
+val-0056/token_swap,val-0056,val,token_swap,Ítalo Cavalcanti Vasconcellos
+val-0056/near_miss,val-0056,val,near_miss,Ícaro Sousa Vasconcellos
+val-0057/positive,val-0057,val,positive,Ana Magalhães
+val-0057/easy,val-0057,val,easy,Cristóvão Cavalcante Pardo
+val-0057/token_swap,val-0057,val,token_swap,Ana Brandão
+val-0057/near_miss,val-0057,val,near_miss,Ane Magalhães
+val-0058/positive,val-0058,val,positive,Caio Vasconcellos Magalhães
+val-0058/easy,val-0058,val,easy,Lara Luz Souza
+val-0058/token_swap,val-0058,val,token_swap,Iara Vasconcellos Magalhães
+val-0058/near_miss,val-0058,val,near_miss,Caio Vasconcelos Magalhães
+val-0059/positive,val-0059,val,positive,Lia Cavalcanti Simões
+val-0059/easy,val-0059,val,easy,Otávia Luz Sousa
+val-0059/token_swap,val-0059,val,token_swap,Lia Cavalcanti Brandão
+val-0059/near_miss,val-0059,val,near_miss,Lia Cavalcante Simões
+val-0060/positive,val-0060,val,positive,Ruy Otávia Mendes Cavalcante
+val-0060/easy,val-0060,val,easy,Saul Sousa Sousa
+val-0060/token_swap,val-0060,val,token_swap,Léa Otávia Mendes Cavalcante
+val-0060/near_miss,val-0060,val,near_miss,Ruy Otávio Mendes Cavalcante
+val-0061/positive,val-0061,val,positive,Ruy de Mendez Souza
+val-0061/easy,val-0061,val,easy,Vítor de Simão Cavalcante
+val-0061/token_swap,val-0061,val,token_swap,Ruy de Luz Souza
+val-0061/near_miss,val-0061,val,near_miss,Rui de Mendez Souza
+val-0062/positive,val-0062,val,positive,Lara Luz Souza
+val-0062/easy,val-0062,val,easy,Ítalo Simões
+val-0062/token_swap,val-0062,val,token_swap,Lara Mendes Souza
+val-0062/near_miss,val-0062,val,near_miss,Iara Luz Souza
+val-0063/positive,val-0063,val,positive,Ítalo Pardo
+val-0063/easy,val-0063,val,easy,Ruy Simões
+val-0063/token_swap,val-0063,val,token_swap,Ítalo Cavalcanti
+val-0063/near_miss,val-0063,val,near_miss,Ítalo Prado
+val-0064/positive,val-0064,val,positive,Caio das Simão Simões
+val-0064/easy,val-0064,val,easy,Victor Iara Magalhães Fontes
+val-0064/token_swap,val-0064,val,token_swap,Raul das Simão Simões
+val-0064/near_miss,val-0064,val,near_miss,Caio das Simão Simão
+val-0065/positive,val-0065,val,positive,Cristóvão Rui Brandão Vasconcellos
+val-0065/easy,val-0065,val,easy,Ítalo Simões
+val-0065/token_swap,val-0065,val,token_swap,Otávia Rui Brandão Vasconcellos
+val-0065/near_miss,val-0065,val,near_miss,Cristóvão Ruy Brandão Vasconcellos
+val-0066/positive,val-0066,val,positive,Otávia Souza Souza
+val-0066/easy,val-0066,val,easy,Ítalo Simões
+val-0066/token_swap,val-0066,val,token_swap,Caio Souza Souza
+val-0066/near_miss,val-0066,val,near_miss,Otávio Souza Souza
+val-0067/positive,val-0067,val,positive,Kaio Sousa
+val-0067/easy,val-0067,val,easy,Otávia Luz
+val-0067/token_swap,val-0067,val,token_swap,Rui Sousa
+val-0067/near_miss,val-0067,val,near_miss,Kaio Souza
+val-0068/positive,val-0068,val,positive,Léa Brandt Brandt
+val-0068/easy,val-0068,val,easy,Ícaro Cavalcante
+val-0068/token_swap,val-0068,val,token_swap,Léa Brandt Cavalcante
+val-0068/near_miss,val-0068,val,near_miss,Léa Brandt Brandão
+val-0069/positive,val-0069,val,positive,Léa Rui Luz Brandt
+val-0069/easy,val-0069,val,easy,Victor Simões
+val-0069/token_swap,val-0069,val,token_swap,Cristóvão Rui Luz Brandt
+val-0069/near_miss,val-0069,val,near_miss,Lia Rui Luz Brandt
+val-0070/positive,val-0070,val,positive,Otávia Vasconcelos
+val-0070/easy,val-0070,val,easy,Cristóvão Luz Luz
+val-0070/token_swap,val-0070,val,token_swap,Ane Vasconcelos
+val-0070/near_miss,val-0070,val,near_miss,Otávio Vasconcelos
+val-0071/positive,val-0071,val,positive,Otávia Vítor Magalhães Sousa
+val-0071/easy,val-0071,val,easy,Ítalo Luz Luz
+val-0071/token_swap,val-0071,val,token_swap,Lia Vítor Magalhães Sousa
+val-0071/near_miss,val-0071,val,near_miss,Otávio Vítor Magalhães Sousa
+val-0072/positive,val-0072,val,positive,Ícaro Mendez Simões
+val-0072/easy,val-0072,val,easy,Cristóvão Vasconcelos Vasconcelos
+val-0072/token_swap,val-0072,val,token_swap,Ícaro Pardo Simões
+val-0072/near_miss,val-0072,val,near_miss,Ítalo Mendez Simões
+val-0073/positive,val-0073,val,positive,Vítor de Simão Cavalcante
+val-0073/easy,val-0073,val,easy,Ítalo Pardo
+val-0073/token_swap,val-0073,val,token_swap,Ane de Simão Cavalcante
+val-0073/near_miss,val-0073,val,near_miss,Victor de Simão Cavalcante
+val-0074/positive,val-0074,val,positive,Victor Iara Magalhães Fontes
+val-0074/easy,val-0074,val,easy,Ruy Simão
+val-0074/token_swap,val-0074,val,token_swap,Victor Iara Magalhães Vasconcellos
+val-0074/near_miss,val-0074,val,near_miss,Victor Iara Magalhães Fontez
+val-0075/positive,val-0075,val,positive,Otávio Souza
+val-0075/easy,val-0075,val,easy,Cristóvão Luz Luz
+val-0075/token_swap,val-0075,val,token_swap,Ruy Souza
+val-0075/near_miss,val-0075,val,near_miss,Otávio Sousa
+val-0076/positive,val-0076,val,positive,Ruy Simão
+val-0076/easy,val-0076,val,easy,Otávia Luz
+val-0076/token_swap,val-0076,val,token_swap,Ana Simão
+val-0076/near_miss,val-0076,val,near_miss,Ruy Simões
+val-0077/positive,val-0077,val,positive,Ana Cavalcante
+val-0077/easy,val-0077,val,easy,Ítalo Sousa Vasconcellos
+val-0077/token_swap,val-0077,val,token_swap,Ana Souza
+val-0077/near_miss,val-0077,val,near_miss,Ane Cavalcante
+val-0078/positive,val-0078,val,positive,Ruy Brandt Brandt
+val-0078/easy,val-0078,val,easy,Ítalo Pardo
+val-0078/token_swap,val-0078,val,token_swap,Ruy Simão Brandt
+val-0078/near_miss,val-0078,val,near_miss,Ruy Brandt Brandão
+val-0079/positive,val-0079,val,positive,Raul Cavalcante Vasconcelos
+val-0079/easy,val-0079,val,easy,Iara das Brandt Simão
+val-0079/token_swap,val-0079,val,token_swap,Raul Brandt Vasconcelos
+val-0079/near_miss,val-0079,val,near_miss,Saul Cavalcante Vasconcelos
+val-0080/positive,val-0080,val,positive,Ítalo Luz Luz
+val-0080/easy,val-0080,val,easy,Ruy dos Sousa Mendes
+val-0080/token_swap,val-0080,val,token_swap,Ítalo Luz Cavalcante
+val-0080/near_miss,val-0080,val,near_miss,Ítalo Luz Lvz
+test-0001/positive,test-0001,test,positive,Rosemeire Gonçalvez
+test-0001/easy,test-0001,test,easy,Ísis Renato Vanderlei Paz
+test-0001/token_swap,test-0001,test,token_swap,Lúcia Gonçalvez
+test-0001/near_miss,test-0001,test,near_miss,Rosimeire Gonçalvez
+test-0002/positive,test-0002,test,positive,Renato Nogueira Telles
+test-0002/easy,test-0002,test,easy,Rosimeire do Vanderlei Moura
+test-0002/token_swap,test-0002,test,token_swap,Lúcia Nogueira Telles
+test-0002/near_miss,test-0002,test,near_miss,Renato Nogucira Telles
+test-0003/positive,test-0003,test,positive,Lúcia Reis
+test-0003/easy,test-0003,test,easy,Renan Mourão Mourão
+test-0003/token_swap,test-0003,test,token_swap,Lúcia Moraes
+test-0003/near_miss,test-0003,test,near_miss,Lúcia Rios
+test-0004/positive,test-0004,test,positive,Edu Lima Gonçalvez
+test-0004/easy,test-0004,test,easy,Lúcia Luciana Paz Moura
+test-0004/token_swap,test-0004,test,token_swap,Edu Albuquerque Gonçalvez
+test-0004/near_miss,test-0004,test,near_miss,Edv Lima Gonçalvez
+test-0005/positive,test-0005,test,positive,Lúcia Gonçalves
+test-0005/easy,test-0005,test,easy,Edu Telles Telles
+test-0005/token_swap,test-0005,test,token_swap,Rosimeire Gonçalves
+test-0005/near_miss,test-0005,test,near_miss,Lúcia Gonçalvez
+test-0006/positive,test-0006,test,positive,Edu Lúcia Lima Gonçalvez
+test-0006/easy,test-0006,test,easy,Rosimeire do Vanderlei Moura
+test-0006/token_swap,test-0006,test,token_swap,Edu Ísis Lima Gonçalvez
+test-0006/near_miss,test-0006,test,near_miss,Edu Luciana Lima Gonçalvez
+test-0007/positive,test-0007,test,positive,Ísis Morais
+test-0007/easy,test-0007,test,easy,Ilda Mourão
+test-0007/token_swap,test-0007,test,token_swap,Ísis Moura
+test-0007/near_miss,test-0007,test,near_miss,Isa Morais
+test-0008/positive,test-0008,test,positive,Tânia Lima Morais
+test-0008/easy,test-0008,test,easy,Bartolomeu Teles
+test-0008/token_swap,test-0008,test,token_swap,Tânia Nogueira Morais
+test-0008/near_miss,test-0008,test,near_miss,Tânia Lina Morais
+test-0009/positive,test-0009,test,positive,Luciana Renato Wanderley Lima
+test-0009/easy,test-0009,test,easy,Edu Telles Telles
+test-0009/token_swap,test-0009,test,token_swap,Luciana Renato Wanderley Paz
+test-0009/near_miss,test-0009,test,near_miss,Luciana Renan Wanderley Lima
+test-0010/positive,test-0010,test,positive,Davi Rios
+test-0010/easy,test-0010,test,easy,Renan Morais Vanderlei
+test-0010/token_swap,test-0010,test,token_swap,Davi Teles
+test-0010/near_miss,test-0010,test,near_miss,Dani Rios
+test-0011/positive,test-0011,test,positive,Lúcia Nogueira Nogueira
+test-0011/easy,test-0011,test,easy,Bartolomeu Gonçalves Gonçalves
+test-0011/token_swap,test-0011,test,token_swap,Lúcia Moura Nogueira
+test-0011/near_miss,test-0011,test,near_miss,Lúcia Nogueiro Nogueira
+test-0012/positive,test-0012,test,positive,Ilda Gonçalves
+test-0012/easy,test-0012,test,easy,Renan das Moraes Rios
+test-0012/token_swap,test-0012,test,token_swap,Rosemeire Gonçalves
+test-0012/near_miss,test-0012,test,near_miss,Ilda Gonçalvez
+test-0013/positive,test-0013,test,positive,Luciana Ísis Nogueira Wanderley
+test-0013/easy,test-0013,test,easy,Edu Telles
+test-0013/token_swap,test-0013,test,token_swap,Luciana Tânia Nogueira Wanderley
+test-0013/near_miss,test-0013,test,near_miss,Luciana Isa Nogueira Wanderley
+test-0014/positive,test-0014,test,positive,Isa Nogueira Wanderley
+test-0014/easy,test-0014,test,easy,Érica Telles Mourão
+test-0014/token_swap,test-0014,test,token_swap,Rosimeire Nogueira Wanderley
+test-0014/near_miss,test-0014,test,near_miss,Isa Nogueira Vanderlei
+test-0015/positive,test-0015,test,positive,Érika da Lima Wanderley
+test-0015/easy,test-0015,test,easy,Edu Gonçalves
+test-0015/token_swap,test-0015,test,token_swap,Érika da Moura Wanderley
+test-0015/near_miss,test-0015,test,near_miss,Érica da Lima Wanderley
+test-0016/positive,test-0016,test,positive,Ilma Rosemeire Reis Lima
+test-0016/easy,test-0016,test,easy,Lúcia Paz Paz
+test-0016/token_swap,test-0016,test,token_swap,Ilma Rosemeire Teles Lima
+test-0016/near_miss,test-0016,test,near_miss,Ilma Rosemeire Reis Lina
+test-0017/positive,test-0017,test,positive,Renato Nogueira Albuquerque
+test-0017/easy,test-0017,test,easy,Isa Lima Moraes
+test-0017/token_swap,test-0017,test,token_swap,Rosimeire Nogueira Albuquerque
+test-0017/near_miss,test-0017,test,near_miss,Renato Nogueira Aibuquerque
+test-0018/positive,test-0018,test,positive,Ilma Isa Gonçalvez Rios
+test-0018/easy,test-0018,test,easy,Érica das Moraes Albuquerque
+test-0018/token_swap,test-0018,test,token_swap,Ilma Isa Gonçalvez Wanderley
+test-0018/near_miss,test-0018,test,near_miss,Ilma Ísis Gonçalvez Rios
+test-0019/positive,test-0019,test,positive,Renato Mourão Moraes
+test-0019/easy,test-0019,test,easy,Rosemeire Gonçalves
+test-0019/token_swap,test-0019,test,token_swap,Renato Telles Moraes
+test-0019/near_miss,test-0019,test,near_miss,Renan Mourão Moraes
+test-0020/positive,test-0020,test,positive,Tânia do Nogueira Gonçalves
+test-0020/easy,test-0020,test,easy,Rosimeire do Teles Moraes
+test-0020/token_swap,test-0020,test,token_swap,Tânia do Moraes Gonçalves
+test-0020/near_miss,test-0020,test,near_miss,Tainá do Nogueira Gonçalves
+test-0021/positive,test-0021,test,positive,Edu Telles Reis
+test-0021/easy,test-0021,test,easy,Tânia Albuquerque Paz
+test-0021/token_swap,test-0021,test,token_swap,Ísis Telles Reis
+test-0021/near_miss,test-0021,test,near_miss,Edu Teles Reis
+test-0022/positive,test-0022,test,positive,Ísis Renato Vanderlei Paz
+test-0022/easy,test-0022,test,easy,Rosimeire Telles Teles
+test-0022/token_swap,test-0022,test,token_swap,Tainá Renato Vanderlei Paz
+test-0022/near_miss,test-0022,test,near_miss,Ísis Renan Vanderlei Paz
+test-0023/positive,test-0023,test,positive,Ísis das Gonçalves Wanderley
+test-0023/easy,test-0023,test,easy,Ilma Rosemeire Reis Lima
+test-0023/token_swap,test-0023,test,token_swap,Ísis das Gonçalves Telles
+test-0023/near_miss,test-0023,test,near_miss,Isa das Gonçalves Wanderley
+test-0024/positive,test-0024,test,positive,Edu de Vanderlei Nogueira
+test-0024/easy,test-0024,test,easy,Tainá Mourão Telles
+test-0024/token_swap,test-0024,test,token_swap,Dani de Vanderlei Nogueira
+test-0024/near_miss,test-0024,test,near_miss,Edu de Wanderley Nogueira
+test-0025/positive,test-0025,test,positive,Renan Tânia Telles Teles
+test-0025/easy,test-0025,test,easy,Edu Moura Moura
+test-0025/token_swap,test-0025,test,token_swap,Renan Tânia Morais Teles
+test-0025/near_miss,test-0025,test,near_miss,Renato Tânia Telles Teles
+test-0026/positive,test-0026,test,positive,Renan das Moraes Rios
+test-0026/easy,test-0026,test,easy,Ísis Vanderlei Gonçalvez
+test-0026/token_swap,test-0026,test,token_swap,Renan das Gonçalvez Rios
+test-0026/near_miss,test-0026,test,near_miss,Renan das Moraes Reis
+test-0027/positive,test-0027,test,positive,Ilda Mourão
+test-0027/easy,test-0027,test,easy,Isa Lima Teles
+test-0027/token_swap,test-0027,test,token_swap,Ilda Lima
+test-0027/near_miss,test-0027,test,near_miss,Ilda Moura
+test-0028/positive,test-0028,test,positive,Edu Rios Rios
+test-0028/easy,test-0028,test,easy,Isa Paz Gonçalves
+test-0028/token_swap,test-0028,test,token_swap,Edu Rios Telles
+test-0028/near_miss,test-0028,test,near_miss,Edu Reis Rios
+test-0029/positive,test-0029,test,positive,Rosimeire Reis
+test-0029/easy,test-0029,test,easy,Tânia Lima Morais
+test-0029/token_swap,test-0029,test,token_swap,Tânia Reis
+test-0029/near_miss,test-0029,test,near_miss,Rosimeire Rios
+test-0030/positive,test-0030,test,positive,Ilma Mourão Paz
+test-0030/easy,test-0030,test,easy,Edu Teles
+test-0030/token_swap,test-0030,test,token_swap,Luciana Mourão Paz
+test-0030/near_miss,test-0030,test,near_miss,Ilda Mourão Paz
+test-0031/positive,test-0031,test,positive,Bartolomeu Tânia Moraes Paz
+test-0031/easy,test-0031,test,easy,Isa Rios Rios
+test-0031/token_swap,test-0031,test,token_swap,Bartolomeu Tânia Moraes Reis
+test-0031/near_miss,test-0031,test,near_miss,Bartolameu Tânia Moraes Paz
+test-0032/positive,test-0032,test,positive,Lúcia Luciana Paz Moura
+test-0032/easy,test-0032,test,easy,Edu Lima Gonçalvez
+test-0032/token_swap,test-0032,test,token_swap,Lúcia Dani Paz Moura
+test-0032/near_miss,test-0032,test,near_miss,Lúcia Luciana Paz Mourão
+test-0033/positive,test-0033,test,positive,Davi Rosemeire Reis Nogueira
+test-0033/easy,test-0033,test,easy,Érica das Moraes Albuquerque
+test-0033/token_swap,test-0033,test,token_swap,Davi Tainá Reis Nogueira
+test-0033/near_miss,test-0033,test,near_miss,Davi Rosimeire Reis Nogueira
+test-0034/positive,test-0034,test,positive,Érika Paz
+test-0034/easy,test-0034,test,easy,Isa do Gonçalvez Reis
+test-0034/token_swap,test-0034,test,token_swap,Érika Albuquerque
+test-0034/near_miss,test-0034,test,near_miss,Érica Paz
+test-0035/positive,test-0035,test,positive,Renan Tainá Paz Gonçalves
+test-0035/easy,test-0035,test,easy,Ísis Isa Morais Telles
+test-0035/token_swap,test-0035,test,token_swap,Renan Tainá Moura Gonçalves
+test-0035/near_miss,test-0035,test,near_miss,Renan Tainá Paz Gonçalvez
+test-0036/positive,test-0036,test,positive,Dani Telles
+test-0036/easy,test-0036,test,easy,Ilma Rosemeire Reis Lima
+test-0036/token_swap,test-0036,test,token_swap,Dani Moura
+test-0036/near_miss,test-0036,test,near_miss,Dani Teles
+test-0037/positive,test-0037,test,positive,Ilda Telles
+test-0037/easy,test-0037,test,easy,Lúcia Paz Paz
+test-0037/token_swap,test-0037,test,token_swap,Érika Telles
+test-0037/near_miss,test-0037,test,near_miss,Ilda Teles
+test-0038/positive,test-0038,test,positive,Rosemeire da Vanderlei Moraes
+test-0038/easy,test-0038,test,easy,Ilda Telles
+test-0038/token_swap,test-0038,test,token_swap,Rosemeire da Vanderlei Moura
+test-0038/near_miss,test-0038,test,near_miss,Rosemeire da Wanderley Moraes
+test-0039/positive,test-0039,test,positive,Edu Telles
+test-0039/easy,test-0039,test,easy,Isa de Mourão Reis
+test-0039/token_swap,test-0039,test,token_swap,Bartolomeu Telles
+test-0039/near_miss,test-0039,test,near_miss,Edu Teles
+test-0040/positive,test-0040,test,positive,Rosimeire Érica Albuquerque Gonçalvez
+test-0040/easy,test-0040,test,easy,Isa de Mourão Reis
+test-0040/token_swap,test-0040,test,token_swap,Rosimeire Tânia Albuquerque Gonçalvez
+test-0040/near_miss,test-0040,test,near_miss,Rosimeire Érika Albuquerque Gonçalvez
+test-0041/positive,test-0041,test,positive,Érica Telles Mourão
+test-0041/easy,test-0041,test,easy,Renato Lima Morais
+test-0041/token_swap,test-0041,test,token_swap,Bartolomeu Telles Mourão
+test-0041/near_miss,test-0041,test,near_miss,Érica Teles Mourão
+test-0042/positive,test-0042,test,positive,Rosemeire das Gonçalvez Teles
+test-0042/easy,test-0042,test,easy,Renato Nogueira Albuquerque
+test-0042/token_swap,test-0042,test,token_swap,Lúcia das Gonçalvez Teles
+test-0042/near_miss,test-0042,test,near_miss,Rosemeire das Gonçalves Teles
+test-0043/positive,test-0043,test,positive,Tânia Tainá Rios Moraes
+test-0043/easy,test-0043,test,easy,Ilda de Telles Moura
+test-0043/token_swap,test-0043,test,token_swap,Tânia Rosimeire Rios Moraes
+test-0043/near_miss,test-0043,test,near_miss,Tânia Tânia Rios Moraes
+test-0044/positive,test-0044,test,positive,Dani Morais Nogueira
+test-0044/easy,test-0044,test,easy,Ilma da Reis Lima
+test-0044/token_swap,test-0044,test,token_swap,Dani Reis Nogueira
+test-0044/near_miss,test-0044,test,near_miss,Dani Morais Noguelra
+test-0045/positive,test-0045,test,positive,Isa Paz Gonçalves
+test-0045/easy,test-0045,test,easy,Tainá Mourão
+test-0045/token_swap,test-0045,test,token_swap,Isa Lima Gonçalves
+test-0045/near_miss,test-0045,test,near_miss,Ísis Paz Gonçalves
+test-0046/positive,test-0046,test,positive,Tainá Mourão Telles
+test-0046/easy,test-0046,test,easy,Rosemeire da Vanderlei Moraes
+test-0046/token_swap,test-0046,test,token_swap,Tainá Albuquerque Telles
+test-0046/near_miss,test-0046,test,near_miss,Tânia Mourão Telles
+test-0047/positive,test-0047,test,positive,Isa Wanderley Paz
+test-0047/easy,test-0047,test,easy,Ilda Nogueira Gonçalves
+test-0047/token_swap,test-0047,test,token_swap,Isa Wanderley Albuquerque
+test-0047/near_miss,test-0047,test,near_miss,Ísis Wanderley Paz
+test-0048/positive,test-0048,test,positive,Tainá Moura Telles
+test-0048/easy,test-0048,test,easy,Ilma da Reis Lima
+test-0048/token_swap,test-0048,test,token_swap,Tainá Nogueira Telles
+test-0048/near_miss,test-0048,test,near_miss,Tainá Mourão Telles
+test-0049/positive,test-0049,test,positive,Érika Mourão Mourão
+test-0049/easy,test-0049,test,easy,Ilma das Albuquerque Wanderley
+test-0049/token_swap,test-0049,test,token_swap,Tânia Mourão Mourão
+test-0049/near_miss,test-0049,test,near_miss,Érika Mourão Moura
+test-0050/positive,test-0050,test,positive,Luciana Paz Paz
+test-0050/easy,test-0050,test,easy,Rosemeire Tainá Morais Gonçalvez
+test-0050/token_swap,test-0050,test,token_swap,Luciana Paz Telles
+test-0050/near_miss,test-0050,test,near_miss,Luciana Paz Poz
+test-0051/positive,test-0051,test,positive,Tainá Mourão
+test-0051/easy,test-0051,test,easy,Ilma Gonçalves
+test-0051/token_swap,test-0051,test,token_swap,Tainá Telles
+test-0051/near_miss,test-0051,test,near_miss,Tainá Moura
+test-0052/positive,test-0052,test,positive,Érika Rios
+test-0052/easy,test-0052,test,easy,Dani Telles Moura
+test-0052/token_swap,test-0052,test,token_swap,Isa Rios
+test-0052/near_miss,test-0052,test,near_miss,Érika Reis
+test-0053/positive,test-0053,test,positive,Érika Moura Nogueira
+test-0053/easy,test-0053,test,easy,Rosimeire Albuquerque
+test-0053/token_swap,test-0053,test,token_swap,Renato Moura Nogueira
+test-0053/near_miss,test-0053,test,near_miss,Érika Moura Nogueiro
+test-0054/positive,test-0054,test,positive,Rosemeire da Vanderlei Gonçalves
+test-0054/easy,test-0054,test,easy,Tânia de Paz Reis
+test-0054/token_swap,test-0054,test,token_swap,Rosemeire da Vanderlei Mourão
+test-0054/near_miss,test-0054,test,near_miss,Rosemeire da Wanderley Gonçalves
+test-0055/positive,test-0055,test,positive,Ísis Vanderlei
+test-0055/easy,test-0055,test,easy,Dani Telles
+test-0055/token_swap,test-0055,test,token_swap,Ísis Gonçalves
+test-0055/near_miss,test-0055,test,near_miss,Isa Vanderlei
+test-0056/positive,test-0056,test,positive,Renan Albuquerque Teles
+test-0056/easy,test-0056,test,easy,Lúcia Ilma Mourão Rios
+test-0056/token_swap,test-0056,test,token_swap,Renan Albuquerque Wanderley
+test-0056/near_miss,test-0056,test,near_miss,Renato Albuquerque Teles
+test-0057/positive,test-0057,test,positive,Rosemeire Gonçalves
+test-0057/easy,test-0057,test,easy,Edu Moura Mourão
+test-0057/token_swap,test-0057,test,token_swap,Rosemeire Morais
+test-0057/near_miss,test-0057,test,near_miss,Rosimeire Gonçalves
+test-0058/positive,test-0058,test,positive,Ísis da Vanderlei Lima
+test-0058/easy,test-0058,test,easy,Ilma Mourão Mourão
+test-0058/token_swap,test-0058,test,token_swap,Ísis da Vanderlei Moura
+test-0058/near_miss,test-0058,test,near_miss,Isa da Vanderlei Lima
+test-0059/positive,test-0059,test,positive,Isa Paz Morais
+test-0059/easy,test-0059,test,easy,Rosimeire Albuquerque
+test-0059/token_swap,test-0059,test,token_swap,Isa Reis Morais
+test-0059/near_miss,test-0059,test,near_miss,Isa Paz Moraes
+test-0060/positive,test-0060,test,positive,Lúcia Moraes Moraes
+test-0060/easy,test-0060,test,easy,Érika Paz
+test-0060/token_swap,test-0060,test,token_swap,Edu Moraes Moraes
+test-0060/near_miss,test-0060,test,near_miss,Lúcia Morais Moraes
+test-0061/positive,test-0061,test,positive,Ilma da Reis Lima
+test-0061/easy,test-0061,test,easy,Lúcia Gonçalves
+test-0061/token_swap,test-0061,test,token_swap,Ilma da Reis Nogueira
+test-0061/near_miss,test-0061,test,near_miss,Ilma da Reis Limo
+test-0062/positive,test-0062,test,positive,Tainá Gonçalves Gonçalves
+test-0062/easy,test-0062,test,easy,Ísis Rios
+test-0062/token_swap,test-0062,test,token_swap,Tainá Gonçalves Morais
+test-0062/near_miss,test-0062,test,near_miss,Tainá Gonçalvez Gonçalves
+test-0063/positive,test-0063,test,positive,Lúcia Ilma Mourão Rios
+test-0063/easy,test-0063,test,easy,Tânia do Nogueira Gonçalves
+test-0063/token_swap,test-0063,test,token_swap,Lúcia Ilma Moraes Rios
+test-0063/near_miss,test-0063,test,near_miss,Lúcia Ilda Mourão Rios
+test-0064/positive,test-0064,test,positive,Bartolomeu Moraes Wanderley
+test-0064/easy,test-0064,test,easy,Isa Lima Teles
+test-0064/token_swap,test-0064,test,token_swap,Bartolomeu Rios Wanderley
+test-0064/near_miss,test-0064,test,near_miss,Bantolomeu Moraes Wanderley
+test-0065/positive,test-0065,test,positive,Renan Morais Vanderlei
+test-0065/easy,test-0065,test,easy,Tainá Mourão Telles
+test-0065/token_swap,test-0065,test,token_swap,Rosemeire Morais Vanderlei
+test-0065/near_miss,test-0065,test,near_miss,Renato Morais Vanderlei
+test-0066/positive,test-0066,test,positive,Renan Mourão Mourão
+test-0066/easy,test-0066,test,easy,Edu Lima Gonçalvez
+test-0066/token_swap,test-0066,test,token_swap,Renan Vanderlei Mourão
+test-0066/near_miss,test-0066,test,near_miss,Renan Moura Mourão
+test-0067/positive,test-0067,test,positive,Rosimeire do Teles Moraes
+test-0067/easy,test-0067,test,easy,Tânia Reis
+test-0067/token_swap,test-0067,test,token_swap,Rosimeire do Teles Nogueira
+test-0067/near_miss,test-0067,test,near_miss,Rosimeire do Teles Morais
+test-0068/positive,test-0068,test,positive,Tânia das Vanderlei Moura
+test-0068/easy,test-0068,test,easy,Renan das Moraes Rios
+test-0068/token_swap,test-0068,test,token_swap,Tânia das Nogueira Moura
+test-0068/near_miss,test-0068,test,near_miss,Tânia das Wanderley Moura
+test-0069/positive,test-0069,test,positive,Lúcia Paz Paz
+test-0069/easy,test-0069,test,easy,Érika Mourão Mourão
+test-0069/token_swap,test-0069,test,token_swap,Lúcia Reis Paz
+test-0069/near_miss,test-0069,test,near_miss,Lúcia Poz Paz
+test-0070/positive,test-0070,test,positive,Edu Teles
+test-0070/easy,test-0070,test,easy,Ilma Reis
+test-0070/token_swap,test-0070,test,token_swap,Ísis Teles
+test-0070/near_miss,test-0070,test,near_miss,Edv Teles
+test-0071/positive,test-0071,test,positive,Dani Luciana Reis Moraes
+test-0071/easy,test-0071,test,easy,Rosimeire Telles Mourão
+test-0071/token_swap,test-0071,test,token_swap,Renato Luciana Reis Moraes
+test-0071/near_miss,test-0071,test,near_miss,Dani Luciana Reis Morais
+test-0072/positive,test-0072,test,positive,Érika Albuquerque
+test-0072/easy,test-0072,test,easy,Edu Telles Telles
+test-0072/token_swap,test-0072,test,token_swap,Dani Albuquerque
+test-0072/near_miss,test-0072,test,near_miss,Érika Alhuquerque
+test-0073/positive,test-0073,test,positive,Rosemeire Tainá Morais Gonçalvez
+test-0073/easy,test-0073,test,easy,Lúcia Nogueira Nogueira
+test-0073/token_swap,test-0073,test,token_swap,Rosemeire Tainá Morais Rios
+test-0073/near_miss,test-0073,test,near_miss,Rosimeire Tainá Morais Gonçalvez
+test-0074/positive,test-0074,test,positive,Renato Gonçalvez Nogueira
+test-0074/easy,test-0074,test,easy,Bartolomeu Moraes Wanderley
+test-0074/token_swap,test-0074,test,token_swap,Renato Paz Nogueira
+test-0074/near_miss,test-0074,test,near_miss,Renan Gonçalvez Nogueira
+test-0075/positive,test-0075,test,positive,Rosimeire Telles Teles
+test-0075/easy,test-0075,test,easy,Érika Moura Nogueira
+test-0075/token_swap,test-0075,test,token_swap,Rosimeire Gonçalves Teles
+test-0075/near_miss,test-0075,test,near_miss,Rosimeire Telles Telles
+test-0076/positive,test-0076,test,positive,Ísis Vanderlei Morais
+test-0076/easy,test-0076,test,easy,Dani Gonçalves
+test-0076/token_swap,test-0076,test,token_swap,Ísis Lima Morais
+test-0076/near_miss,test-0076,test,near_miss,Isa Vanderlei Morais
+test-0077/positive,test-0077,test,positive,Bartolomeu Gonçalves Gonçalves
+test-0077/easy,test-0077,test,easy,Érika Albuquerque
+test-0077/token_swap,test-0077,test,token_swap,Bartolomeu Gonçalves Albuquerque
+test-0077/near_miss,test-0077,test,near_miss,Bartolomeu Gonçalves Gonçalvez
+test-0078/positive,test-0078,test,positive,Dani Telles Moura
+test-0078/easy,test-0078,test,easy,Tânia Reis
+test-0078/token_swap,test-0078,test,token_swap,Dani Telles Rios
+test-0078/near_miss,test-0078,test,near_miss,Davi Telles Moura
+test-0079/positive,test-0079,test,positive,Lúcia Albuquerque
+test-0079/easy,test-0079,test,easy,Rosimeire Reis
+test-0079/token_swap,test-0079,test,token_swap,Lúcia Moraes
+test-0079/near_miss,test-0079,test,near_miss,Luciana Albuquerque
+test-0080/positive,test-0080,test,positive,Davi Telles Telles
+test-0080/easy,test-0080,test,easy,Lúcia Nogueira Nogueira
+test-0080/token_swap,test-0080,test,token_swap,Ilda Telles Telles
+test-0080/near_miss,test-0080,test,near_miss,Dani Telles Telles
+test-0081/positive,test-0081,test,positive,Edu Gonçalves
+test-0081/easy,test-0081,test,easy,Rosimeire Telles Mourão
+test-0081/token_swap,test-0081,test,token_swap,Davi Gonçalves
+test-0081/near_miss,test-0081,test,near_miss,Edu Gonçalvez
+test-0082/positive,test-0082,test,positive,Tânia dos Vanderlei Albuquerque
+test-0082/easy,test-0082,test,easy,Dani Luciana Reis Moraes
+test-0082/token_swap,test-0082,test,token_swap,Tânia dos Vanderlei Gonçalvez
+test-0082/near_miss,test-0082,test,near_miss,Tânia dos Wanderley Albuquerque
+test-0083/positive,test-0083,test,positive,Bartolomeu Nogueira Nogueira
+test-0083/easy,test-0083,test,easy,Ilma Reis
+test-0083/token_swap,test-0083,test,token_swap,Bartolomeu Gonçalvez Nogueira
+test-0083/near_miss,test-0083,test,near_miss,Bartoiomeu Nogueira Nogueira
+test-0084/positive,test-0084,test,positive,Ilda de Telles Moura
+test-0084/easy,test-0084,test,easy,Ísis do Nogueira Lima
+test-0084/token_swap,test-0084,test,token_swap,Ilda de Reis Moura
+test-0084/near_miss,test-0084,test,near_miss,Ilda de Teles Moura
+test-0085/positive,test-0085,test,positive,Rosemeire Ilma Lima Telles
+test-0085/easy,test-0085,test,easy,Edu Gonçalves
+test-0085/token_swap,test-0085,test,token_swap,Rosemeire Ilma Lima Paz
+test-0085/near_miss,test-0085,test,near_miss,Rosemeire Ilda Lima Telles
+test-0086/positive,test-0086,test,positive,Dani Gonçalves
+test-0086/easy,test-0086,test,easy,Érika Albuquerque
+test-0086/token_swap,test-0086,test,token_swap,Dani Vanderlei
+test-0086/near_miss,test-0086,test,near_miss,Dani Gonçalvez
+test-0087/positive,test-0087,test,positive,Ísis das Lima Rios
+test-0087/easy,test-0087,test,easy,Érika Moura Nogueira
+test-0087/token_swap,test-0087,test,token_swap,Rosemeire das Lima Rios
+test-0087/near_miss,test-0087,test,near_miss,Ísis das Llma Rios
+test-0088/positive,test-0088,test,positive,Ilma das Albuquerque Wanderley
+test-0088/easy,test-0088,test,easy,Rosemeire Érika Gonçalves Moura
+test-0088/token_swap,test-0088,test,token_swap,Ilma das Albuquerque Morais
+test-0088/near_miss,test-0088,test,near_miss,Ilda das Albuquerque Wanderley
+test-0089/positive,test-0089,test,positive,Lúcia Tânia Paz Moura
+test-0089/easy,test-0089,test,easy,Bartolomeu Nogueira Nogueira
+test-0089/token_swap,test-0089,test,token_swap,Lúcia Tânia Paz Teles
+test-0089/near_miss,test-0089,test,near_miss,Lúcia Tainá Paz Moura
+test-0090/positive,test-0090,test,positive,Ísis Rios
+test-0090/easy,test-0090,test,easy,Rosemeire Gonçalvez
+test-0090/token_swap,test-0090,test,token_swap,Edu Rios
+test-0090/near_miss,test-0090,test,near_miss,Ísis Reis
+test-0091/positive,test-0091,test,positive,Ilda Nogueira Reis
+test-0091/easy,test-0091,test,easy,Érika Lima Wanderley
+test-0091/token_swap,test-0091,test,token_swap,Tainá Nogueira Reis
+test-0091/near_miss,test-0091,test,near_miss,Ilma Nogueira Reis
+test-0092/positive,test-0092,test,positive,Edu das Telles Mourão
+test-0092/easy,test-0092,test,easy,Renato Gonçalves Albuquerque
+test-0092/token_swap,test-0092,test,token_swap,Isa das Telles Mourão
+test-0092/near_miss,test-0092,test,near_miss,Edu das Teles Mourão
+test-0093/positive,test-0093,test,positive,Dani Paz
+test-0093/easy,test-0093,test,easy,Ísis Isa Morais Telles
+test-0093/token_swap,test-0093,test,token_swap,Tainá Paz
+test-0093/near_miss,test-0093,test,near_miss,Davi Paz
+test-0094/positive,test-0094,test,positive,Renato Nogueira Lima
+test-0094/easy,test-0094,test,easy,Rosemeire Tainá Morais Gonçalvez
+test-0094/token_swap,test-0094,test,token_swap,Tainá Nogueira Lima
+test-0094/near_miss,test-0094,test,near_miss,Renato Nogueira Llma
+test-0095/positive,test-0095,test,positive,Érica do Albuquerque Telles
+test-0095/easy,test-0095,test,easy,Tânia das Vanderlei Moura
+test-0095/token_swap,test-0095,test,token_swap,Tânia do Albuquerque Telles
+test-0095/near_miss,test-0095,test,near_miss,Érica do Albuquerque Teles
+test-0096/positive,test-0096,test,positive,Ilma Gonçalves
+test-0096/easy,test-0096,test,easy,Ísis Isa Morais Telles
+test-0096/token_swap,test-0096,test,token_swap,Érica Gonçalves
+test-0096/near_miss,test-0096,test,near_miss,Ilma Gonçalvez
+test-0097/positive,test-0097,test,positive,Luciana dos Albuquerque Rios
+test-0097/easy,test-0097,test,easy,Renato Nogueira Lima
+test-0097/token_swap,test-0097,test,token_swap,Luciana dos Albuquerque Vanderlei
+test-0097/near_miss,test-0097,test,near_miss,Luciana dos Albuquerqve Rios
+test-0098/positive,test-0098,test,positive,Ilda Bartolomeu Mourão Teles
+test-0098/easy,test-0098,test,easy,Renato Gonçalvez Nogueira
+test-0098/token_swap,test-0098,test,token_swap,Dani Bartolomeu Mourão Teles
+test-0098/near_miss,test-0098,test,near_miss,Ilma Bartolomeu Mourão Teles
+test-0099/positive,test-0099,test,positive,Tânia Mourão Telles
+test-0099/easy,test-0099,test,easy,Érika Lúcia Rios Moraes
+test-0099/token_swap,test-0099,test,token_swap,Tânia Lima Telles
+test-0099/near_miss,test-0099,test,near_miss,Tânia Moura Telles
+test-0100/positive,test-0100,test,positive,Luciana Vanderlei
+test-0100/easy,test-0100,test,easy,Rosimeire Érica Albuquerque Gonçalvez
+test-0100/token_swap,test-0100,test,token_swap,Luciana Telles
+test-0100/near_miss,test-0100,test,near_miss,Luciana Wanderley
+test-0101/positive,test-0101,test,positive,Edu Wanderley Wanderley
+test-0101/easy,test-0101,test,easy,Ísis Isa Morais Telles
+test-0101/token_swap,test-0101,test,token_swap,Edu Paz Wanderley
+test-0101/near_miss,test-0101,test,near_miss,Edu Wanderley Vanderlei
+test-0102/positive,test-0102,test,positive,Rosimeire Telles Telles
+test-0102/easy,test-0102,test,easy,Edu Lúcia Lima Gonçalvez
+test-0102/token_swap,test-0102,test,token_swap,Rosimeire Moura Telles
+test-0102/near_miss,test-0102,test,near_miss,Rosimeire Teles Telles
+test-0103/positive,test-0103,test,positive,Rosimeire Albuquerque
+test-0103/easy,test-0103,test,easy,Ilma da Reis Lima
+test-0103/token_swap,test-0103,test,token_swap,Rosimeire Mourão
+test-0103/near_miss,test-0103,test,near_miss,Rosimeire Albuqucrque
+test-0104/positive,test-0104,test,positive,Ilda Paz
+test-0104/easy,test-0104,test,easy,Ísis Rios
+test-0104/token_swap,test-0104,test,token_swap,Isa Paz
+test-0104/near_miss,test-0104,test,near_miss,Ilma Paz
+test-0105/positive,test-0105,test,positive,Isa Rios Rios
+test-0105/easy,test-0105,test,easy,Rosemeire da Vanderlei Moraes
+test-0105/token_swap,test-0105,test,token_swap,Isa Rios Lima
+test-0105/near_miss,test-0105,test,near_miss,Isa Rios Reis
+test-0106/positive,test-0106,test,positive,Tânia Albuquerque Paz
+test-0106/easy,test-0106,test,easy,Rosimeire Telles Telles
+test-0106/token_swap,test-0106,test,token_swap,Davi Albuquerque Paz
+test-0106/near_miss,test-0106,test,near_miss,Tânia Albuquerque Poz
+test-0107/positive,test-0107,test,positive,Renato Mourão Nogueira
+test-0107/easy,test-0107,test,easy,Lúcia Albuquerque
+test-0107/token_swap,test-0107,test,token_swap,Renato Mourão Albuquerque
+test-0107/near_miss,test-0107,test,near_miss,Renato Mourão Nagueira
+test-0108/positive,test-0108,test,positive,Ísis do Nogueira Lima
+test-0108/easy,test-0108,test,easy,Edu Moura Moura
+test-0108/token_swap,test-0108,test,token_swap,Dani do Nogueira Lima
+test-0108/near_miss,test-0108,test,near_miss,Ísis do Nogveira Lima
+test-0109/positive,test-0109,test,positive,Rosimeire do Vanderlei Moura
+test-0109/easy,test-0109,test,easy,Ilma das Gonçalves Telles
+test-0109/token_swap,test-0109,test,token_swap,Isa do Vanderlei Moura
+test-0109/near_miss,test-0109,test,near_miss,Rosimeire do Wanderley Moura
+test-0110/positive,test-0110,test,positive,Isa Lima Moraes
+test-0110/easy,test-0110,test,easy,Rosimeire Telles Mourão
+test-0110/token_swap,test-0110,test,token_swap,Isa Rios Moraes
+test-0110/near_miss,test-0110,test,near_miss,Isa Lima Morais
+test-0111/positive,test-0111,test,positive,Érika Lima Wanderley
+test-0111/easy,test-0111,test,easy,Isa Gonçalves Gonçalves
+test-0111/token_swap,test-0111,test,token_swap,Érika Lima Gonçalvez
+test-0111/near_miss,test-0111,test,near_miss,Érika Llma Wanderley
+test-0112/positive,test-0112,test,positive,Dani Teles Moraes
+test-0112/easy,test-0112,test,easy,Tânia de Paz Reis
+test-0112/token_swap,test-0112,test,token_swap,Luciana Teles Moraes
+test-0112/near_miss,test-0112,test,near_miss,Dani Telles Moraes
+test-0113/positive,test-0113,test,positive,Ísis Teles Rios
+test-0113/easy,test-0113,test,easy,Tânia do Nogueira Gonçalves
+test-0113/token_swap,test-0113,test,token_swap,Ísis Teles Gonçalvez
+test-0113/near_miss,test-0113,test,near_miss,Ísis Teles Reis
+test-0114/positive,test-0114,test,positive,Érika Reis
+test-0114/easy,test-0114,test,easy,Renato Gonçalvez Nogueira
+test-0114/token_swap,test-0114,test,token_swap,Renato Reis
+test-0114/near_miss,test-0114,test,near_miss,Érica Reis
+test-0115/positive,test-0115,test,positive,Ilma Mourão Mourão
+test-0115/easy,test-0115,test,easy,Isa Lima Moraes
+test-0115/token_swap,test-0115,test,token_swap,Ilma Mourão Telles
+test-0115/near_miss,test-0115,test,near_miss,Ilma Mourão Moura
+test-0116/positive,test-0116,test,positive,Ilma das Gonçalves Telles
+test-0116/easy,test-0116,test,easy,Davi Rosemeire Reis Nogueira
+test-0116/token_swap,test-0116,test,token_swap,Ilma das Paz Telles
+test-0116/near_miss,test-0116,test,near_miss,Ilma das Gonçalvez Telles
+test-0117/positive,test-0117,test,positive,Rosimeire Telles Mourão
+test-0117/easy,test-0117,test,easy,Tânia dos Vanderlei Albuquerque
+test-0117/token_swap,test-0117,test,token_swap,Ísis Telles Mourão
+test-0117/near_miss,test-0117,test,near_miss,Rosimeire Telles Moura
+test-0118/positive,test-0118,test,positive,Rosemeire Reis
+test-0118/easy,test-0118,test,easy,Ilma Mourão Mourão
+test-0118/token_swap,test-0118,test,token_swap,Rosemeire Telles
+test-0118/near_miss,test-0118,test,near_miss,Rosemeire Rios
+test-0119/positive,test-0119,test,positive,Tainá Moura
+test-0119/easy,test-0119,test,easy,Érika Lima Wanderley
+test-0119/token_swap,test-0119,test,token_swap,Tainá Nogueira
+test-0119/near_miss,test-0119,test,near_miss,Tainá Mourão
+test-0120/positive,test-0120,test,positive,Ilma das Teles Wanderley
+test-0120/easy,test-0120,test,easy,Renato Mourão Moraes
+test-0120/token_swap,test-0120,test,token_swap,Ilma das Teles Paz
+test-0120/near_miss,test-0120,test,near_miss,Ilma das Teles Vanderlei
+test-0121/positive,test-0121,test,positive,Tainá dos Paz Wanderley
+test-0121/easy,test-0121,test,easy,Rosemeire Ilma Lima Telles
+test-0121/token_swap,test-0121,test,token_swap,Tainá dos Albuquerque Wanderley
+test-0121/near_miss,test-0121,test,near_miss,Tainá dos Paz Vanderlei
+test-0122/positive,test-0122,test,positive,Érica das Moraes Albuquerque
+test-0122/easy,test-0122,test,easy,Isa Nogueira Wanderley
+test-0122/token_swap,test-0122,test,token_swap,Érica das Moraes Reis
+test-0122/near_miss,test-0122,test,near_miss,Érica das Morais Albuquerque
+test-0123/positive,test-0123,test,positive,Tânia Reis
+test-0123/easy,test-0123,test,easy,Érica Telles Mourão
+test-0123/token_swap,test-0123,test,token_swap,Bartolomeu Reis
+test-0123/near_miss,test-0123,test,near_miss,Tainá Reis
+test-0124/positive,test-0124,test,positive,Ilma Reis
+test-0124/easy,test-0124,test,easy,Renato Nogueira Lima
+test-0124/token_swap,test-0124,test,token_swap,Ilma Mourão
+test-0124/near_miss,test-0124,test,near_miss,Ilda Reis
+test-0125/positive,test-0125,test,positive,Bartolomeu Teles
+test-0125/easy,test-0125,test,easy,Luciana Gonçalvez Gonçalvez
+test-0125/token_swap,test-0125,test,token_swap,Luciana Teles
+test-0125/near_miss,test-0125,test,near_miss,Bartoloneu Teles
+test-0126/positive,test-0126,test,positive,Bartolomeu Rios
+test-0126/easy,test-0126,test,easy,Tainá Gonçalves Gonçalves
+test-0126/token_swap,test-0126,test,token_swap,Bartolomeu Lima
+test-0126/near_miss,test-0126,test,near_miss,Bartoloneu Rios
+test-0127/positive,test-0127,test,positive,Edu Mourão Mourão
+test-0127/easy,test-0127,test,easy,Ísis das Gonçalves Wanderley
+test-0127/token_swap,test-0127,test,token_swap,Renan Mourão Mourão
+test-0127/near_miss,test-0127,test,near_miss,Edu Mourão Moura
+test-0128/positive,test-0128,test,positive,Ísis Reis Reis
+test-0128/easy,test-0128,test,easy,Renan Mourão Albuquerque
+test-0128/token_swap,test-0128,test,token_swap,Ísis Reis Lima
+test-0128/near_miss,test-0128,test,near_miss,Ísis Rios Reis
+test-0129/positive,test-0129,test,positive,Renan Isa Moraes Reis
+test-0129/easy,test-0129,test,easy,Lúcia Luciana Paz Moura
+test-0129/token_swap,test-0129,test,token_swap,Davi Isa Moraes Reis
+test-0129/near_miss,test-0129,test,near_miss,Renan Isa Moraes Rios
+test-0130/positive,test-0130,test,positive,Isa Gonçalves Gonçalves
+test-0130/easy,test-0130,test,easy,Tânia Mourão Telles
+test-0130/token_swap,test-0130,test,token_swap,Isa Teles Gonçalves
+test-0130/near_miss,test-0130,test,near_miss,Ísis Gonçalves Gonçalves
+test-0131/positive,test-0131,test,positive,Ilda Nogueira Gonçalves
+test-0131/easy,test-0131,test,easy,Renan Tânia Telles Teles
+test-0131/token_swap,test-0131,test,token_swap,Dani Nogueira Gonçalves
+test-0131/near_miss,test-0131,test,near_miss,Ilda Nogueira Gonçalvez
+test-0132/positive,test-0132,test,positive,Ísis Vanderlei Gonçalvez
+test-0132/easy,test-0132,test,easy,Dani Morais Nogueira
+test-0132/token_swap,test-0132,test,token_swap,Ísis Vanderlei Lima
+test-0132/near_miss,test-0132,test,near_miss,Isa Vanderlei Gonçalvez
+test-0133/positive,test-0133,test,positive,Lúcia de Vanderlei Morais
+test-0133/easy,test-0133,test,easy,Tânia Reis
+test-0133/token_swap,test-0133,test,token_swap,Ilda de Vanderlei Morais
+test-0133/near_miss,test-0133,test,near_miss,Luciana de Vanderlei Morais
+test-0134/positive,test-0134,test,positive,Edu Moura Moura
+test-0134/easy,test-0134,test,easy,Érica Isa Wanderley Telles
+test-0134/token_swap,test-0134,test,token_swap,Edu Moura Paz
+test-0134/near_miss,test-0134,test,near_miss,Edu Mourão Moura
+test-0135/positive,test-0135,test,positive,Renato Moraes Moraes
+test-0135/easy,test-0135,test,easy,Ilma Mourão Mourão
+test-0135/token_swap,test-0135,test,token_swap,Renato Gonçalvez Moraes
+test-0135/near_miss,test-0135,test,near_miss,Renato Morais Moraes
+test-0136/positive,test-0136,test,positive,Isa de Mourão Reis
+test-0136/easy,test-0136,test,easy,Edu Lima Gonçalvez
+test-0136/token_swap,test-0136,test,token_swap,Érika de Mourão Reis
+test-0136/near_miss,test-0136,test,near_miss,Isa de Moura Reis
+test-0137/positive,test-0137,test,positive,Davi Moraes Moraes
+test-0137/easy,test-0137,test,easy,Isa Lúcia Lima Telles
+test-0137/token_swap,test-0137,test,token_swap,Davi Moraes Gonçalvez
+test-0137/near_miss,test-0137,test,near_miss,Dani Moraes Moraes
+test-0138/positive,test-0138,test,positive,Isa Teles Reis
+test-0138/easy,test-0138,test,easy,Luciana Renato Wanderley Lima
+test-0138/token_swap,test-0138,test,token_swap,Luciana Teles Reis
+test-0138/near_miss,test-0138,test,near_miss,Ísis Teles Reis
+test-0139/positive,test-0139,test,positive,Érika Lúcia Rios Moraes
+test-0139/easy,test-0139,test,easy,Ilda Nogueira Gonçalves
+test-0139/token_swap,test-0139,test,token_swap,Érika Lúcia Teles Moraes
+test-0139/near_miss,test-0139,test,near_miss,Érika Luciana Rios Moraes
+test-0140/positive,test-0140,test,positive,Isa do Gonçalvez Reis
+test-0140/easy,test-0140,test,easy,Tainá Moura
+test-0140/token_swap,test-0140,test,token_swap,Tainá do Gonçalvez Reis
+test-0140/near_miss,test-0140,test,near_miss,Isa do Gonçalves Reis
+test-0141/positive,test-0141,test,positive,Renato Lima Morais
+test-0141/easy,test-0141,test,easy,Luciana Ísis Nogueira Wanderley
+test-0141/token_swap,test-0141,test,token_swap,Renato Paz Morais
+test-0141/near_miss,test-0141,test,near_miss,Renan Lima Morais
+test-0142/positive,test-0142,test,positive,Rosimeire Ilma Gonçalvez Lima
+test-0142/easy,test-0142,test,easy,Tânia Albuquerque Paz
+test-0142/token_swap,test-0142,test,token_swap,Rosimeire Luciana Gonçalvez Lima
+test-0142/near_miss,test-0142,test,near_miss,Rosemeire Ilma Gonçalvez Lima
+test-0143/positive,test-0143,test,positive,Edu Telles Telles
+test-0143/easy,test-0143,test,easy,Lúcia Albuquerque
+test-0143/token_swap,test-0143,test,token_swap,Ilma Telles Telles
+test-0143/near_miss,test-0143,test,near_miss,Edu Teles Telles
+test-0144/positive,test-0144,test,positive,Rosimeire Rosemeire Moraes Albuquerque
+test-0144/easy,test-0144,test,easy,Ilda Nogueira Reis
+test-0144/token_swap,test-0144,test,token_swap,Dani Rosemeire Moraes Albuquerque
+test-0144/near_miss,test-0144,test,near_miss,Rosimeire Rosemeire Morais Albuquerque
+test-0145/positive,test-0145,test,positive,Edu Wanderley Moraes
+test-0145/easy,test-0145,test,easy,Ilma Reis
+test-0145/token_swap,test-0145,test,token_swap,Edu Lima Moraes
+test-0145/near_miss,test-0145,test,near_miss,Edu Vanderlei Moraes
+test-0146/positive,test-0146,test,positive,Ilma da Morais Nogueira
+test-0146/easy,test-0146,test,easy,Lúcia Paz Paz
+test-0146/token_swap,test-0146,test,token_swap,Ísis da Morais Nogueira
+test-0146/near_miss,test-0146,test,near_miss,Ilma da Moraes Nogueira
+test-0147/positive,test-0147,test,positive,Rosemeire Érika Gonçalves Moura
+test-0147/easy,test-0147,test,easy,Lúcia Albuquerque
+test-0147/token_swap,test-0147,test,token_swap,Rosemeire Érika Wanderley Moura
+test-0147/near_miss,test-0147,test,near_miss,Rosimeire Érika Gonçalves Moura
+test-0148/positive,test-0148,test,positive,Edu Moura Mourão
+test-0148/easy,test-0148,test,easy,Tânia Albuquerque Paz
+test-0148/token_swap,test-0148,test,token_swap,Luciana Moura Mourão
+test-0148/near_miss,test-0148,test,near_miss,Edu Mourão Mourão
+test-0149/positive,test-0149,test,positive,Érica Isa Wanderley Telles
+test-0149/easy,test-0149,test,easy,Ilma Gonçalves
+test-0149/token_swap,test-0149,test,token_swap,Érica Bartolomeu Wanderley Telles
+test-0149/near_miss,test-0149,test,near_miss,Érica Ísis Wanderley Telles
+test-0150/positive,test-0150,test,positive,Ísis Isa Morais Telles
+test-0150/easy,test-0150,test,easy,Lúcia Albuquerque
+test-0150/token_swap,test-0150,test,token_swap,Tânia Isa Morais Telles
+test-0150/near_miss,test-0150,test,near_miss,Ísis Isa Morais Teles
+test-0151/positive,test-0151,test,positive,Renan Mourão Albuquerque
+test-0151/easy,test-0151,test,easy,Ilma da Reis Lima
+test-0151/token_swap,test-0151,test,token_swap,Renan Mourão Moraes
+test-0151/near_miss,test-0151,test,near_miss,Renan Mourão Albuquerqve
+test-0152/positive,test-0152,test,positive,Dani Gonçalvez Albuquerque
+test-0152/easy,test-0152,test,easy,Lúcia Moraes Moraes
+test-0152/token_swap,test-0152,test,token_swap,Renan Gonçalvez Albuquerque
+test-0152/near_miss,test-0152,test,near_miss,Davi Gonçalvez Albuquerque
+test-0153/positive,test-0153,test,positive,Rosemeire Lima
+test-0153/easy,test-0153,test,easy,Érika Moura Nogueira
+test-0153/token_swap,test-0153,test,token_swap,Tânia Lima
+test-0153/near_miss,test-0153,test,near_miss,Rosemeire Limo
+test-0154/positive,test-0154,test,positive,Isa Lúcia Lima Telles
+test-0154/easy,test-0154,test,easy,Tânia Reis
+test-0154/token_swap,test-0154,test,token_swap,Dani Lúcia Lima Telles
+test-0154/near_miss,test-0154,test,near_miss,Ísis Lúcia Lima Telles
+test-0155/positive,test-0155,test,positive,Renato Gonçalves Albuquerque
+test-0155/easy,test-0155,test,easy,Edu das Telles Mourão
+test-0155/token_swap,test-0155,test,token_swap,Renato Wanderley Albuquerque
+test-0155/near_miss,test-0155,test,near_miss,Renato Gonçalvez Albuquerque
+test-0156/positive,test-0156,test,positive,Isa Lima Teles
+test-0156/easy,test-0156,test,easy,Tainá Gonçalves Gonçalves
+test-0156/token_swap,test-0156,test,token_swap,Érika Lima Teles
+test-0156/near_miss,test-0156,test,near_miss,Ísis Lima Teles
+test-0157/positive,test-0157,test,positive,Ilma de Albuquerque Teles
+test-0157/easy,test-0157,test,easy,Renato Lima Morais
+test-0157/token_swap,test-0157,test,token_swap,Edu de Albuquerque Teles
+test-0157/near_miss,test-0157,test,near_miss,Ilda de Albuquerque Teles
+test-0158/positive,test-0158,test,positive,Isa Vanderlei Teles
+test-0158/easy,test-0158,test,easy,Lúcia Gonçalves
+test-0158/token_swap,test-0158,test,token_swap,Isa Morais Teles
+test-0158/near_miss,test-0158,test,near_miss,Isa Vanderlei Telles
+test-0159/positive,test-0159,test,positive,Luciana Gonçalvez Gonçalvez
+test-0159/easy,test-0159,test,easy,Ísis da Vanderlei Lima
+test-0159/token_swap,test-0159,test,token_swap,Érika Gonçalvez Gonçalvez
+test-0159/near_miss,test-0159,test,near_miss,Luciana Gonçalvez Gonçalves
+test-0160/positive,test-0160,test,positive,Tânia de Paz Reis
+test-0160/easy,test-0160,test,easy,Érika Lima Wanderley
+test-0160/token_swap,test-0160,test,token_swap,Tânia de Paz Telles
+test-0160/near_miss,test-0160,test,near_miss,Tânia de Pas Reis
