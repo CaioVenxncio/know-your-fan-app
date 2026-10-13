@@ -1,0 +1,18 @@
+# Pilot run: measures per-task cost across every condition and strategy so the
+# main experiment sizes can be chosen from a computational budget.
+# Uses only dev sources (never test).
+experiment_id = "pilot"
+description = "Cost pilot: 6 dev sources x 16 conditions x 8 preprocessing strategies."
+splits = ["dev"]
+conditions = "all"
+strategies = ["P0_baseline", "P1_none", "P2_gray", "P3_otsu", "P4_median", "P5_upscale2", "P6_invert", "P7_upscale2_otsu"]
+max_sources_per_split = 6
+
+[dataset]
+version = "kyf-synth-names-v1"
+seed = 20261013
+sources_per_split = { dev = 80, val = 80, test = 160 }
+
+[execution]
+workers = 3
+ocr_timeout_seconds = 15

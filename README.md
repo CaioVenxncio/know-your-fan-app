@@ -1,107 +1,339 @@
-# Know Your Fan 🧠 - FURIA Edition
+# Know Your Fan
 
-**Stand-alone Streamlit application for e-sports fan registration and validation**
+**An independent, esports-themed software engineering project for exploring fictional fan profiles and OCR-based text matching, built with Python and Streamlit.**
 
----
-
-## 📝 Description
-This project is a stand-alone web application built with **Streamlit** and **SQLite** to:
-
-- Collect data from e-sports fans (name, CPF, address, interests, activities, purchases, social links, and e-sports profiles).
-- Validate documents (RG/CNH) via OCR using **pytesseract**.
-- List registered fans in a panel accessible only with an admin password.
-
-The application does not require a separate backend (like FastAPI); all persistence and validation logic is embedded in the **`main.py`** script.
+> **Synthetic data only.** Every profile and document in this application is fictional.
+> The app does not accept real names, CPF numbers, addresses, or identity documents.
+> Its OCR and name matching are **not** identity verification, document authentication, or fraud detection.
+>
+> Know Your Fan is an independent project. It is not an official product of, partnership with, or
+> initiative of any esports organization, and it is not endorsed or sponsored by one.
 
 ---
 
-## ⚙️ Key Features
+## At a glance
 
-1. **Registration Form**  
-   - Validation of required fields (name and CPF).  
-   - CPF format validation (digit check algorithm).  
-   - Local SQLite database storage (`fans.db`).
+| | |
+|---|---|
+| **What** | A four-page Streamlit app: fictional esports fan profiles, an OCR demo on a generated specimen card, and an interactive view of a research study. |
+| **Data** | Synthetic only. No uploads, no fields for real personal data, no accounts. |
+| **Research** | A pre-registered OCR study: 19,200 real Tesseract runs over three experiments, choices frozen on dev/val, a held-out test split evaluated once. On that test split the original matching rule falsely accepted 33 of 7,680 decoy trials; the sequence-aware rule the app now uses accepted 0, with false rejections 34.6 % vs 34.9 % (driven by severe image degradations). Synthetic cards only. |
+| **Reproducibility** | Committed observations, manifests, configuration hashes and dataset fingerprints. CI recomputes every reported metric from the committed observations and checks that the outputs match. |
+| **Engineering** | 400+ automated tests (≈98 % coverage), strict mypy, Ruff, real-Tesseract tests in CI, a Docker image check, dependency audit, and full-history secret scanning. |
+| **Safeguards** | OCR rate and concurrency limits, atomic SQLite writes under a dataset cap, privacy-safe logging, plain-text rendering of all generated values. |
+| **Accessibility** | An axe-core scan of 23 page states at desktop and phone widths reports no WCAG 2.2 A/AA violations; this is an automated check, not a certification ([details](docs/ux-accessibility.md)). |
 
-2. **Document Validation**  
-   - Upload of RG/CNH image (JPG, PNG, JPEG).  
-   - Image preprocessing (grayscale + inversion).  
-   - Text extraction via OCR with `pytesseract`.  
-   - Check if the registered name is present in the document.
+It is a portfolio and research-practice project, not a product: the study is not peer reviewed,
+and nothing here is identity verification.
 
-3. **Registered Fans Panel**  
-   - Access restricted by admin password.  
-   - Display of all records with details using accordions.
+## Purpose
 
----
+The author originally built Know Your Fan, independently, as an entry to a technology and esports challenge. It was a
+fan-registration app that collected personal data and ran OCR on uploaded identity documents.
+It is now a standalone portfolio and research-foundation project. It keeps the original ideas
+(fan profiles and document-text processing) but is redesigned so that it never handles real personal information.
 
-## 🛠️ Requirements
+Current scope:
 
-- Python 3.7 or higher  
-- Python libraries (see **`requirements.txt`**):
-  ```bash
-  streamlit
-  pytesseract
-  pillow
-  sqlite3 (included in Python standard library)
-  ```
-- **Tesseract OCR** installed on the system:
-  - **Windows**: Install via official installer and configure PATH  
-  - **macOS**: `brew install tesseract`  
-  - **Linux (Ubuntu/Debian)**: `sudo apt install tesseract-ocr`
+- esports-themed synthetic fan profiles;
+- generating and exploring fictional profiles;
+- OCR text extraction from synthetic specimen documents;
+- text-matching experiments on the extracted text;
+- privacy-conscious application design;
+- a reproducible OCR study on synthetic cards (see *Research study*).
 
----
+## Implemented features
 
-## 🚀 Local Installation and Execution
+| Page | What it does |
+|---|---|
+| **Home** | What the project is, why all data is synthetic, how the text matching works, and links to each section. |
+| **Fans** | *Browse:* search and filter a seeded dataset of fictional profiles and open a profile card. *Generate:* create a fictional profile from a numeric seed and optionally add it to the local demo dataset (no free-text fields). |
+| **OCR demo** | Three steps: pick a fictional card and blur or rotate it, run Tesseract OCR, and see whether the name appears as a whole sequence of words on one line, with the words found or missing and the extracted text. |
+| **Research** | Interactive view of the precomputed Phase 4 results: degradations, preprocessing, matching rules, FAR/FRR trade-off, method and limits. Nothing is computed on page load. |
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/your-username/know-your-fan.git
-   cd know-your-fan
-   ```
+The interface uses a small design system (theme tokens in `.streamlit/config.toml`, static styles
+in `src/know_your_fan/ui.py`). It was checked in a real browser at desktop and phone widths; see
+[docs/ux-accessibility.md](docs/ux-accessibility.md) for the UX audit, contrast measurements,
+accessibility notes, and their limits.
 
-2. (Optional) Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # macOS/Linux
-   venv\Scripts\Activate      # Windows
-   ```
+### Synthetic-only data policy
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- The app has no form for real personal data and no file upload. All profiles come from a
+  deterministic generator.
+- Demo identifiers look like `KYF-DEMO-7FQA-91CZ`. They always contain letters, so they cannot be
+  confused with an 11-digit CPF or another government number.
+- Cities are fictional, and links use the reserved `.example` domain (RFC 2606).
+- Names are random combinations of common given names and surnames. Any resemblance to a real
+  person is coincidental.
+- The specimen card is a generic layout labelled *"SPECIMEN - FICTIONAL DATA - NOT AN IDENTITY
+  DOCUMENT"*. It does not imitate any official document.
 
-4. Run the application:
-   ```bash
-   streamlit run main.py
-   ```
+### About the text matching
 
-5. Open in your browser: [http://localhost:8501](http://localhost:8501)
+*Text matching demonstration — not identity verification.*
 
----
+The app accepts a name only when its **whole sequence of words (order and repeats included)
+appears on one line** of the OCR text. Accents and case are folded, and only whole words count, so
+"Ana" never matches inside "Mariana". This rule (M1) replaced the original "every word appears
+anywhere" rule (M0) after the Phase 4 study showed M0 accepting decoy names that repeat a token of
+the true name. Preprocessing is unchanged (grayscale + autocontrast), because the study found no
+name-level benefit in changing it. See [ADR 0007](docs/decisions/0007-research-informed-matching-and-preprocessing.md).
 
-## 🔐 Admin Access
+A match only means the OCR engine recognized those words, in that order, in an image the app
+generated itself. It does **not** show that a document is genuine or unaltered,
+or that it belongs to the person presenting it. OCR and matching error rates have been measured
+only on synthetic cards; see the research study below.
 
-To view the **"Registered Fans"** tab, enter the admin password in the sidebar:
+## Research study (synthetic data)
+
+`src/know_your_fan/research/` contains a reproducible experiment harness. It is separate from the
+app and is never run by it. The study asks how controlled image degradations, preprocessing, and
+name-matching rules affect OCR transcription errors, name-matching error rates (FAR/FRR), and
+latency on **synthetic** specimen cards.
+
+The protocol has three stages:
+
+1. Hypotheses, the design, and the selection rules were committed first
+   ([methodology.md](docs/research/methodology.md)).
+2. Choices were made on dev and val splits and frozen.
+3. The held-out test split was then evaluated once.
+
+| Document | Content |
+|---|---|
+| [docs/research/report.md](docs/research/report.md) | Technical report: method, results, discussion, threats to validity |
+| [docs/research/methodology.md](docs/research/methodology.md) | Pre-registration: questions, hypotheses, design, rules, analysis plan |
+| [docs/research/results.md](docs/research/results.md) | Generated result tables (do not edit) |
+| [docs/research/limitations.md](docs/research/limitations.md) | What the study can and cannot show |
+
+Reproducing it requires Tesseract with `eng` + `por` data, and about 1 h on a 6-core machine.
+
+```bash
+uv run python scripts/run_research.py run      --config experiments/configs/e1_degradation.toml
+uv run python scripts/run_research.py run      --config experiments/configs/e2_preprocessing.toml
+uv run python scripts/run_research.py run      --config experiments/configs/e3_test.toml
+uv run python scripts/run_research.py evaluate --config experiments/configs/<experiment>.toml
+uv run python scripts/run_research.py report
+```
+
+To re-analyse the committed observations without OCR, run only `evaluate` and `report`. To
+verify the committed record (configuration hashes, dataset fingerprints, manifests, task
+coverage, frozen selection) and check that re-analysis reproduces the committed outputs, run
+`uv run python scripts/verify_research.py --reanalyse` (about 3 minutes; CI runs it too). The
+runner is resumable, uses at most 4 worker processes with one Tesseract thread each, and records
+the commit, configuration hash, dataset fingerprint, engine version, and model hashes with every
+run. Results are not evidence of performance on real documents, and the study is not identity
+verification.
+
+## Future work (not implemented)
+
+- Comparing a second OCR engine.
+- Capture-realistic degradations: perspective, uneven lighting, compression.
+- More card templates and fonts.
+
+## Architecture
+
+The app is a small modular monolith: one Streamlit process and one package in `src/know_your_fan/`.
+Presentation (`app.py`) is separate from workflows (`services.py`) and from the domain and
+infrastructure modules.
+
+- [docs/architecture.md](docs/architecture.md): modules, workflows, data and OCR flows, error handling, testing strategy
+- [docs/threat-model.md](docs/threat-model.md): STRIDE analysis, mitigations, residual risks
+- [docs/operations.md](docs/operations.md): resource limits, configuration, logging policy, validation results
+- [docs/ux-accessibility.md](docs/ux-accessibility.md): UX audit, design system, accessibility review, visual validation, UI performance
+- [docs/decisions/](docs/decisions/): architecture decision records
+- [docs/security-review.md](docs/security-review.md): Phase 6 security and privacy review, findings by severity
+- [docs/release-readiness.md](docs/release-readiness.md): release checklist with evidence and open items
+- [docs/deployment.md](docs/deployment.md): Streamlit Community Cloud preparation (nothing is deployed)
 
 ```
-🔒 Admin Access: minhasenhafuria
+main.py                     Streamlit entry point
+src/know_your_fan/
+  app.py                    Streamlit shell and pages (presentation only)
+  research_page.py          Interactive Research page (precomputed data)
+  ui.py                     Static styling and layout helpers
+  services.py               Workflows: runtime, seeding, filtering, OCR + matching
+  config.py                 Validated settings from environment variables
+  limits.py                 OCR rate limits and concurrency limit (per process)
+  observability.py          Privacy-safe logging
+  synthetic.py              Deterministic generator and synthetic-data allowlist
+  storage.py                SQLite repository (synthetic profiles only)
+  ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
+  text_matching.py          Accent-insensitive whole-word name matching
+  models.py                 FanProfile dataclass
+  research/                 OCR research harness (dataset, degradations, matching, metrics, runner)
+tests/unit/, tests/integration/
+scripts/validate_limits.py  Bounded operational validation
+scripts/run_research.py     Research CLI (run, evaluate, report, export-explorer)
+scripts/verify_research.py  Integrity check and re-analysis of the committed research record
+experiments/                Configs, dataset manifests, committed observation archives
+docs/                       Architecture, threat model, operations, ADRs, research report
+pyproject.toml, uv.lock     Packaging, dependencies, tool configuration
+requirements.txt            Generated from uv.lock for pip-only hosts
+packages.txt, Dockerfile    Tesseract system dependency
 ```
 
-Replace `minhasenhafuria` with a more secure password in production.
+## Requirements
 
----
+- **Python 3.13** (`requires-python = ">=3.13"`; CI tests 3.13 only).
+- **[uv](https://docs.astral.sh/uv/)** for development. Running the app also works with plain pip.
+- **Tesseract OCR 5.x** (a system program, not a Python package) with English and Portuguese language
+  data. Only the text-matching page needs it. Without it, the other pages work normally and the
+  text-matching page shows an "OCR is unavailable" message.
 
-## ☁️ Deploying to Streamlit Community Cloud
+| OS | Install Tesseract |
+|---|---|
+| Debian / Ubuntu | `sudo apt install tesseract-ocr tesseract-ocr-por tesseract-ocr-eng` |
+| macOS (Homebrew) | `brew install tesseract tesseract-lang` |
+| Windows | Install the [UB Mannheim build](https://github.com/UB-Mannheim/tesseract/wiki), select *Portuguese* under additional language data, and add the install folder to `PATH`. |
+| Any OS with Docker | Use the provided `Dockerfile` (see below); it includes Tesseract and the language data. |
 
-1. Push the project to a GitHub repository.  
-2. Go to [share.streamlit.io](https://share.streamlit.io) and connect your repo.  
-3. Point to the `main.py` file and click **Deploy**.  
-4. Share the generated link (`https://share.streamlit.io/...`) with your users.
+Check the installation with `tesseract --list-langs`; the output should include `eng` and `por`.
+CI tests the Tesseract 5.x packages from Ubuntu 24.04 and, through Docker, Debian 13. The Windows
+and macOS installs are documented but not tested in CI.
 
----
+## Running locally
 
+With uv (recommended):
 
-## 📄 Licença
-Concedido sob a [MIT License](LICENSE).
+```bash
+git clone https://github.com/CaioVenxncio/know-your-fan-app.git
+cd know-your-fan-app
+uv sync --locked            # creates .venv from uv.lock, including dev tools
+uv run streamlit run main.py
+```
 
+With pip only:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run main.py
+```
+
+With Docker (includes Tesseract):
+
+```bash
+docker build -t know-your-fan .
+docker run --rm -p 8501:8501 know-your-fan
+```
+
+Streamlit listens on all network interfaces by default. To keep a local run private to your
+machine, add `--server.address localhost` (the Docker image deliberately listens on all interfaces
+inside the container).
+
+Then open http://localhost:8501. On first start the app creates a local SQLite file at
+`.data/kyf_demo.db` and seeds it with 25 fictional profiles. Set `KYF_DB_PATH` to use another
+location. Database files are ignored by Git.
+
+## Development
+
+| Task | Command |
+|---|---|
+| Lint | `uv run ruff check .` |
+| Format | `uv run ruff format .` (check only: `--check`) |
+| Type-check (strict) | `uv run mypy` |
+| Tests | `uv run pytest` |
+| Tests with coverage | `uv run pytest --cov` (fails below 90%) |
+| Non-UI coverage | `uv run coverage report --omit=src/know_your_fan/app.py --fail-under=90` |
+| Dependency audit | `uv run pip-audit --skip-editable` |
+| Operational validation | `uv run python scripts/validate_limits.py` (add `--real-ocr` if Tesseract is installed) |
+| Pre-commit hooks | `uv run pre-commit install`, then `uv run pre-commit run --all-files` |
+| Update dependencies | `uv lock --upgrade`, then regenerate `requirements.txt` with the `uv export` command in its header |
+
+The end-to-end OCR tests (`tests/integration/test_ocr_e2e.py`) run the real Tesseract engine.
+They are skipped locally when Tesseract is not installed. Setting `KYF_REQUIRE_OCR=1` makes a
+missing engine fail the run instead, which is how CI runs them.
+
+## Continuous integration
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on pushes to the development branch, on pull
+requests to `main`, on manual dispatch, and weekly (Mondays 06:23 UTC, dependency audit only).
+GitHub activates the weekly schedule only from the default branch, so it takes effect after the
+final merge into `main`. The workflow has four jobs:
+
+- **quality:**
+  - install from `uv.lock`, and check that `requirements.txt` matches it;
+  - Ruff lint and format check, and mypy;
+  - real-Tesseract OCR tests (which must not skip), including a small research smoke run of the
+    full `run_research.py` pipeline, and the full test suite. The full benchmark never runs in CI;
+  - coverage thresholds;
+  - verification and full re-analysis of the committed research record;
+  - bounded operational validation with real Tesseract, run with default threading and with
+    `OMP_THREAD_LIMIT=1` (results are published as run annotations).
+- **dependency-audit:** `pip-audit` on the locked environment.
+- **secret-scan:** gitleaks on the full Git history (the binary's checksum is verified).
+- **docker:** builds the image, checks it runs as non-root, checks that it contains no
+  databases, secrets, tests, or tooling and does contain the Research page data, runs real OCR
+  inside it, and checks that the app reports healthy.
+
+Actions are pinned to commit SHAs, and the workflow token is read-only. There is no deployment
+workflow.
+
+## Security and privacy design
+
+These measures limit risk for a public demo. They are not a formal security audit, and the
+project is not production software.
+
+- There is no authentication, because nothing private is stored: the only stored data is
+  generated by the app itself.
+- There are no file uploads. OCR runs only on images the app renders from synthetic profiles.
+- The only free-text inputs (search box, expected name) are length-limited and never stored.
+- Stored profiles must pass an allowlist (every value comes from the generator), and the dataset is capped at 500 profiles.
+- User-visible values are rendered as plain text, never as Markdown or HTML. The few static HTML
+  snippets live in `ui.py`, escape their text, and a test fails if raw HTML appears anywhere else.
+- OCR is rate-limited (per session and per process) and limited to 2 concurrent jobs per process,
+  and each Tesseract process uses one thread. Adding generated profiles is rate-limited per
+  session and per process. All OCR limits are configurable and validated; see
+  [docs/operations.md](docs/operations.md).
+- Logs record technical events only, never OCR text, names, or profile data.
+
+See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](docs/threat-model.md).
+
+## Known limitations
+
+- Name matching requires the exact word sequence and does not tolerate OCR character errors. For
+  example, in CI, Ubuntu 24.04's Tesseract 5.3.4 reads the "ç" on one card as "g", so "Gonçalves"
+  is reported as missing. The study found that edit-tolerant rules did not pay for their false
+  acceptances on these cards.
+- OCR accuracy was measured only on synthetic cards, with Tesseract 5.4.0 on one Windows machine.
+  Other engine versions, language data, and real captures will behave differently.
+- The degradations (blur, rotation) are illustrative, not a realistic capture model.
+- The local SQLite file isn't persistent on hosts with temporary filesystems. The demo reseeds itself,
+  so only profiles added through the generator would be lost.
+- Resource limits are per process, not per client. Replicas multiply them, and per-session limits
+  can be bypassed by opening new sessions (the process-wide limits still apply). One visitor can
+  use up the process-wide OCR budget for one window (60 s by default).
+
+## History
+
+Before Phase 1, the repository collected personal data in real formats (such as CPF numbers), stored it in SQLite, and
+protected an admin view with a password that was hardcoded and published. That workflow has been
+removed. The old password must be considered compromised and must never be reused. Git history
+is preserved unchanged.
+
+## License
+
+Know Your Fan is released under the [MIT License](LICENSE). Copyright (c) 2026 Caio Venancio.
+
+The MIT License covers this project's own source code and documentation only. Third-party
+software keeps its own license, including:
+
+| Component | How it is used | License |
+|---|---|---|
+| Streamlit | Python dependency | Apache-2.0 |
+| Pillow | Python dependency | MIT-CMU |
+| Altair | Python dependency (Research page charts) | BSD-3-Clause |
+| NumPy | Python dependency | BSD-3-Clause (with bundled MIT, Zlib, 0BSD, CC0 parts) |
+| Matplotlib | Optional `research` group (report figures) | Matplotlib License (PSF-based) |
+| pytesseract | Python dependency | Apache-2.0 |
+| Tesseract OCR and its language data | System program, installed separately | Apache-2.0 |
+| Ruff, mypy, pytest, pytest-cov, pip-audit, pre-commit | Development dependencies | MIT or Apache-2.0 |
+| Aileron Regular font (`src/know_your_fan/assets/fonts/`) | Bundled, unmodified; draws the specimen cards | CC0 1.0 (public domain dedication) |
+
+The font is the only third-party file stored in this repository. Its source and checksum are
+recorded in [`assets/fonts/README.md`](src/know_your_fan/assets/fonts/README.md). No third-party
+source code, images, or logos are included.
+
+Game titles that appear in synthetic profiles are trademarks of their respective owners. They are used only to describe
+fan interests and do not imply affiliation or endorsement.

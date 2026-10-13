@@ -1,0 +1,34 @@
+{
+  "frozen_utc": "2026-10-13",
+  "note": "Frozen on dev/val before the held-out test split (E3) was run. Rules: docs/research/methodology.md section 5.",
+  "evidence_runs": {
+    "e1_degradation": "commit 621ac1c, clean tree, local-windows, 2560 OCR runs",
+    "e2_preprocessing": "commit 621ac1c, clean tree, local-windows, 11520 OCR runs"
+  },
+  "preprocessing": "P1_none",
+  "preprocessing_rule": "S1: lowest dev pooled micro CER over the 9 E2 conditions (ties within 0.002 -> lower median latency); must beat P0 by >= 0.002 on dev; frozen if val dCER(candidate - P0) point estimate < 0.",
+  "preprocessing_evidence": {
+    "dev_pooled_cer": {
+      "P1_none": 0.2746,
+      "P2_gray": 0.2767,
+      "P5_upscale2": 0.2789,
+      "P0_baseline": 0.2889,
+      "P6_invert": 0.2896,
+      "P7_upscale2_otsu": 0.3345,
+      "P3_otsu": 0.3620,
+      "P4_median": 0.4354
+    },
+    "dev_delta_cer_P1_minus_P0": {"estimate": -0.0143, "ci_low": -0.0192, "ci_high": -0.0091, "n_sources": 80},
+    "val_delta_cer_P1_minus_P0": {"estimate": -0.0128, "ci_low": -0.0203, "ci_high": -0.0052, "n_sources": 80}
+  },
+  "e3_strategies": ["P0_baseline", "P1_none"],
+  "m2_tau": 0.05,
+  "m2_rule": "S2: largest tau in {0, 0.05, ..., 0.40} with dev FAR <= 0.01 (E1, P0, all conditions, all negative kinds pooled).",
+  "m2_evidence": {
+    "dev": {"tau_0.00": {"far": 0.0, "frr": 0.3125}, "tau_0.05": {"far": 0.0, "frr": 0.3125}, "tau_0.10": {"far": 0.0375, "frr": 0.3109}},
+    "val_at_selected_tau": {"far": 0.0005, "frr": 0.3281},
+    "n_negatives_per_split": 3840,
+    "n_positives_per_split": 1280
+  },
+  "m2_note": "With these names, tau = 0.05 accepts no edits (a token would need >= 20 letters for one edit to be within 0.05), so M2 at the selected tau behaves like M1. Reported as a finding; the rule was not changed."
+}

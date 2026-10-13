@@ -1,0 +1,88 @@
+{
+  "experiment_id": "e3_test",
+  "description": "E3: held-out test split, 16 conditions x {P0_baseline, P1_none (frozen)}.",
+  "config_file": "experiments/configs/e3_test.toml",
+  "config_sha256": "92d1a98e8a5c49a9b75044ec8e162577adf2f613d852108a3bb7ec1649260a2a",
+  "config": {
+    "splits": [
+      "test"
+    ],
+    "conditions": [
+      "clean",
+      "blur_1",
+      "blur_2",
+      "blur_3",
+      "rot_-3",
+      "rot_+3",
+      "rot_-8",
+      "rot_+8",
+      "noise_10",
+      "noise_25",
+      "noise_40",
+      "res_0.60",
+      "res_0.45",
+      "res_0.30",
+      "combo_mild",
+      "combo_moderate"
+    ],
+    "strategies": [
+      "P0_baseline",
+      "P1_none"
+    ],
+    "workers": 3,
+    "ocr_timeout_seconds": 15.0,
+    "max_sources_per_split": null
+  },
+  "dataset": {
+    "seed": 20261013,
+    "sources_per_split": {
+      "dev": 80,
+      "val": 80,
+      "test": 160
+    },
+    "version": "kyf-synth-names-v1",
+    "fingerprint": "8c4422b5372ce2f11f8d4d6a324065571a11e0f9bb770c77ebb5713e7a9a7440",
+    "excluded_trials": {
+      "easy": 0,
+      "token_swap": 0,
+      "near_miss": 0
+    }
+  },
+  "runs": [
+    {
+      "started_utc": "2026-10-13T12:40:43+00:00",
+      "wall_seconds": 775.58,
+      "tasks_run": 5120,
+      "tasks_total": 5120,
+      "environment": {
+        "environment_label": "local-windows",
+        "ci": false,
+        "git_commit": "f392a649d976b4b632898a85cdb2daa9bc5706ea",
+        "git_dirty": false,
+        "python": "3.13.14",
+        "platform": "Windows-10-10.0.19045-SP0",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+        "cpu_count": 6,
+        "tesseract_version": "5.4.0.20240606",
+        "tesseract_languages": [
+          "eng",
+          "por"
+        ],
+        "ocr_language_setting": "por+eng",
+        "tessdata_dir": "C:\\Users\\PC\\AppData\\Local\\know-your-fan\\tessdata",
+        "traineddata_sha256": {
+          "eng": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+          "por": "c4932b937207a9514b7514d518b931a99938c02a28a5a5a553f8599ed58b7deb"
+        },
+        "omp_thread_limit": "1",
+        "packages": {
+          "pillow": "12.3.0",
+          "pytesseract": "0.3.13",
+          "numpy": "2.5.4",
+          "streamlit": "1.65.0"
+        }
+      }
+    }
+  ]
+}

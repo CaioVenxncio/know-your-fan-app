@@ -1,0 +1,16 @@
+# E2 (pre-registered): preprocessing comparison and ablations on dev + val.
+# Used for RQ2/RQ4 and the preprocessing selection rule S1 (dev), checked on val.
+experiment_id = "e2_preprocessing"
+description = "E2: 9 conditions x 8 preprocessing strategies on dev and val."
+splits = ["dev", "val"]
+conditions = ["clean", "blur_2", "blur_3", "rot_+3", "rot_-8", "noise_40", "res_0.45", "res_0.30", "combo_mild"]
+strategies = ["P0_baseline", "P1_none", "P2_gray", "P3_otsu", "P4_median", "P5_upscale2", "P6_invert", "P7_upscale2_otsu"]
+
+[dataset]
+version = "kyf-synth-names-v1"
+seed = 20261013
+sources_per_split = { dev = 80, val = 80, test = 160 }
+
+[execution]
+workers = 3
+ocr_timeout_seconds = 15

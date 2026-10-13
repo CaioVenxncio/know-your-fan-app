@@ -1,0 +1,211 @@
+{
+ "status": "final",
+ "experiments_available": [
+  "e1_degradation",
+  "e2_preprocessing",
+  "e3_test"
+ ],
+ "selection": {
+  "frozen_utc": "2026-10-13",
+  "note": "Frozen on dev/val before the held-out test split (E3) was run. Rules: docs/research/methodology.md section 5.",
+  "evidence_runs": {
+   "e1_degradation": "commit 621ac1c, clean tree, local-windows, 2560 OCR runs",
+   "e2_preprocessing": "commit 621ac1c, clean tree, local-windows, 11520 OCR runs"
+  },
+  "preprocessing": "P1_none",
+  "preprocessing_rule": "S1: lowest dev pooled micro CER over the 9 E2 conditions (ties within 0.002 -> lower median latency); must beat P0 by >= 0.002 on dev; frozen if val dCER(candidate - P0) point estimate < 0.",
+  "preprocessing_evidence": {
+   "dev_pooled_cer": {
+    "P1_none": 0.2746,
+    "P2_gray": 0.2767,
+    "P5_upscale2": 0.2789,
+    "P0_baseline": 0.2889,
+    "P6_invert": 0.2896,
+    "P7_upscale2_otsu": 0.3345,
+    "P3_otsu": 0.362,
+    "P4_median": 0.4354
+   },
+   "dev_delta_cer_P1_minus_P0": {
+    "estimate": -0.0143,
+    "ci_low": -0.0192,
+    "ci_high": -0.0091,
+    "n_sources": 80
+   },
+   "val_delta_cer_P1_minus_P0": {
+    "estimate": -0.0128,
+    "ci_low": -0.0203,
+    "ci_high": -0.0052,
+    "n_sources": 80
+   }
+  },
+  "e3_strategies": [
+   "P0_baseline",
+   "P1_none"
+  ],
+  "m2_tau": 0.05,
+  "m2_rule": "S2: largest tau in {0, 0.05, ..., 0.40} with dev FAR <= 0.01 (E1, P0, all conditions, all negative kinds pooled).",
+  "m2_evidence": {
+   "dev": {
+    "tau_0.00": {
+     "far": 0.0,
+     "frr": 0.3125
+    },
+    "tau_0.05": {
+     "far": 0.0,
+     "frr": 0.3125
+    },
+    "tau_0.10": {
+     "far": 0.0375,
+     "frr": 0.3109
+    }
+   },
+   "val_at_selected_tau": {
+    "far": 0.0005,
+    "frr": 0.3281
+   },
+   "n_negatives_per_split": 3840,
+   "n_positives_per_split": 1280
+  },
+  "m2_note": "With these names, tau = 0.05 accepts no edits (a token would need >= 20 letters for one edit to be within 0.05), so M2 at the selected tau behaves like M1. Reported as a finding; the rule was not changed."
+ },
+ "test_ocr": {
+  "test/P1_none": {
+   "cer": {
+    "estimate": 0.2673018786439214,
+    "ci_low": 0.2630095958447507,
+    "ci_high": 0.27181726145452023,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "wer": {
+    "estimate": 0.331803909428622,
+    "ci_low": 0.32789208265818887,
+    "ci_high": 0.3361221931289343,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "name_token_recall": {
+    "estimate": 0.7034045725646123,
+    "ci_low": 0.6953121070171027,
+    "ci_high": 0.7113276349968048,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "median_latency_ms": 412.146,
+   "n_observations": 2560,
+   "n_sources": 160
+  },
+  "test/P0_baseline": {
+   "cer": {
+    "estimate": 0.2739486611962859,
+    "ci_low": 0.2695219502664315,
+    "ci_high": 0.27855369964628546,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "wer": {
+    "estimate": 0.33196975057491596,
+    "ci_low": 0.3281856639018759,
+    "ci_high": 0.3361691203836593,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "name_token_recall": {
+    "estimate": 0.7050198807157058,
+    "ci_low": 0.6970461480496636,
+    "ci_high": 0.7125018527667984,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "median_latency_ms": 386.342,
+   "n_observations": 2560,
+   "n_sources": 160
+  }
+ },
+ "test_matching_P0": {
+  "M0_baseline": {
+   "far": {
+    "estimate": 0.004296875,
+    "ci_low": 0.0,
+    "ci_high": 0.010026041666666667,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34609375,
+    "ci_low": 0.333984375,
+    "ci_high": 0.3578125,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1674,
+   "fp": 33,
+   "tn": 7647,
+   "fn": 886,
+   "tau": null
+  },
+  "M1_token_sequence": {
+   "far": {
+    "estimate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34921875,
+    "ci_low": 0.3375,
+    "ci_high": 0.360546875,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1666,
+   "fp": 0,
+   "tn": 7680,
+   "fn": 894,
+   "tau": null
+  },
+  "M2_tolerant": {
+   "far": {
+    "estimate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34921875,
+    "ci_low": 0.3375,
+    "ci_high": 0.360546875,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1666,
+   "fp": 0,
+   "tn": 7680,
+   "fn": 894,
+   "tau": 0.05
+  },
+  "M3_confusable": {
+   "far": {
+    "estimate": 0.008333333333333333,
+    "ci_low": 0.002734375,
+    "ci_high": 0.015364583333333333,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.333984375,
+    "ci_low": 0.324609375,
+    "ci_high": 0.343359375,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1705,
+   "fp": 64,
+   "tn": 7616,
+   "fn": 855,
+   "tau": null
+  }
+ }
+}

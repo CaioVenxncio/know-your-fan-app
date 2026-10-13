@@ -1,0 +1,16 @@
+# E1 (pre-registered, docs/research/methodology.md): degradations under the baseline pipeline.
+# dev + val only. Used for RQ1 on dev/val, the baseline, and the M2 threshold rule S2.
+experiment_id = "e1_degradation"
+description = "E1: 16 degradation conditions x P0 baseline on dev and val."
+splits = ["dev", "val"]
+conditions = "all"
+strategies = ["P0_baseline"]
+
+[dataset]
+version = "kyf-synth-names-v1"
+seed = 20261013
+sources_per_split = { dev = 80, val = 80, test = 160 }
+
+[execution]
+workers = 3
+ocr_timeout_seconds = 15

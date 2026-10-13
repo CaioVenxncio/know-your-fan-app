@@ -1,0 +1,30 @@
+# Install once:   uv run pre-commit install
+# Run manually:   uv run pre-commit run --all-files
+# Revisions are pinned to commit SHAs; the comment shows the release tag.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+    hooks:
+      # Generated experiment data must never be rewritten by tooling.
+      - id: trailing-whitespace
+        exclude: ^experiments/(results|manifests)/
+      - id: end-of-file-fixer
+        exclude: ^experiments/(results|manifests)/
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 44b5042edab9382aba712eed4f9c7bab7a3d6a3e # frozen: v0.17.0
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
+    hooks:
+      - id: gitleaks
