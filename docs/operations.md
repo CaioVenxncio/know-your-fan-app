@@ -107,8 +107,11 @@ capacity, all slots released, no unexpected errors.
   reported as `StorageBusyError` ("The demo database is busy. Please try again.").
 - Every connection is closed after each operation; a test asserts this.
 - Storage errors while rendering a page show a message instead of failing the session.
-- Per-session write limit: at most 10 dataset additions per 10 minutes. The 500-profile cap remains
-  the hard bound.
+- Write limits: at most 10 dataset additions per session and 60 per process, each per 10
+  minutes. The process-wide limit (Phase 6) stops many sessions together from filling the dataset
+  quickly. The 500-profile cap remains the hard bound.
+- The cap holds across processes as well as threads: a test starts separate Python processes that
+  write to one file concurrently and checks that exactly the capped number of rows is added.
 
 ## 3. Configuration
 
@@ -130,8 +133,8 @@ process (`st.cache_resource`), not on every rerun.
 | `KYF_SQLITE_BUSY_TIMEOUT_SECONDS` | 5 | 0.1–30 | Wait for a locked database |
 | `OMP_THREAD_LIMIT` | 1 (set if absent) | Tesseract/OpenMP | Threads per Tesseract process |
 
-The per-session write limit (10 per 10 minutes) and the 2 s capacity wait are code constants
-(`services.py`, `limits.py`). They were not made configurable because there is no operational need
+The profile write limits (10 per session and 60 per process, each per 10 minutes) and the 2 s
+capacity wait are code constants (`services.py`, `limits.py`). They were not made configurable because there is no operational need
 yet.
 
 ## 4. Logging policy

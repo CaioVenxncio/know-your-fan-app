@@ -11,6 +11,21 @@
 
 ---
 
+## At a glance
+
+| | |
+|---|---|
+| **What** | A four-page Streamlit app: fictional esports fan profiles, an OCR demo on a generated specimen card, and an interactive view of a research study. |
+| **Data** | Synthetic only. No uploads, no fields for real personal data, no accounts. |
+| **Research** | A pre-registered OCR study: 19,200 real Tesseract runs over three experiments, choices frozen on dev/val, a held-out test split evaluated once. On that test split the original matching rule falsely accepted 33 of 7,680 decoy trials; the sequence-aware rule the app now uses accepted 0, with false rejections 34.6 % vs 34.9 % (driven by severe image degradations). Synthetic cards only. |
+| **Reproducibility** | Committed observations, manifests, configuration hashes and dataset fingerprints. CI recomputes every reported metric from the committed observations and checks that the outputs match. |
+| **Engineering** | 400+ automated tests (≈98 % coverage), strict mypy, Ruff, real-Tesseract tests in CI, a Docker image check, dependency audit, and full-history secret scanning. |
+| **Safeguards** | OCR rate and concurrency limits, atomic SQLite writes under a dataset cap, privacy-safe logging, plain-text rendering of all generated values. |
+| **Accessibility** | An axe-core scan of 23 page states at desktop and phone widths reports no WCAG 2.2 A/AA violations; this is an automated check, not a certification ([details](docs/ux-accessibility.md)). |
+
+It is a portfolio and research-practice project, not a product: the study is not peer reviewed,
+and nothing here is identity verification.
+
 ## Purpose
 
 The author originally built Know Your Fan, independently, as an entry to a technology and esports challenge. It was a
@@ -25,7 +40,7 @@ Current scope:
 - OCR text extraction from synthetic specimen documents;
 - text-matching experiments on the extracted text;
 - privacy-conscious application design;
-- a foundation for future reproducible research (see *Planned work*).
+- a reproducible OCR study on synthetic cards (see *Research study*).
 
 ## Implemented features
 
@@ -76,7 +91,7 @@ app and is never run by it. The study asks how controlled image degradations, pr
 name-matching rules affect OCR transcription errors, name-matching error rates (FAR/FRR), and
 latency on **synthetic** specimen cards.
 
-The protocol has four stages:
+The protocol has three stages:
 
 1. Hypotheses, the design, and the selection rules were committed first
    ([methodology.md](docs/research/methodology.md)).
@@ -100,7 +115,10 @@ uv run python scripts/run_research.py evaluate --config experiments/configs/<exp
 uv run python scripts/run_research.py report
 ```
 
-To re-analyse the committed observations without OCR, run only `evaluate` and `report`. The
+To re-analyse the committed observations without OCR, run only `evaluate` and `report`. To
+verify the committed record (configuration hashes, dataset fingerprints, manifests, task
+coverage, frozen selection) and check that re-analysis reproduces the committed outputs, run
+`uv run python scripts/verify_research.py --reanalyse` (about 3 minutes; CI runs it too). The
 runner is resumable, uses at most 4 worker processes with one Tesseract thread each, and records
 the commit, configuration hash, dataset fingerprint, engine version, and model hashes with every
 run. Results are not evidence of performance on real documents, and the study is not identity
@@ -123,6 +141,9 @@ infrastructure modules.
 - [docs/operations.md](docs/operations.md): resource limits, configuration, logging policy, validation results
 - [docs/ux-accessibility.md](docs/ux-accessibility.md): UX audit, design system, accessibility review, visual validation, UI performance
 - [docs/decisions/](docs/decisions/): architecture decision records
+- [docs/security-review.md](docs/security-review.md): Phase 6 security and privacy review, findings by severity
+- [docs/release-readiness.md](docs/release-readiness.md): release checklist with evidence and open items
+- [docs/deployment.md](docs/deployment.md): Streamlit Community Cloud preparation (nothing is deployed)
 
 ```
 main.py                     Streamlit entry point
@@ -142,7 +163,8 @@ src/know_your_fan/
   research/                 OCR research harness (dataset, degradations, matching, metrics, runner)
 tests/unit/, tests/integration/
 scripts/validate_limits.py  Bounded operational validation
-scripts/run_research.py     Research CLI (run, evaluate, report)
+scripts/run_research.py     Research CLI (run, evaluate, report, export-explorer)
+scripts/verify_research.py  Integrity check and re-analysis of the committed research record
 experiments/                Configs, dataset manifests, committed observation archives
 docs/                       Architecture, threat model, operations, ADRs, research report
 pyproject.toml, uv.lock     Packaging, dependencies, tool configuration
@@ -196,6 +218,10 @@ docker build -t know-your-fan .
 docker run --rm -p 8501:8501 know-your-fan
 ```
 
+Streamlit listens on all network interfaces by default. To keep a local run private to your
+machine, add `--server.address localhost` (the Docker image deliberately listens on all interfaces
+inside the container).
+
 Then open http://localhost:8501. On first start the app creates a local SQLite file at
 `.data/kyf_demo.db` and seeds it with 25 fictional profiles. Set `KYF_DB_PATH` to use another
 location. Database files are ignored by Git.
@@ -232,12 +258,14 @@ final merge into `main`. The workflow has four jobs:
   - real-Tesseract OCR tests (which must not skip), including a small research smoke run of the
     full `run_research.py` pipeline, and the full test suite. The full benchmark never runs in CI;
   - coverage thresholds;
+  - verification and full re-analysis of the committed research record;
   - bounded operational validation with real Tesseract, run with default threading and with
     `OMP_THREAD_LIMIT=1` (results are published as run annotations).
 - **dependency-audit:** `pip-audit` on the locked environment.
 - **secret-scan:** gitleaks on the full Git history (the binary's checksum is verified).
-- **docker:** builds the image, checks it runs as non-root, runs real OCR inside it, and checks
-  that the app reports healthy.
+- **docker:** builds the image, checks it runs as non-root, checks that it contains no
+  databases, secrets, tests, or tooling and does contain the Research page data, runs real OCR
+  inside it, and checks that the app reports healthy.
 
 Actions are pinned to commit SHAs, and the workflow token is read-only. There is no deployment
 workflow.
@@ -252,9 +280,11 @@ project is not production software.
 - There are no file uploads. OCR runs only on images the app renders from synthetic profiles.
 - The only free-text inputs (search box, expected name) are length-limited and never stored.
 - Stored profiles must pass an allowlist (every value comes from the generator), and the dataset is capped at 500 profiles.
-- User-visible values are rendered as plain text, never as Markdown or HTML.
+- User-visible values are rendered as plain text, never as Markdown or HTML. The few static HTML
+  snippets live in `ui.py`, escape their text, and a test fails if raw HTML appears anywhere else.
 - OCR is rate-limited (per session and per process) and limited to 2 concurrent jobs per process,
-  and each Tesseract process uses one thread. All limits are configurable and validated; see
+  and each Tesseract process uses one thread. Adding generated profiles is rate-limited per
+  session and per process. All OCR limits are configurable and validated; see
   [docs/operations.md](docs/operations.md).
 - Logs record technical events only, never OCR text, names, or profile data.
 
@@ -262,10 +292,12 @@ See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](
 
 ## Known limitations
 
-- Name matching is a simple whole-word check with no tuned threshold. It does not tolerate OCR
-  character errors. For example, in CI, Ubuntu 24.04's Tesseract 5.3.4 reads the "ç" on one card as
-  "g", so "Gonçalves" is reported as missing.
-- OCR accuracy has not been measured and depends on the installed Tesseract version and language data.
+- Name matching requires the exact word sequence and does not tolerate OCR character errors. For
+  example, in CI, Ubuntu 24.04's Tesseract 5.3.4 reads the "ç" on one card as "g", so "Gonçalves"
+  is reported as missing. The study found that edit-tolerant rules did not pay for their false
+  acceptances on these cards.
+- OCR accuracy was measured only on synthetic cards, with Tesseract 5.4.0 on one Windows machine.
+  Other engine versions, language data, and real captures will behave differently.
 - The degradations (blur, rotation) are illustrative, not a realistic capture model.
 - The local SQLite file isn't persistent on hosts with temporary filesystems. The demo reseeds itself,
   so only profiles added through the generator would be lost.
@@ -291,6 +323,9 @@ software keeps its own license, including:
 |---|---|---|
 | Streamlit | Python dependency | Apache-2.0 |
 | Pillow | Python dependency | MIT-CMU |
+| Altair | Python dependency (Research page charts) | BSD-3-Clause |
+| NumPy | Python dependency | BSD-3-Clause (with bundled MIT, Zlib, 0BSD, CC0 parts) |
+| Matplotlib | Optional `research` group (report figures) | Matplotlib License (PSF-based) |
 | pytesseract | Python dependency | Apache-2.0 |
 | Tesseract OCR and its language data | System program, installed separately | Apache-2.0 |
 | Ruff, mypy, pytest, pytest-cov, pip-audit, pre-commit | Development dependencies | MIT or Apache-2.0 |

@@ -1,4 +1,4 @@
-# UX, visual design, and accessibility (Phase 5)
+# UX, visual design, and accessibility (Phases 5 and 6)
 
 ## UX audit (before the redesign)
 
@@ -37,14 +37,17 @@
 
 | Area | What was done | Evidence |
 |---|---|---|
-| Text contrast | All text pairs ≥ 7.5:1 (AA needs 4.5:1) | Computed with the WCAG formula; values in `.streamlit/config.toml` |
+| Text contrast | Theme text pairs ≥ 7.5:1 (AA needs 4.5:1). **Correction (Phase 6):** this covered only the colours set in the theme. Colours Streamlit derives itself failed: captions 4.36:1 (faded with `opacity: .6`), the input character counter 4.4:1, and success-alert text 4.29:1. Now fixed: captions and hints #4A4E57 at full opacity (7.9:1), alert text colours set in the theme (≥ 7.9:1) | WCAG formula; axe-core scan (below) |
 | Non-text contrast | Pill borders `#857F75`, 3.8:1. The first version (`#C9C5BC`, 1.6:1) **failed** and was fixed | Same computation |
 | Colour independence | Selected pill: fill **and** bold text. Verdicts: icon **and** wording. Chart series: colour **and** shape | Screenshots, code |
 | Keyboard focus | Visible 3 px focus outline (`:focus-visible`, React Aria `data-focus-visible`). The native radio inputs stay in the DOM | `ui.py` |
-| Labels | Every input has a visible label; navigation radio has an `aria-label` ("Section") | DOM inspection in Chromium |
+| Labels | Every input has a visible label; navigation radio has an `aria-label` ("Section") | DOM inspection in Chromium; axe-core |
+| Images | The specimen card has alt text describing it (Phase 6; it had none) | axe-core |
+| Landmarks | The brand bar no longer claims `role="banner"`, which duplicated Streamlit's own header (Phase 6) | axe-core |
 | Charts | Axis titles and units, sample sizes in captions and tooltips, a data table under every chart | Research page |
-| Headings | One header per section, with subheaders and captions in order | Screenshots |
-| Mobile | Verified at 390 px: navigation fits on one row; columns stack; legends are vertical; OCR text wraps; no horizontal page overflow | Headless Chromium screenshots |
+| Headings | One `h1` per page. Home card titles were `h3` directly after the `h1` and are now `h2` (Phase 6) | axe-core, heading outline |
+| Mobile | Verified at 390 px: navigation fits on one row; columns stack; legends are vertical; OCR text and profile links wrap (the links block was a horizontally scrolling region that keyboards could not reach, fixed in Phase 6); no horizontal page overflow | Headless Chromium screenshots; axe-core; `scrollWidth` check |
+| Keyboard | Tab reaches the navigation, then each page's controls, with a 3 px outline on every stop; arrow keys move within the navigation | Scripted keyboard walk in Chromium (Phase 6) |
 
 **Limits imposed by Streamlit (not fixed):**
 
@@ -54,8 +57,41 @@
 - The pill styling depends on Streamlit's DOM test ids. It was verified against Streamlit 1.65 and
   degrades to standard radio buttons if the markup changes.
 
-No automated accessibility scanner (e.g. axe) and no screen-reader session was run. **This is not
-a WCAG certification.**
+## Automated scan (Phase 6)
+
+**Tool:** axe-core 4.13.0, checked against its npm integrity hash, injected into headless Chromium
+by Playwright 1.63.
+
+**Rule sets:** `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, `best-practice`.
+
+**Coverage:** 23 page states at 1440 px and 390 px:
+- Home;
+- Fans: Browse, the empty search result, and Generate with a profile card;
+- OCR demo: before running, after a match, and after the rate-limit message;
+- all four Research tabs;
+- the "OCR is unavailable" error, on an instance without Tesseract.
+
+**First run:**
+
+| Rule | Impact | Cause | Status |
+|---|---|---|---|
+| `color-contrast` | serious | Captions, the input character counter, and success-alert text (see above) | Fixed |
+| `image-alt` | critical | Specimen card image had no alternative text | Fixed |
+| `scrollable-region-focusable` | serious | Profile links block scrolled horizontally on phones | Fixed (wrapped) |
+| `heading-order` | moderate | `h1` followed by `h3` on Home | Fixed |
+| `landmark-no-duplicate-banner`, `landmark-unique` | moderate | Brand bar `role="banner"` plus Streamlit's header | Fixed |
+| `region` | moderate (best practice) | Streamlit renders page content outside landmark elements | Not fixable in the app; framework markup |
+
+**Final run:** 0 WCAG A/AA violations on all 23 states. One best-practice finding remains
+(`region`). The run also found no browser console errors, no failed requests, and no horizontal
+overflow.
+
+**Still not done:**
+- a session with a real screen reader (NVDA, VoiceOver);
+- manual checks of zoom to 400 % and of text spacing;
+- testing with Windows High Contrast / forced colours.
+
+Automated tools find only part of the WCAG failures. **This is not a WCAG certification.**
 
 ## Visual validation performed
 
