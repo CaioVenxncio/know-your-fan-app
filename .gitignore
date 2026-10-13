@@ -62,3 +62,4 @@ coverage.xml
 experiments/results/*/observations.csv
 experiments/results/*/observation_metrics.csv
 experiments/results/*/trial_scores.csv.gz
+experiments/results/*/summary.json

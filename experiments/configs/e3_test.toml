@@ -1,0 +1,17 @@
+# E3 (pre-registered; strategies fixed by experiments/configs/frozen_selection.json):
+# the held-out test split, all 16 conditions, baseline P0 and the frozen strategy P1.
+# Run only after frozen_selection.json was committed.
+experiment_id = "e3_test"
+description = "E3: held-out test split, 16 conditions x {P0_baseline, P1_none (frozen)}."
+splits = ["test"]
+conditions = "all"
+strategies = ["P0_baseline", "P1_none"]
+
+[dataset]
+version = "kyf-synth-names-v1"
+seed = 20261013
+sources_per_split = { dev = 80, val = 80, test = 160 }
+
+[execution]
+workers = 3
+ocr_timeout_seconds = 15
