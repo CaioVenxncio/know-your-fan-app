@@ -1,130 +1,108 @@
-# UX, visual design, and accessibility (Phases 5 and 6)
+# UX and accessibility
 
-## UX audit (before the redesign)
+The current interface comes from the UI redesign (branch `design/know-your-fan-ui-redesign`). Its
+audit, tokens, and decisions are in [design-system.md](design-system.md). This page records how
+accessibility was checked, what was found, and what is still open. The sections at the end keep
+the earlier Phase 5 and Phase 6 findings for the record.
 
-| # | Problem | Priority | Resolution |
-|---|---|---|---|
-| 1 | Navigation was a five-item sidebar radio, hidden behind a menu on phones; "About" was a weak entry point | High | Four sections (Home, Fans, OCR demo, Research) as a horizontal pill bar at the top; Home is the entry point |
-| 2 | The synthetic-data policy was a yellow warning on every page: alarm styling for a policy note | High | Persistent "Synthetic data only" and "Not identity verification" labels plus a plain caption |
-| 3 | OCR demo was an unstructured stack; bare result box; failure causes unexplained; results vanished on any rerun | High | Steps 1–3; specimen preview beside the controls; verdicts with icon and text; results persist until inputs change; research-based "why OCR misses" note |
-| 4 | Profile details were dumped as monospace text; no empty state | Medium | Grouped profile card with a title; "No fictional fans match…" empty state |
-| 5 | Research figures were static PNGs, unreadable on phones | Medium | Interactive charts from precomputed data, each with a data table |
-| 6 | Explorer and generator were separate pages for one task | Medium | One "Fans" section with Browse and Generate tabs |
-| 7 | Mixed styling, no hierarchy or identity | Medium | Theme tokens plus a small static stylesheet |
+## Accessibility review (WCAG 2.2 A/AA principles; not a formal audit)
 
-## Design system
-
-- **Palette:**
-  - warm "paper" background `#FAF9F6`, ink text `#16181D`;
-  - indigo primary `#4338CA` for actions and selection;
-  - restrained burnt-orange accent `#C2410C`, used only for the wordmark dot and the hero rule.
-- **Charts:** an 8-colour categorical palette set in `.streamlit/config.toml`.
-- **Typography:** the theme's sans-serif and monospace stacks. No web fonts are loaded, so no
-  third-party requests reveal visitors.
-- **Components:**
-  - uppercase eyebrow labels;
-  - a hero with an accent rule;
-  - bordered cards;
-  - numbered steps;
-  - pill toggles;
-  - metric tiles for verified study counts only.
-- **Esports personality, kept subtle:** a scoreboard-style wordmark and pill navigation. No neon,
-  gradients, logos, or third-party branding.
-- **Safe rendering:** custom HTML is limited to static strings in `ui.py`. Generated or typed
-  values are rendered with `st.text`, `st.code`, `st.dataframe`, or `st.metric`.
-
-## Accessibility review (WCAG 2.2 AA principles; not a formal audit)
-
-| Area | What was done | Evidence |
+| Area | Current state | Evidence |
 |---|---|---|
-| Text contrast | Theme text pairs ≥ 7.5:1 (AA needs 4.5:1). **Correction (Phase 6):** this covered only the colours set in the theme. Colours Streamlit derives itself failed: captions 4.36:1 (faded with `opacity: .6`), the input character counter 4.4:1, and success-alert text 4.29:1. Now fixed: captions and hints #4A4E57 at full opacity (7.9:1), alert text colours set in the theme (≥ 7.9:1) | WCAG formula; axe-core scan (below) |
-| Non-text contrast | Pill borders `#857F75`, 3.8:1. The first version (`#C9C5BC`, 1.6:1) **failed** and was fixed | Same computation |
-| Colour independence | Selected pill: fill **and** bold text. Verdicts: icon **and** wording. Chart series: colour **and** shape | Screenshots, code |
-| Keyboard focus | Visible 3 px focus outline (`:focus-visible`, React Aria `data-focus-visible`). The native radio inputs stay in the DOM | `ui.py` |
-| Labels | Every input has a visible label; navigation radio has an `aria-label` ("Section") | DOM inspection in Chromium; axe-core |
-| Images | The specimen card has alt text describing it (Phase 6; it had none) | axe-core |
-| Landmarks | The brand bar no longer claims `role="banner"`, which duplicated Streamlit's own header (Phase 6) | axe-core |
-| Charts | Axis titles and units, sample sizes in captions and tooltips, a data table under every chart | Research page |
-| Headings | One `h1` per page. Home card titles were `h3` directly after the `h1` and are now `h2` (Phase 6) | axe-core, heading outline |
-| Mobile | Verified at 390 px: navigation fits on one row; columns stack; legends are vertical; OCR text and profile links wrap (the links block was a horizontally scrolling region that keyboards could not reach, fixed in Phase 6); no horizontal page overflow | Headless Chromium screenshots; axe-core; `scrollWidth` check |
-| Keyboard | Tab reaches the navigation, then each page's controls, with a 3 px outline on every stop; arrow keys move within the navigation | Scripted keyboard walk in Chromium (Phase 6) |
+| Text contrast | Text 15.8:1, secondary text 7.5:1 (6.0:1 on panels), accent 7.2:1, status text ≥ 6.6:1. Streamlit fades captions with `opacity: .6`; `ui.py` restores full opacity | WCAG formula; axe-core |
+| Primary buttons | Dark label on the accent, 7.2:1. Streamlit darkens the fill on focus, which gave 3.5:1 after a click; hover, focus and press now lighten it (9.1:1) | axe-core found the focus state; fixed |
+| Non-text contrast | Text inputs and selects have a `#6B6B73` outline, 3.3:1 against the page | WCAG formula |
+| Colour independence | Current page: fill **and** `aria-current="page"`. Verdicts: icon **and** wording. Chart series: colour **and** marker shape | Screenshots, DOM |
+| Keyboard | Tab order: navigation links, header toolbar, then page controls in reading order. Every stop shows a 2 px accent outline. Enter on a navigation link opens the page | Scripted keyboard walk in Chromium |
+| Labels and names | Every input has a visible label. Navigation entries are links with their page names. The specimen image has alt text. The profile monogram is `aria-hidden`, because the name is shown as text next to it | axe-core, DOM |
+| Headings | One `h1` per page; sections `h2`; panel titles `h3` | Heading outline from the DOM |
+| Charts | Axis titles with units, sample sizes in captions and tooltips, a data table under every chart. Charts keep their declared plot height (`autosize: fit-x`), so legends no longer squeeze them on phones | Research page at 390–1920 px |
+| Responsive | 390, 768, 1440, 1920 px and 200 % zoom: no horizontal page overflow, columns stack, and no text sits under the app header | `scrollWidth` and header-overlap checks in Chromium |
 
-**Limits imposed by Streamlit (not fixed):**
-
-- Charts render to canvas/SVG through Vega-Lite, so screen readers depend on the data tables.
-- Tab strips scroll horizontally on narrow screens.
-- Some Streamlit internals (spinners, toasts) use the framework's own markup and ARIA.
-- The pill styling depends on Streamlit's DOM test ids. It was verified against Streamlit 1.65 and
-  degrades to standard radio buttons if the markup changes.
-
-## Automated scan (Phase 6)
+## Automated scan
 
 **Tool:** axe-core 4.13.0, checked against its npm integrity hash, injected into headless Chromium
 by Playwright 1.63.
 
 **Rule sets:** `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, `best-practice`.
 
-**Coverage:** 23 page states at 1440 px and 390 px:
-- Home;
-- Fans: Browse, the empty search result, and Generate with a profile card;
-- OCR demo: before running, after a match, and after the rate-limit message;
-- all four Research tabs;
-- the "OCR is unavailable" error, on an instance without Tesseract.
+**Coverage:** 39 page states:
 
-**First run:**
+| Viewport | States scanned |
+|---|---|
+| 390, 768, 1440, 1920 px | Home; Fans; OCR demo; all four Research tabs |
+| 1440 px only | The Fans empty search result; Generate with a profile; the "OCR is unavailable" error, on an instance without Tesseract |
+| 390 and 1440 px | OCR demo after a match, and after the rate-limit message |
+| 200 % zoom | All four pages |
 
-| Rule | Impact | Cause | Status |
+**Results:**
+
+| Rule | Impact | Where | Status |
 |---|---|---|---|
-| `color-contrast` | serious | Captions, the input character counter, and success-alert text (see above) | Fixed |
-| `image-alt` | critical | Specimen card image had no alternative text | Fixed |
-| `scrollable-region-focusable` | serious | Profile links block scrolled horizontally on phones | Fixed (wrapped) |
-| `heading-order` | moderate | `h1` followed by `h3` on Home | Fixed |
-| `landmark-no-duplicate-banner`, `landmark-unique` | moderate | Brand bar `role="banner"` plus Streamlit's header | Fixed |
-| `region` | moderate (best practice) | Streamlit renders page content outside landmark elements | Not fixable in the app; framework markup |
+| `color-contrast` | serious | Primary button after a click (Streamlit's darker focus shade) | Fixed |
+| `aria-allowed-attr` | critical | Sidebar navigation: Streamlit's `<section aria-expanded>` on every page | Avoided on desktop and tablet by moving the navigation to the top |
+| `aria-allowed-attr` | critical | The same element in Streamlit's navigation drawer, at 390 px and 200 % zoom | **Open: framework markup**, not changeable without DOM manipulation |
+| `region` | moderate (best practice) | Streamlit renders content outside landmark elements | Open: framework markup |
 
-**Final run:** 0 WCAG A/AA violations on all 23 states. One best-practice finding remains
-(`region`). The run also found no browser console errors, no failed requests, and no horizontal
-overflow.
+**Final state:** 0 WCAG A/AA violations at 768, 1440, and 1920 px. At 390 px and 200 % zoom the
+only finding is the framework's drawer attribute above.
+
+**Other checks in the same run:**
+- no browser console errors other than Streamlit's base-path probes on deep links (404s);
+- no requests to any origin other than the app;
+- no horizontal overflow.
 
 **Still not done:**
 - a session with a real screen reader (NVDA, VoiceOver);
-- manual checks of zoom to 400 % and of text spacing;
-- testing with Windows High Contrast / forced colours.
+- zoom to 400 %;
+- text-spacing overrides;
+- Windows High Contrast / forced colours.
 
 Automated tools find only part of the WCAG failures. **This is not a WCAG certification.**
 
-## Visual validation performed
+## Functional checks in the browser (redesign)
 
-The real application was run with real Tesseract and driven in **headless Chromium** (Playwright)
-at 1440×3200 and 390×3600. Screenshots covered:
+| Check | Result |
+|---|---|
+| OCR demo with real Tesseract, session limit set to 3 | Three matches, then the rate-limit message, at 390 and 1440 px |
+| Fans empty state | Shown for an unmatched search |
+| Selecting a table row | Opens that profile in the panel |
+| Generate tab | Previews a generated profile |
+| Instance without Tesseract | "OCR is unavailable in this environment." with no details; the server log has the fixed message only |
+| Header | With a populated toolbar (as on Community Cloud), no page title or text is under the header at any tested width |
 
-- every page;
-- a real OCR match;
-- the Fans empty state;
-- the rate-limit message;
-- the Research tabs.
+## Limits imposed by Streamlit
 
-Issues found and fixed during that review:
+- The navigation drawer on narrow screens carries `aria-expanded` on a `<section>` (above).
+- Charts render through Vega-Lite, so screen-reader users rely on the data tables.
+- Data grids and tab strips scroll horizontally inside their own region on narrow screens.
+- Spinners and toasts use the framework's own markup.
+- Control outlines use BaseWeb's `data-baseweb` attributes and may need checking after a
+  Streamlit upgrade.
 
-1. The pill navigation CSS initially did not apply. The selectors were rewritten against the
-   actual DOM.
-2. The degradation chart hid half of its x-axis labels and clipped its axis title. Fixed with a
-   horizontal layout.
-3. The profile card truncated the demo ID.
-4. On mobile, chart legends overflowed and OCR text overflowed horizontally.
-5. Pill border contrast was too low (see above).
+## History
 
-The automated tests also caught an invalid emoji icon that would have crashed the partial-match
-message.
+**Phase 5 (light theme, pill navigation).**
+- The first browser review fixed: pill CSS that did not apply, hidden axis labels, a truncated
+  demo ID, mobile overflow, and pill borders at 1.6:1.
+- Phase 5 claimed every text pair was at least 7.5:1. That covered only theme colours, and was
+  corrected in Phase 6.
 
-## Performance (measured on the development machine)
+**Phase 6 (axe-core, 23 states).** Fixed:
+- contrast of Streamlit-derived colours (captions 4.36:1, success text 4.29:1);
+- the missing alt text on the specimen image;
+- an unreachable scroll region;
+- heading order;
+- a duplicate banner landmark.
+
+The final Phase 6 run had 0 WCAG A/AA violations.
+
+**Performance** (Phase 5, development machine):
 
 | Measurement | Result |
 |---|---|
-| Cold first script run (runtime setup, seeding 25 profiles, Home) | 2.0 s |
-| Warm reruns, median of 5 | Home 9 ms, Fans 17 ms, OCR demo 26 ms (card rendering, no OCR), Research 95 ms (chart specs) |
-| In-browser OCR round trip (click to result, real Tesseract) | 2.1–2.6 s |
-| First page render in Chromium | 2.8–3.8 s |
+| Cold first script run | 2.0 s |
+| Warm reruns | 9–95 ms |
+| In-browser OCR round trip | 2.1–2.6 s |
 
-Research data is parsed once per process (`st.cache_data`), and the page runs no OCR. SQLite is
-read only on the Fans and OCR pages.
+The research data is parsed once per process, and the Research page runs no OCR.

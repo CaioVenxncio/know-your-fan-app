@@ -111,6 +111,14 @@ Run against the app URL, with the owner's authorisation and bounded tests only:
 For a private app, the browser checks need a signed-in viewer session, so the owner runs them or
 shares a session. Credentials must not be shared in chat.
 
+## Follow-up: Live Demo link
+
+The app is running on Streamlit Community Cloud, but its URL is not recorded in this repository
+(the GitHub repository's homepage field is empty), so the README has no Live Demo link yet. Once
+the URL is confirmed and the app is intentionally public, add the link near the top of the
+README. The redesigned interface appears there only after its pull request is merged and the
+deployment has updated.
+
 ## Rollback
 
 - **Bad release:** revert the offending commit on `main` with a new commit (no history rewrite);
