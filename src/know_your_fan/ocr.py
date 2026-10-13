@@ -7,6 +7,8 @@ Tesseract on the result.
 
 from __future__ import annotations
 
+import logging
+import math
 from functools import cache
 from importlib import resources
 from io import BytesIO
@@ -14,13 +16,18 @@ from io import BytesIO
 import pytesseract
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
+from know_your_fan.config import DEFAULT_MAX_IMAGE_PIXELS, DEFAULT_OCR_TIMEOUT_SECONDS
 from know_your_fan.models import FanProfile
+from know_your_fan.observability import LOGGER_NAME
 
 FONT_RESOURCE = "assets/fonts/Aileron-Regular.otf"
 OCR_LANGUAGE = "por+eng"
-OCR_TIMEOUT_SECONDS = 15
-MAX_IMAGE_PIXELS = 4_000_000
+OCR_TIMEOUT_SECONDS = DEFAULT_OCR_TIMEOUT_SECONDS
+MAX_IMAGE_PIXELS = DEFAULT_MAX_IMAGE_PIXELS
+MAX_IMAGE_SIDE = 8_000
 SPECIMEN_SIZE = (900, 520)
+
+_logger = logging.getLogger(f"{LOGGER_NAME}.ocr")
 
 
 class OCRUnavailableError(RuntimeError):
@@ -31,8 +38,12 @@ class OCRFailedError(RuntimeError):
     """Text extraction failed or timed out."""
 
 
+class OCRTimeoutError(OCRFailedError):
+    """Tesseract exceeded the configured timeout and was terminated."""
+
+
 class InvalidImageError(ValueError):
-    """The image is empty or too large for the demo OCR pipeline."""
+    """The object is not a usable image: empty, too large, or an unsupported mode."""
 
 
 @cache
@@ -102,9 +113,9 @@ def degrade(
 
     Parameters are bounded so a caller cannot request arbitrarily expensive work.
     """
-    if not 0 <= blur_radius <= MAX_BLUR_RADIUS:
+    if not (math.isfinite(blur_radius) and 0 <= blur_radius <= MAX_BLUR_RADIUS):
         raise ValueError(f"blur_radius must be between 0 and {MAX_BLUR_RADIUS}.")
-    if abs(rotation_degrees) > MAX_ROTATION_DEGREES:
+    if not (math.isfinite(rotation_degrees) and abs(rotation_degrees) <= MAX_ROTATION_DEGREES):
         raise ValueError(f"rotation_degrees must be within ±{MAX_ROTATION_DEGREES}.")
     result = image
     if rotation_degrees:
@@ -114,31 +125,64 @@ def degrade(
     return result
 
 
-def preprocess(image: Image.Image) -> Image.Image:
-    """Prepare an image for OCR: orientation, size guard, grayscale, contrast."""
+def check_image(image: object, max_pixels: int = MAX_IMAGE_PIXELS) -> Image.Image:
+    """Validate that ``image`` is a non-empty PIL image within the size limits.
+
+    This only inspects metadata, so it is cheap enough to run before any
+    rate-limit token or OCR slot is spent.
+    """
+    if not isinstance(image, Image.Image):
+        raise InvalidImageError("Not an image.")
     width, height = image.size
-    if width == 0 or height == 0:
+    if width <= 0 or height <= 0:
         raise InvalidImageError("Image is empty.")
-    if width * height > MAX_IMAGE_PIXELS:
+    if width > MAX_IMAGE_SIDE or height > MAX_IMAGE_SIDE or width * height > max_pixels:
         raise InvalidImageError("Image is too large for the demo OCR pipeline.")
-    image = ImageOps.exif_transpose(image)
-    image = ImageOps.grayscale(image)
-    return ImageOps.autocontrast(image)
+    return image
 
 
-def extract_text(image: Image.Image) -> str:
-    """Run Tesseract on ``image`` and return the extracted text."""
-    prepared = preprocess(image)
+def preprocess(image: Image.Image, max_pixels: int = MAX_IMAGE_PIXELS) -> Image.Image:
+    """Prepare an image for OCR: size guard, orientation, grayscale, contrast."""
+    image = check_image(image, max_pixels)
     try:
-        text = pytesseract.image_to_string(prepared, lang=OCR_LANGUAGE, timeout=OCR_TIMEOUT_SECONDS)
+        image = ImageOps.exif_transpose(image)
+        image = ImageOps.grayscale(image)
+        return ImageOps.autocontrast(image)
+    except (ValueError, OSError) as exc:
+        raise InvalidImageError("Unsupported image format.") from exc
+
+
+def extract_text(
+    image: Image.Image,
+    *,
+    timeout_seconds: float = OCR_TIMEOUT_SECONDS,
+    max_pixels: int = MAX_IMAGE_PIXELS,
+) -> str:
+    """Run Tesseract on ``image`` and return the extracted text.
+
+    On timeout pytesseract terminates the Tesseract subprocess and removes its
+    temporary files before raising; this function maps that to
+    :class:`OCRTimeoutError`. Logs record event types only, never image
+    contents, extracted text, or engine messages.
+    """
+    prepared = preprocess(image, max_pixels)
+    try:
+        text = pytesseract.image_to_string(prepared, lang=OCR_LANGUAGE, timeout=timeout_seconds)
     except pytesseract.TesseractNotFoundError as exc:
+        _logger.error("Tesseract binary not found")
         raise OCRUnavailableError("Tesseract OCR is not installed or not on PATH.") from exc
     except pytesseract.TesseractError as exc:
         if "Failed loading language" in str(exc):
+            _logger.error("Tesseract language data missing")
             raise OCRUnavailableError(
                 "Tesseract language data (por/eng) is not installed."
             ) from exc
+        _logger.warning("Tesseract failed (exit status %s)", exc.status)
         raise OCRFailedError("Tesseract could not process the image.") from exc
-    except RuntimeError as exc:  # pytesseract raises RuntimeError on timeout
-        raise OCRFailedError("OCR timed out.") from exc
+    except RuntimeError as exc:
+        if "timeout" in str(exc).lower():
+            _logger.warning("Tesseract timed out after %.1f s and was terminated", timeout_seconds)
+            raise OCRTimeoutError("OCR timed out.") from exc
+        _logger.error("Unexpected OCR engine error (%s)", type(exc).__name__)
+        raise OCRFailedError("OCR failed unexpectedly.") from exc
     return str(text)
