@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [phase-1/security-privacy-foundation]
+    branches: [main, "deploy/**", phase-1/security-privacy-foundation]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -218,4 +218,80 @@ jobs:
             sleep 2
           done
           docker logs kyf
+          exit 1
+
+  # Approximates Streamlit Community Cloud, which runs Debian 11 ("bullseye"), installs the
+  # apt packages in packages.txt, and installs Python dependencies from uv.lock. This checks
+  # the distribution's (older) Tesseract with the app's real OCR tests, limits, and start-up
+  # under the configuration that Community Cloud enforces. It is not the hosted platform.
+  cloud-parity:
+    name: Community Cloud parity (Debian 11, packages.txt)
+    if: ${{ github.event_name != 'schedule' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: debian:bullseye-slim
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install the apt packages listed in packages.txt
+        run: |
+          apt-get update -q
+          # shellcheck disable=SC2046
+          apt-get install -y --no-install-recommends ca-certificates curl $(grep -v '^[[:space:]]*#' packages.txt)
+          tesseract --version
+          echo "::notice title=Tesseract (Debian 11 packages.txt)::$(tesseract --version 2>&1 | head -n 1)"
+          tesseract --list-langs
+
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies from the lockfile
+        run: uv sync --locked
+
+      - name: Engine is at least Tesseract 4 with por and eng data
+        run: |
+          uv run python -c '
+          import pytesseract
+          version = pytesseract.get_tesseract_version()
+          languages = set(pytesseract.get_languages(config=""))
+          print(version, sorted(languages))
+          assert version.major >= 4, version
+          assert {"por", "eng"} <= languages, languages
+          '
+
+      - name: Real OCR tests with the distribution engine
+        env:
+          KYF_REQUIRE_OCR: "1"
+        # The version test pins Tesseract >= 5 for the Ubuntu and Docker environments;
+        # the step above checks this environment's version instead.
+        run: uv run pytest -m ocr -v --no-cov -k "not test_engine_version_and_language_data"
+
+      - name: Bounded operational validation (distribution engine)
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: uv run python scripts/validate_limits.py --real-ocr --github --label debian11
+
+      - name: App starts with the configuration Community Cloud enforces
+        env:
+          STREAMLIT_CLIENT_SHOW_ERROR_DETAILS: "false"
+          STREAMLIT_RUNNER_FAST_RERUNS: "true"
+          STREAMLIT_SERVER_RUN_ON_SAVE: "true"
+          STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION: "true"
+          STREAMLIT_BROWSER_GATHER_USAGE_STATS: "true"
+        run: |
+          uv run streamlit run main.py --server.headless true --server.port 8501 > streamlit.log 2>&1 &
+          for _ in $(seq 1 45); do
+            if curl -sf http://localhost:8501/_stcore/health; then
+              echo
+              ! grep -E "Traceback|ERROR" streamlit.log
+              exit 0
+            fi
+            sleep 2
+          done
+          cat streamlit.log
           exit 1
