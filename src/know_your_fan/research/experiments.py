@@ -220,7 +220,15 @@ def capture_environment(label: str) -> dict[str, Any]:
         languages = sorted(pytesseract.get_languages(config=""))
     except (OSError, pytesseract.TesseractNotFoundError):
         tesseract_version, languages = "unavailable", []
-    dirty = _git("status", "--porcelain", "--", ".", ":(exclude)experiments/results")
+    # Run outputs (results and the generated dataset manifests) do not count as "dirty".
+    dirty = _git(
+        "status",
+        "--porcelain",
+        "--",
+        ".",
+        ":(exclude)experiments/results",
+        ":(exclude)experiments/manifests",
+    )
     return {
         "environment_label": label,
         "ci": os.environ.get("GITHUB_ACTIONS") == "true",
