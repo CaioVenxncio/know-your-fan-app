@@ -8,13 +8,17 @@ Markdown.
 
 from __future__ import annotations
 
+import logging
 import random
+import uuid
 
 import streamlit as st
 
 from know_your_fan import services
-from know_your_fan.config import load_settings
+from know_your_fan.config import ConfigurationError, load_settings
+from know_your_fan.limits import ResourceLimitError
 from know_your_fan.models import FanProfile
+from know_your_fan.observability import LOGGER_NAME, configure_logging
 from know_your_fan.ocr import (
     MAX_BLUR_RADIUS,
     MAX_ROTATION_DEGREES,
@@ -22,7 +26,7 @@ from know_your_fan.ocr import (
     OCRFailedError,
     OCRUnavailableError,
 )
-from know_your_fan.storage import StorageError, StorageLimitError, SyntheticProfileRepository
+from know_your_fan.storage import StorageBusyError, StorageError, StorageLimitError
 from know_your_fan.synthetic import GAMES, generate_profile
 from know_your_fan.text_matching import MAX_EXPECTED_NAME_LENGTH
 
@@ -37,9 +41,24 @@ MATCHING_DISCLAIMER = "Text matching demonstration — not identity verification
 PAGES = ("About", "Fan explorer", "Profile generator", "Text-matching demo")
 
 
+_logger = logging.getLogger(f"{LOGGER_NAME}.app")
+_SESSION_KEY = "kyf_session_key"
+
+
 @st.cache_resource
-def get_repository() -> SyntheticProfileRepository:
-    return services.open_repository(load_settings())
+def get_runtime() -> services.Runtime:
+    """Load settings and build process-wide limits and storage once per process."""
+    configure_logging()
+    return services.build_runtime(load_settings())
+
+
+def session_key() -> str:
+    """Random per-session identifier for per-session limits (not a security boundary)."""
+    key = st.session_state.get(_SESSION_KEY)
+    if not isinstance(key, str):
+        key = uuid.uuid4().hex
+        st.session_state[_SESSION_KEY] = key
+    return key
 
 
 def _profile_label(profile: FanProfile) -> str:
@@ -80,9 +99,9 @@ def page_about() -> None:
     )
 
 
-def page_explorer(repo: SyntheticProfileRepository) -> None:
+def page_explorer(runtime: services.Runtime) -> None:
     st.header("Synthetic fan explorer")
-    profiles = repo.list_all()
+    profiles = runtime.repository.list_all()
     query = st.text_input("Search name or city", max_chars=services.MAX_SEARCH_LENGTH)
     games = st.multiselect("Filter by game", GAMES)
     filtered = services.filter_profiles(profiles, query, games)
@@ -106,7 +125,7 @@ def page_explorer(repo: SyntheticProfileRepository) -> None:
             show_profile_details(selected)
 
 
-def page_generator(repo: SyntheticProfileRepository) -> None:
+def page_generator(runtime: services.Runtime) -> None:
     st.header("Fictional profile generator")
     st.write(
         "Profiles are generated from a seed. There are no free-text fields, "
@@ -121,8 +140,8 @@ def page_generator(repo: SyntheticProfileRepository) -> None:
     show_profile_details(profile)
     if st.button("Add to demo dataset"):
         try:
-            added = repo.add(profile)
-        except StorageLimitError as exc:
+            added = services.add_generated_profile(runtime, profile, session_key())
+        except (StorageLimitError, StorageBusyError, ResourceLimitError) as exc:
             st.warning(str(exc))
         else:
             if added:
@@ -131,10 +150,10 @@ def page_generator(repo: SyntheticProfileRepository) -> None:
                 st.info("This profile is already in the demo dataset.")
 
 
-def page_text_matching(repo: SyntheticProfileRepository) -> None:
+def page_text_matching(runtime: services.Runtime) -> None:
     st.header("Text-matching demo")
     st.info(MATCHING_DISCLAIMER)
-    profiles = repo.list_all()
+    profiles = runtime.repository.list_all()
     if not profiles:
         st.warning("The demo dataset is empty.")
         return
@@ -156,7 +175,16 @@ def page_text_matching(repo: SyntheticProfileRepository) -> None:
         return
     try:
         with st.spinner("Running OCR..."):
-            outcome = services.run_text_matching(image, expected)
+            outcome = services.run_text_matching(
+                image,
+                expected,
+                guard=runtime.ocr_guard,
+                session_key=session_key(),
+                settings=runtime.settings,
+            )
+    except ResourceLimitError as exc:
+        st.warning(str(exc))
+        return
     except OCRUnavailableError as exc:
         st.error(f"OCR is unavailable in this environment: {exc}")
         return
@@ -186,7 +214,11 @@ def main() -> None:
     st.title("Know Your Fan — synthetic demo")
     st.warning(SYNTHETIC_NOTICE)
     try:
-        repo = get_repository()
+        runtime = get_runtime()
+    except ConfigurationError:
+        _logger.error("Invalid configuration; the app will not start")
+        st.error("The demo is misconfigured and cannot start. Please contact the operator.")
+        st.stop()
     except StorageError as exc:
         st.error(f"The demo dataset is unavailable: {exc}")
         st.stop()
@@ -194,11 +226,14 @@ def main() -> None:
     st.sidebar.caption(
         "Independent portfolio project. Not affiliated with any esports organization."
     )
-    if page == "About":
-        page_about()
-    elif page == "Fan explorer":
-        page_explorer(repo)
-    elif page == "Profile generator":
-        page_generator(repo)
-    else:
-        page_text_matching(repo)
+    try:
+        if page == "About":
+            page_about()
+        elif page == "Fan explorer":
+            page_explorer(runtime)
+        elif page == "Profile generator":
+            page_generator(runtime)
+        else:
+            page_text_matching(runtime)
+    except StorageError as exc:
+        st.error(f"The demo dataset is temporarily unavailable: {exc}")
