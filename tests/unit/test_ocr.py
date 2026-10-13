@@ -1,0 +1,132 @@
+"""OCR module tests that do not need Tesseract (the engine is replaced where noted).
+
+The real engine is exercised in tests/integration/test_ocr_e2e.py.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+from typing import NoReturn
+
+import pytesseract
+import pytest
+from PIL import Image, ImageChops
+
+from know_your_fan import ocr
+from know_your_fan.models import FanProfile
+
+
+def test_specimen_has_fixed_size_and_is_not_blank(profile: FanProfile) -> None:
+    image = ocr.render_specimen(profile)
+    assert image.size == ocr.SPECIMEN_SIZE
+    assert image.convert("L").getextrema() == (0, 255)
+
+
+def test_specimen_rendering_is_deterministic(profile: FanProfile) -> None:
+    first, second = ocr.render_specimen(profile), ocr.render_specimen(profile)
+    assert ImageChops.difference(first, second).getbbox() is None
+
+
+def test_degrade_without_parameters_returns_identical_image(profile: FanProfile) -> None:
+    image = ocr.render_specimen(profile)
+    assert ocr.degrade(image) is image
+
+
+def test_rotation_expands_canvas_and_blur_changes_pixels(profile: FanProfile) -> None:
+    image = ocr.render_specimen(profile)
+    rotated = ocr.degrade(image, rotation_degrees=5)
+    assert rotated.size[0] > image.size[0]
+    blurred = ocr.degrade(image, blur_radius=1.5)
+    assert blurred.size == image.size
+    assert ImageChops.difference(image, blurred).getbbox() is not None
+
+
+@pytest.mark.parametrize(
+    ("blur", "rotation"),
+    [(-0.1, 0), (ocr.MAX_BLUR_RADIUS + 0.1, 0), (0, ocr.MAX_ROTATION_DEGREES + 1), (0, -45)],
+)
+def test_degrade_rejects_out_of_range_parameters(
+    profile: FanProfile, blur: float, rotation: float
+) -> None:
+    with pytest.raises(ValueError, match="must be"):
+        ocr.degrade(ocr.render_specimen(profile), blur_radius=blur, rotation_degrees=rotation)
+
+
+@pytest.mark.parametrize("mode", ["RGB", "RGBA", "P", "L", "CMYK"])
+def test_preprocess_returns_grayscale_for_common_modes(mode: str) -> None:
+    image = Image.new("RGB", (40, 20), "white").convert(mode)
+    assert ocr.preprocess(image).mode == "L"
+
+
+def test_preprocess_stretches_contrast() -> None:
+    image = Image.new("L", (10, 10), 100)
+    image.putpixel((0, 0), 150)
+    assert ocr.preprocess(image).getextrema() == (0, 255)
+
+
+def test_preprocess_applies_exif_orientation() -> None:
+    image = Image.new("RGB", (60, 20), "white")
+    image.getexif()[0x0112] = 6  # EXIF orientation: rotated 90 degrees
+    assert ocr.preprocess(image).size == (20, 60)
+
+
+@pytest.mark.parametrize("size", [(0, 0), (0, 10), (10, 0)])
+def test_preprocess_rejects_empty_images(size: tuple[int, int]) -> None:
+    with pytest.raises(ocr.InvalidImageError, match="empty"):
+        ocr.preprocess(Image.new("RGB", size))
+
+
+def test_preprocess_rejects_oversized_images() -> None:
+    with pytest.raises(ocr.InvalidImageError, match="too large"):
+        ocr.preprocess(Image.new("L", (2001, 2000)))
+
+
+def test_invalid_image_error_is_raised_before_tesseract_runs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[object] = []
+    monkeypatch.setattr(pytesseract, "image_to_string", lambda *a, **k: calls.append(a))
+    with pytest.raises(ocr.InvalidImageError):
+        ocr.extract_text(Image.new("RGB", (0, 0)))
+    assert calls == []
+
+
+def test_extract_text_passes_language_and_timeout(
+    monkeypatch: pytest.MonkeyPatch, profile: FanProfile
+) -> None:
+    seen: dict[str, object] = {}
+
+    def fake(image: Image.Image, **kwargs: object) -> str:
+        seen.update(kwargs, mode=image.mode)
+        return "text"
+
+    monkeypatch.setattr(pytesseract, "image_to_string", fake)
+    assert ocr.extract_text(ocr.render_specimen(profile)) == "text"
+    assert seen == {"lang": ocr.OCR_LANGUAGE, "timeout": ocr.OCR_TIMEOUT_SECONDS, "mode": "L"}
+
+
+def _raiser(exc: BaseException) -> Callable[..., NoReturn]:
+    def boom(*args: object, **kwargs: object) -> NoReturn:
+        raise exc
+
+    return boom
+
+
+@pytest.mark.parametrize(
+    ("raised", "expected"),
+    [
+        (pytesseract.TesseractNotFoundError(), ocr.OCRUnavailableError),
+        (pytesseract.TesseractError(1, "Failed loading language 'por'"), ocr.OCRUnavailableError),
+        (pytesseract.TesseractError(1, "Image too small to scale"), ocr.OCRFailedError),
+        (RuntimeError("Tesseract process timeout"), ocr.OCRFailedError),
+    ],
+)
+def test_engine_failures_map_to_friendly_errors(
+    monkeypatch: pytest.MonkeyPatch,
+    profile: FanProfile,
+    raised: BaseException,
+    expected: type[Exception],
+) -> None:
+    monkeypatch.setattr(pytesseract, "image_to_string", _raiser(raised))
+    with pytest.raises(expected):
+        ocr.extract_text(ocr.render_specimen(profile))

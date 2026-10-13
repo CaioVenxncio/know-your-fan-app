@@ -1,7 +1,9 @@
 """Streamlit interface for the Know Your Fan synthetic-data demonstration.
 
-User-controlled or generated values are rendered with ``st.text``, ``st.code``
-or ``st.dataframe`` and never interpolated into Markdown.
+This module contains presentation code only; workflows live in
+:mod:`know_your_fan.services`. User-controlled or generated values are rendered
+with ``st.text``, ``st.code`` or ``st.dataframe`` and never interpolated into
+Markdown.
 """
 
 from __future__ import annotations
@@ -10,21 +12,20 @@ import random
 
 import streamlit as st
 
+from know_your_fan import services
+from know_your_fan.config import load_settings
 from know_your_fan.models import FanProfile
 from know_your_fan.ocr import (
+    MAX_BLUR_RADIUS,
+    MAX_ROTATION_DEGREES,
+    InvalidImageError,
     OCRFailedError,
     OCRUnavailableError,
-    degrade,
-    extract_text,
-    render_specimen,
 )
-from know_your_fan.storage import StorageLimitError, SyntheticProfileRepository, resolve_db_path
-from know_your_fan.synthetic import GAMES, generate_profile, generate_profiles
-from know_your_fan.text_matching import MAX_EXPECTED_NAME_LENGTH, match_name
+from know_your_fan.storage import StorageError, StorageLimitError, SyntheticProfileRepository
+from know_your_fan.synthetic import GAMES, generate_profile
+from know_your_fan.text_matching import MAX_EXPECTED_NAME_LENGTH
 
-SEED_DATASET_SIZE = 25
-SEED_DATASET_SEED = 2025
-MAX_SEARCH_LENGTH = 50
 MAX_SEED = 1_000_000_000
 
 SYNTHETIC_NOTICE = (
@@ -38,10 +39,11 @@ PAGES = ("About", "Fan explorer", "Profile generator", "Text-matching demo")
 
 @st.cache_resource
 def get_repository() -> SyntheticProfileRepository:
-    repo = SyntheticProfileRepository(resolve_db_path())
-    repo.initialize()
-    repo.seed_if_empty(generate_profiles(SEED_DATASET_SIZE, seed=SEED_DATASET_SEED))
-    return repo
+    return services.open_repository(load_settings())
+
+
+def _profile_label(profile: FanProfile) -> str:
+    return f"{profile.demo_id} — {profile.name}"
 
 
 def show_profile_details(profile: FanProfile) -> None:
@@ -81,38 +83,40 @@ def page_about() -> None:
 def page_explorer(repo: SyntheticProfileRepository) -> None:
     st.header("Synthetic fan explorer")
     profiles = repo.list_all()
-    query = st.text_input("Search name or city", max_chars=MAX_SEARCH_LENGTH).strip().casefold()
+    query = st.text_input("Search name or city", max_chars=services.MAX_SEARCH_LENGTH)
     games = st.multiselect("Filter by game", GAMES)
-    filtered = [
-        p
-        for p in profiles
-        if (not query or query in p.name.casefold() or query in p.city.casefold())
-        and (not games or set(games) & set(p.interests))
-    ]
+    filtered = services.filter_profiles(profiles, query, games)
     st.caption(f"{len(filtered)} of {len(profiles)} fictional profiles")
     st.dataframe(
         [
-            {"Demo ID": p.demo_id, "Name": p.name, "City": p.city, "Interests": ", ".join(p.interests)}
+            {
+                "Demo ID": p.demo_id,
+                "Name": p.name,
+                "City": p.city,
+                "Interests": ", ".join(p.interests),
+            }
             for p in filtered
         ],
         hide_index=True,
         width="stretch",
     )
     if filtered:
-        selected = st.selectbox(
-            "Profile details", filtered, format_func=lambda p: f"{p.demo_id} — {p.name}"
-        )
-        show_profile_details(selected)
+        selected = st.selectbox("Profile details", filtered, format_func=_profile_label)
+        if selected is not None:
+            show_profile_details(selected)
 
 
 def page_generator(repo: SyntheticProfileRepository) -> None:
     st.header("Fictional profile generator")
-    st.write("Profiles are generated from a seed. There are no free-text fields, so nothing typed by a visitor is stored.")
+    st.write(
+        "Profiles are generated from a seed. There are no free-text fields, "
+        "so nothing typed by a visitor is stored."
+    )
     seed = st.number_input("Seed", min_value=0, max_value=MAX_SEED, value=0, step=1)
     if st.button("Generate profile"):
         st.session_state["generated_profile"] = generate_profile(random.Random(int(seed)))
     profile = st.session_state.get("generated_profile")
-    if profile is None:
+    if not isinstance(profile, FanProfile):
         return
     show_profile_details(profile)
     if st.button("Add to demo dataset"):
@@ -134,11 +138,12 @@ def page_text_matching(repo: SyntheticProfileRepository) -> None:
     if not profiles:
         st.warning("The demo dataset is empty.")
         return
-    profile = st.selectbox("Fictional profile", profiles, format_func=lambda p: f"{p.demo_id} — {p.name}")
+    profile = st.selectbox("Fictional profile", profiles, format_func=_profile_label)
     col1, col2 = st.columns(2)
-    blur = col1.slider("Blur radius", 0.0, 3.0, 0.0, 0.5)
-    rotation = col2.slider("Rotation (degrees)", -10, 10, 0)
-    image = degrade(render_specimen(profile), blur_radius=blur, rotation_degrees=rotation)
+    blur = col1.slider("Blur radius", 0.0, MAX_BLUR_RADIUS, 0.0, 0.5)
+    max_rotation = int(MAX_ROTATION_DEGREES)
+    rotation = col2.slider("Rotation (degrees)", -max_rotation, max_rotation, 0)
+    image = services.render_card(profile, blur_radius=blur, rotation_degrees=rotation)
     st.image(image, caption="Fictional specimen card (synthetic data)")
 
     expected = st.text_input(
@@ -151,18 +156,18 @@ def page_text_matching(repo: SyntheticProfileRepository) -> None:
         return
     try:
         with st.spinner("Running OCR..."):
-            text = extract_text(image)
-        result = match_name(expected, text)
+            outcome = services.run_text_matching(image, expected)
     except OCRUnavailableError as exc:
         st.error(f"OCR is unavailable in this environment: {exc}")
         return
-    except OCRFailedError as exc:
+    except (OCRFailedError, InvalidImageError) as exc:
         st.error(f"OCR failed: {exc}")
         return
     except ValueError as exc:
         st.error(str(exc))
         return
 
+    result = outcome.match
     if result.all_found:
         st.success("All words of the name were found in the extracted text.")
     elif result.found_tokens:
@@ -173,16 +178,22 @@ def page_text_matching(repo: SyntheticProfileRepository) -> None:
     st.text("Found: " + (", ".join(result.found_tokens) or "—"))
     st.text("Missing: " + (", ".join(result.missing_tokens) or "—"))
     st.caption("Extracted text (OCR)")
-    st.code(text or "(no text recognized)", language=None)
+    st.code(outcome.extracted_text or "(no text recognized)", language=None)
 
 
 def main() -> None:
     st.set_page_config(page_title="Know Your Fan (synthetic demo)", layout="wide")
     st.title("Know Your Fan — synthetic demo")
     st.warning(SYNTHETIC_NOTICE)
-    repo = get_repository()
+    try:
+        repo = get_repository()
+    except StorageError as exc:
+        st.error(f"The demo dataset is unavailable: {exc}")
+        st.stop()
     page = st.sidebar.radio("Go to", PAGES)
-    st.sidebar.caption("Independent portfolio project. Not affiliated with any esports organization.")
+    st.sidebar.caption(
+        "Independent portfolio project. Not affiliated with any esports organization."
+    )
     if page == "About":
         page_about()
     elif page == "Fan explorer":
