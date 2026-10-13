@@ -2,9 +2,10 @@
 
 ## Scope
 
-Know Your Fan is a **synthetic-data-only demonstration**. It does not collect personal data,
-accept file uploads, or provide authentication. It is not an identity-verification or
-document-authentication system and must not be used as one.
+Know Your Fan is an independent, **synthetic-data-only demonstration**. It does not collect personal data,
+accept file uploads, or provide authentication. It is not an identity-verification,
+document-authentication, or fraud-detection system and must not be used as one. It has not had
+a formal security audit and is not production software.
 
 ## Supported versions
 
@@ -12,10 +13,15 @@ Only the latest commit on `main` is maintained.
 
 ## Reporting a vulnerability
 
-Please report security issues privately through
-[GitHub's private vulnerability reporting](https://github.com/CaioVenxncio/know-your-fan-app/security/advisories/new)
-rather than in a public issue. Include steps to reproduce and the affected commit. You should
-receive an acknowledgement within 7 days.
+Please report security issues privately rather than in a public issue:
+
+1. Use [GitHub's private vulnerability reporting](https://github.com/CaioVenxncio/know-your-fan-app/security/advisories/new)
+   if it is available for this repository.
+2. Otherwise, open a public issue titled "Security contact request" **without any vulnerability
+   details**, and the maintainer will arrange a private channel.
+
+Include steps to reproduce and the affected commit. The maintainer aims to acknowledge reports
+within 7 days, on a best-effort basis.
 
 Please do **not** include real personal data in reports.
 

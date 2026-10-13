@@ -1,6 +1,6 @@
 # Privacy Statement
 
-**Know Your Fan is a demonstration that works only with synthetic data.**
+**Know Your Fan is an independent demonstration project that works only with synthetic data.**
 
 - **What we collect:** nothing personal. The app has no registration form, no file uploads, and no
   fields for names, CPF numbers, addresses, or identity documents of real people.
