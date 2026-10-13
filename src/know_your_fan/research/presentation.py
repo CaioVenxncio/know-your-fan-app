@@ -130,6 +130,22 @@ def total_ocr_runs(explorer: dict[str, Any]) -> int:
     return sum(int(run["ocr_runs"]) for run in explorer["runs"].values())
 
 
+def study_scope(explorer: dict[str, Any]) -> dict[str, int]:
+    """Headline scope figures, all read from the committed results (none hard-coded)."""
+    devval = explorer["devval_preprocessing"]
+    cards = (
+        int(devval["dev"]["P0_baseline"]["n_sources"])
+        + int(devval["val"]["P0_baseline"]["n_sources"])
+        + int(explorer["test_ocr"]["P0_baseline"]["pooled"]["n_sources"])
+    )
+    return {
+        "cards": cards,
+        "ocr_runs": total_ocr_runs(explorer),
+        "conditions": int(explorer["runs"]["e3_test"]["n_conditions"]),
+        "matching_rules": len(explorer["test_matching"]["P0_baseline"]),
+    }
+
+
 def condition_rows(
     explorer: dict[str, Any], metric: str, family: str | None = None
 ) -> list[dict[str, Any]]:

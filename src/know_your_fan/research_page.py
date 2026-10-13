@@ -18,6 +18,11 @@ from know_your_fan.research import presentation
 
 # Vertical legends fit narrow (phone) viewports.
 LEGEND = alt.Legend(orient="bottom", direction="vertical")
+# Streamlit's default for stretched charts is autosize "fit", which squeezes the legend into
+# the declared height and can flatten the plot (seen on phones). "fit-x" fills the width and
+# keeps the declared height for the plot area itself.
+FIT_WIDTH = alt.AutoSizeParams(type="fit-x", contains="padding")
+X_TICKS = 6
 
 METRICS = {
     "CER": ("cer", "CER (lower is better)"),
@@ -99,12 +104,19 @@ def _point_chart(
         alt.Tooltip("n_cards:Q", title="Cards (n)"),
     ]
     points = base.mark_point(filled=True, size=70).encode(
-        x=alt.X("estimate:Q", title=value_title, scale=alt.Scale(domainMin=0)),
+        x=alt.X(
+            "estimate:Q",
+            title=value_title,
+            scale=alt.Scale(domainMin=0),
+            axis=alt.Axis(tickCount=X_TICKS),
+        ),
         shape=alt.Shape(f"{color}:N", title=color_title),
         tooltip=tooltip,
     )
     intervals = base.mark_rule(strokeWidth=2).encode(x="ci_low:Q", x2="ci_high:Q")
-    return alt.layer(intervals, points, height=max(160, 34 * len(categories)))
+    return alt.layer(intervals, points, height=max(160, 34 * len(categories))).properties(
+        autosize=FIT_WIDTH
+    )
 
 
 def _rows_table(rows: list[dict[str, Any]], columns: dict[str, str]) -> None:
@@ -116,33 +128,39 @@ def _rows_table(rows: list[dict[str, Any]], columns: dict[str, str]) -> None:
 
 
 def page_research() -> None:
-    ui.eyebrow("Phase 4 study · synthetic cards · pre-registered")
-    st.header("How reliable is OCR name matching?")
+    ui.page_header(
+        "How reliable is OCR name matching?",
+        "A pre-registered study on fictional cards rendered by this app: how image "
+        "degradations, preprocessing, and the matching rule affect transcription errors, "
+        "name-matching error rates, and cost.",
+    )
     st.info(
-        "Synthetic-data study. These numbers describe OCR text matching on fictional cards "
-        "rendered by this app. They are not identity-verification, document-authentication, or "
-        "fraud-detection performance and do not transfer to real documents."
+        "Synthetic-data study. These numbers describe OCR text matching on fictional cards. "
+        "They are not identity-verification, document-authentication, or fraud-detection "
+        "performance and do not transfer to real documents.",
+        icon=":material/science:",
     )
     explorer = research_data()
     if explorer is None:
         st.warning("No research results are available in this deployment.")
         return
     if explorer.get("status") == "final":
-        st.success(
-            "Final results: choices were frozen on dev/val before the single test-split run."
+        st.caption(
+            "Final results. Settings were frozen on the dev and val splits before a single run "
+            "on the held-out test split."
         )
     else:
         st.warning("Preliminary results: the held-out test evaluation is not complete.")
 
-    runs = explorer["runs"]
+    scope = presentation.study_scope(explorer)
     test_cards = explorer["test_ocr"]["P0_baseline"]["pooled"]["n_sources"]
     cols = st.columns(4)
-    cols[0].metric("Real OCR runs", f"{presentation.total_ocr_runs(explorer):,}")
-    cols[1].metric("Held-out test cards", f"{test_cards}")
-    cols[2].metric("Degradation conditions", f"{runs['e3_test']['n_conditions']}")
-    cols[3].metric("Matching rules compared", f"{len(explorer['test_matching']['P0_baseline'])}")
+    cols[0].metric("Synthetic cards", f"{scope['cards']:,}", help="Dev, val and test splits")
+    cols[1].metric("Real OCR runs", f"{scope['ocr_runs']:,}")
+    cols[2].metric("Held-out test cards", f"{test_cards}")
+    cols[3].metric("Matching rules compared", f"{scope['matching_rules']}")
 
-    st.subheader("The question")
+    st.header("The question", anchor=False)
     st.write(
         "How do image degradations, preprocessing, and the text-matching rule affect OCR "
         "transcription errors, name-matching error rates, and cost? Dev and val splits were used "
@@ -152,7 +170,7 @@ def page_research() -> None:
 
     clean = explorer["test_ocr"]["P0_baseline"]["by_condition"]["clean"]
     matching = explorer["test_matching"]["P0_baseline"]
-    st.subheader("Key findings (test split)")
+    st.header("Key findings (test split)", anchor=False)
     st.write(
         f"- **Image quality dominates.** Clean cards: CER {clean['cer']['estimate']:.4f}, "
         f"{_pct(clean['exact_rate']['estimate'])} transcribed exactly. ±8° rotation, strong blur, "
@@ -232,7 +250,7 @@ def _preprocessing(explorer: dict[str, Any]) -> None:
         _point_chart(rows, "strategy", "Preprocessing", "split", "Split", title),
         width="stretch",
     )
-    st.markdown("**Accuracy vs latency (dev)**")
+    st.subheader("Accuracy vs latency (dev)", anchor=False)
     dev = [r for r in presentation.preprocessing_rows(explorer, "cer") if r["split"] == "dev"]
     for row in dev:
         row["strategy"] = STRATEGY_LABELS.get(row["strategy"], row["strategy"])
@@ -241,7 +259,7 @@ def _preprocessing(explorer: dict[str, Any]) -> None:
         .mark_point(filled=True, size=80)
         .encode(
             x=alt.X("median_latency_ms:Q", title="Median preprocessing + OCR time (ms)",
-                    scale=alt.Scale(domainMin=0)),
+                    scale=alt.Scale(domainMin=0), axis=alt.Axis(tickCount=X_TICKS)),
             y=alt.Y("estimate:Q", title="CER (lower is better)", scale=alt.Scale(domainMin=0)),
             shape=alt.Shape("strategy:N", title="Preprocessing"),
             color=alt.Color(
@@ -253,7 +271,7 @@ def _preprocessing(explorer: dict[str, Any]) -> None:
                 alt.Tooltip("median_latency_ms:Q", title="Median ms", format=".0f"),
             ],
         )
-        .properties(height=300)
+        .properties(height=300, autosize=FIT_WIDTH)
     )  # fmt: skip
     st.altair_chart(scatter, width="stretch")
     with st.expander("Data table"):
@@ -295,14 +313,16 @@ def _matching(explorer: dict[str, Any]) -> None:
             }
         )
     st.dataframe(rows, hide_index=True, width="stretch")
-    st.markdown("**False acceptance vs false rejection as edit tolerance τ grows (rule M2)**")
+    st.subheader(
+        "False acceptance vs false rejection as edit tolerance τ grows (rule M2)", anchor=False
+    )
     sweep = presentation.sweep_rows(explorer)
     chart = (
         alt.Chart({"values": sweep})
         .mark_line(point=alt.OverlayMarkDef(filled=True, size=60))
         .encode(
             x=alt.X("far:Q", title="FAR (decoys accepted)",
-                    axis=alt.Axis(format="%"), scale=alt.Scale(domainMin=0)),
+                    axis=alt.Axis(format="%", tickCount=X_TICKS), scale=alt.Scale(domainMin=0)),
             y=alt.Y("frr:Q", title="FRR (true names rejected)",
                     axis=alt.Axis(format="%"), scale=alt.Scale(domainMin=0)),
             color=alt.Color("split:N", title="Split", legend=LEGEND),
@@ -317,7 +337,7 @@ def _matching(explorer: dict[str, Any]) -> None:
                 alt.Tooltip("n_positives:Q", title="True-name trials"),
             ],
         )
-        .properties(height=320)
+        .properties(height=320, autosize=FIT_WIDTH)
     )  # fmt: skip
     st.altair_chart(chart, width="stretch")
     with st.expander("Data table"):
@@ -351,7 +371,8 @@ def _method(explorer: dict[str, Any]) -> None:
         "**Limitations.** One card template and font, simulated degradations, rule-generated "
         "decoys, one OCR engine on one machine. Results describe this synthetic benchmark only."
     )
-    st.caption(
-        f"Full report: {presentation.REPORT_PATH} in the repository "
-        f"({presentation.REPOSITORY_URL})."
+    st.link_button(
+        "Read the full technical report",
+        f"{presentation.REPOSITORY_URL}/blob/main/{presentation.REPORT_PATH}",
+        icon=":material/open_in_new:",
     )

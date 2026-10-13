@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="196" height="32" viewBox="0 0 196 32" role="img" aria-label="Know Your Fan">
+  <rect x="0.75" y="6.75" width="18.5" height="18.5" rx="4" fill="none" stroke="#A99AF0" stroke-width="1.5"/>
+  <path d="M6.5 11v10M6.5 16.4 13.2 11M8.9 14.6 13.6 21" fill="none" stroke="#A99AF0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="28" y="21.5" fill="#F3F3F4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16.5" font-weight="650" letter-spacing="0.1">Know Your Fan</text>
+</svg>

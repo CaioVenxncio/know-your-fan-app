@@ -1,5 +1,7 @@
 [client]
-# Never show stack traces to visitors.
+# Never show stack traces to visitors. (Streamlit Community Cloud overrides this with
+# `false`, which Streamlit renders as "stacktrace"; app.main() therefore catches every
+# unexpected error itself.)
 showErrorDetails = "none"
 toolbarMode = "minimal"
 
@@ -10,28 +12,50 @@ maxUploadSize = 1
 [browser]
 gatherUsageStats = false
 
-# Visual identity (Phase 5). WCAG contrast ratios computed with the WCAG 2.x formula:
-# text #16181D on #FAF9F6 16.9:1; primary #4338CA on #FAF9F6 7.5:1; white on #4338CA 7.9:1;
-# link/tag #3730A3 9.4:1; pill borders #857F75 3.8:1 (non-text, >= 3:1). The orange accent
-# #C2410C (4.9:1) is decorative only and never the sole carrier of meaning.
-# Phase 6: an axe-core scan found colours Streamlit derives itself below 4.5:1 (captions
-# 4.36:1, success-alert text 4.29:1). Alert text colours are set here (all >= 7.9:1 on the
-# rendered alert backgrounds); captions and input hints are darkened in ui.py.
+# Design tokens (docs/design-system.md). Dark, mostly neutral; one accent.
+# WCAG contrast ratios (WCAG 2.x formula), on the page background #19191B unless noted:
+#   text #F3F3F4 15.8:1 (12.7:1 on the elevated surface #2B2B2F)
+#   secondary text #A9A9B0 7.5:1 (6.0:1 on #2B2B2F)
+#   accent #A99AF0 7.2:1 as text; #19191B on the accent (primary buttons) 7.2:1
+#   status text: positive #81C9A2 9.0:1, warning #E1B77A 9.4:1, negative #DF8686 6.6:1,
+#   info #8FB8E8 8.5:1 (axe-core checks them on the rendered alert backgrounds)
+# Structural borders (#34343A) are decorative; form controls get a 3.3:1 outline in ui.py.
 [theme]
-base = "light"
-primaryColor = "#4338CA"
-backgroundColor = "#FAF9F6"
-secondaryBackgroundColor = "#F0EEE9"
-textColor = "#16181D"
-borderColor = "#DEDBD3"
-linkColor = "#3730A3"
-greenTextColor = "#14532D"
-yellowTextColor = "#713F12"
-redTextColor = "#7F1D1D"
-blueTextColor = "#1E3A8A"
-font = "sans-serif"
-headingFont = "sans-serif"
-codeFont = "monospace"
-baseRadius = "0.6rem"
+base = "dark"
+primaryColor = "#A99AF0"
+backgroundColor = "#19191B"
+secondaryBackgroundColor = "#242427"
+textColor = "#F3F3F4"
+linkColor = "#A99AF0"
+borderColor = "#34343A"
 showWidgetBorder = true
-chartCategoricalColors = ["#4338CA", "#C2410C", "#0F766E", "#A16207", "#6B7280", "#BE185D", "#1D4ED8", "#4D7C0F"]
+showSidebarBorder = true
+greenTextColor = "#81C9A2"
+yellowTextColor = "#E1B77A"
+redTextColor = "#DF8686"
+blueTextColor = "#8FB8E8"
+grayTextColor = "#A9A9B0"
+violetTextColor = "#A99AF0"
+codeTextColor = "#E4E4E7"
+codeBackgroundColor = "#202023"
+dataframeHeaderBackgroundColor = "#202023"
+dataframeHeaderTextColor = "#A9A9B0"
+dataframeBorderColor = "#34343A"
+# Local system fonts only: no web-font requests.
+font = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+headingFont = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+codeFont = "ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, monospace"
+headingFontSizes = ["2rem", "1.3rem", "1.05rem", "1rem"]
+headingFontWeights = [650, 600, 600, 600]
+metricValueFontSize = "1.6rem"
+metricValueFontWeight = 600
+baseRadius = "0.5rem"
+buttonRadius = "0.5rem"
+# Categorical series: distinct in hue and lightness on #19191B (each >= 6:1); charts also
+# vary marker shape, so colour is never the only cue.
+chartCategoricalColors = ["#A99AF0", "#74C9D3", "#E1B77A", "#DF8686", "#81C9A2", "#D7A6E0", "#9FB3C8", "#E4E4E7"]
+
+[theme.sidebar]
+backgroundColor = "#1F1F22"
+secondaryBackgroundColor = "#28282C"
+borderColor = "#34343A"

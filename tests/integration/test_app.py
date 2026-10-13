@@ -43,8 +43,11 @@ def at(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[AppTest]:
 
 
 def goto(at: AppTest, page: str) -> None:
-    at.radio(key=app_module.NAV_KEY).set_value(page).run()
+    """Switch to a section, as the sidebar navigation does (the page persists across reruns)."""
+    script = app_module.page_script(page).relative_to(ROOT).as_posix()
+    at.switch_page(script).run()
     assert not at.exception
+    assert at.title, "every page has an h1"
 
 
 def button(at: AppTest, label: str) -> Button:
@@ -73,7 +76,7 @@ def test_pages_have_no_sensitive_inputs_or_claims(at: AppTest, page: str) -> Non
     assert not at.get("camera_input")
     text = all_text(at)
     assert app_module.SYNTHETIC_NOTICE.casefold() in text  # notice on every page
-    assert "synthetic data only" in text  # brand bar label
+    assert "synthetic data only" in text  # sidebar label
     assert not any(claim in text for claim in MISLEADING_CLAIMS)
 
 
@@ -81,19 +84,44 @@ def test_pages_have_no_sensitive_inputs_or_claims(at: AppTest, page: str) -> Non
 
 
 def test_home_is_the_default_page_and_links_to_sections(at: AppTest) -> None:
-    assert at.radio(key=app_module.NAV_KEY).value == "Home"
+    assert [t.value for t in at.title] == ["Know Your Fan"]
     assert "not identity verification" in all_text(at)
-    button(at, "Open OCR demo").click().run()
-    assert at.radio(key=app_module.NAV_KEY).value == "OCR demo"
-    assert any(h.value == "OCR demo" for h in at.header)
-    button_labels = {b.label for b in at.button}
-    assert "Extract text and compare" in button_labels
+    labels = {b.label for b in at.button}
+    assert set(app_module.HOME_ACTIONS.values()) <= labels
+    button(at, app_module.HOME_ACTIONS["OCR demo"]).click().run()
+    assert not at.exception
+    assert [t.value for t in at.title] == ["OCR demo"]
+    assert "Extract text and compare" in {b.label for b in at.button}
 
 
-def test_home_research_card_uses_measured_run_count(at: AppTest) -> None:
+@pytest.mark.parametrize(
+    ("page", "title"),
+    [
+        ("Fans", "Fans"),
+        ("OCR demo", "OCR demo"),
+        ("Research", "How reliable is OCR name matching?"),
+    ],
+)
+def test_every_home_action_opens_its_page(at: AppTest, page: str, title: str) -> None:
+    button(at, app_module.HOME_ACTIONS[page]).click().run()
+    assert not at.exception
+    assert [t.value for t in at.title] == [title]
+    goto(at, page)  # and the navigation entry for the same section opens the same page
+    assert [t.value for t in at.title] == [title]
+
+
+def test_home_study_summary_uses_committed_results(at: AppTest) -> None:
     explorer = presentation.load_explorer()
     assert explorer is not None
-    assert f"{presentation.total_ocr_runs(explorer):,} real ocr runs" in all_text(at)
+    scope = presentation.study_scope(explorer)
+    metrics = {m.label: m.value for m in at.metric}
+    assert metrics == {
+        "Synthetic cards": f"{scope['cards']:,}",
+        "OCR runs": f"{scope['ocr_runs']:,}",
+        "Matching rules": f"{scope['matching_rules']}",
+    }
+    m0 = explorer["test_matching"]["P0_baseline"]["M0_baseline"]
+    assert f"{m0['fp']} of {m0['fp'] + m0['tn']:,}" in all_text(at)
 
 
 # ------------------------------------------------------------------ fans
@@ -102,11 +130,11 @@ def test_home_research_card_uses_measured_run_count(at: AppTest) -> None:
 def test_explorer_lists_seeded_profiles_and_filters(at: AppTest) -> None:
     goto(at, "Fans")
     total = services.SEED_DATASET_SIZE
-    assert any(f"{total} of {total} fictional profiles" in c.value for c in at.caption)
+    assert any(f"{total} of {total} profiles" in c.value for c in at.caption)
     search = next(t for t in at.text_input if t.label == "Search name or city")
     search.set_value("zzz-no-such-fan").run()
-    assert any(f"0 of {total} fictional profiles" in c.value for c in at.caption)
     assert any("No fictional fans match" in i.value for i in at.info)  # empty state
+    assert not at.dataframe
 
 
 def test_profile_card_renders_generated_values_as_plain_text(at: AppTest) -> None:
@@ -419,7 +447,7 @@ def test_research_page_with_malformed_results(at: AppTest, research_root: Path) 
 def test_research_page_shows_precomputed_results(at: AppTest, research_root: Path) -> None:
     _install_explorer(research_root)
     goto(at, "Research")
-    assert any("Final results" in s.value for s in at.success)
+    assert any("Final results" in c.value for c in at.caption)
     metrics = {m.label: m.value for m in at.metric}
     assert metrics["Real OCR runs"] == "19,200"
     assert metrics["Held-out test cards"] == "160"
@@ -464,7 +492,9 @@ def test_research_page_never_runs_experiments(
 
 def test_home_falls_back_when_research_data_is_missing(at: AppTest, research_root: Path) -> None:
     at.run()
-    assert "a pre-registered ocr study" in all_text(at)
+    assert not at.exception
+    assert not at.metric  # no figures without the committed results
+    assert "research results are not available" in all_text(at)
 
 
 def test_committed_explorer_file_exists_and_is_loadable() -> None:

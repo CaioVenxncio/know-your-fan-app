@@ -25,15 +25,39 @@ def rendered(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     return calls
 
 
-def test_helpers_escape_markup_in_text_arguments(rendered: list[str]) -> None:
-    ui.eyebrow(PAYLOAD)
-    ui.hero(PAYLOAD, PAYLOAD)
-    ui.step(1, PAYLOAD)
-    assert len(rendered) == 3
+def test_monogram_renders_escaped_letters_only(rendered: list[str]) -> None:
+    ui.monogram(PAYLOAD)
+    ui.monogram("Ana <b>x</b> Lima")
     for body in rendered:
         assert "<script>" not in body
         assert "<img" not in body
-        assert "&lt;script&gt;" in body
+        assert "<b>" not in body
+    assert ">AL<" in rendered[1]
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [("Ana Lima", "AL"), ("João Conceição Gonçalves", "JG"), ("Yuri", "Y"), ("", ""), ("123", "")],
+)
+def test_initials(name: str, expected: str) -> None:
+    assert ui.initials(name) == expected
+
+
+def test_step_number_accepts_integers_only(rendered: list[str]) -> None:
+    ui.step_number(3)
+    assert ">03<" in rendered[0]
+
+
+def test_stylesheet_leaves_the_main_container_top_padding_to_streamlit() -> None:
+    # Regression test for the clipped wordmark: overriding the main container's top
+    # padding pushed content under Streamlit's fixed header whenever its toolbar had
+    # items (as on Community Cloud). See docs/design-system.md, "Header clipping".
+    css = ui._CSS.replace(" ", "")
+    for selector in ("block-container", "stMainBlockContainer", "stAppViewBlockContainer"):
+        for rule in css.split("}"):
+            if selector in rule:
+                assert "padding-top" not in rule, rule
+                assert "margin-top:-" not in rule, rule
 
 
 def test_raw_html_is_only_emitted_by_the_ui_module() -> None:
