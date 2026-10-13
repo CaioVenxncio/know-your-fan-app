@@ -180,8 +180,8 @@ numbers.
   exception, because it is enforced by SQLite transactions on the shared file.
 - **Session limits can be bypassed** by opening new sessions. The global and concurrency limits
   still apply.
-- **No per-IP limiting.** Streamlit does not expose a trustworthy client address to the app, and
-  the deployment target is not decided yet.
+- **No per-IP limiting.** Streamlit does not expose a trustworthy client address to the app,
+  including on Streamlit Community Cloud, where the demo is deployed.
 - **One abuser can use up the global budget.** Legitimate visitors are then refused for up to one
   window (60 s by default). This trades fairness for a hard CPU bound.
 - **Stuck subprocesses:** on timeout, pytesseract sends SIGTERM and waits 1 s without escalating to

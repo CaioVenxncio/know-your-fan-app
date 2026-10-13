@@ -64,5 +64,5 @@ The full analysis is in [docs/threat-model.md](docs/threat-model.md).
   branch; until then, audits run on every push.
 - Streamlit does not send security headers such as `Content-Security-Policy` or
   `X-Frame-Options`. A hosting platform or reverse proxy should add them.
-- Hosted behaviour (for example on Streamlit Community Cloud) has not been verified, because
-  nothing has been deployed.
+- The public demo runs on Streamlit Community Cloud (https://know-your-fan-app.streamlit.app). Its platform-level behaviour
+  (headers, logs, resource limits) is controlled by the host; see docs/deployment.md.

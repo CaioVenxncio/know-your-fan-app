@@ -2,6 +2,8 @@
 
 **An independent, esports-themed software engineering project for exploring fictional fan profiles and OCR-based text matching, built with Python and Streamlit.**
 
+**[Live Demo — Try Know Your Fan](https://know-your-fan-app.streamlit.app)**
+
 > **Synthetic data only.** Every profile and document in this application is fictional.
 > The app does not accept real names, CPF numbers, addresses, or identity documents.
 > Its OCR and name matching are **not** identity verification, document authentication, or fraud detection.
@@ -193,7 +195,7 @@ infrastructure modules.
 - [docs/decisions/](docs/decisions/): architecture decision records
 - [docs/security-review.md](docs/security-review.md): Phase 6 security and privacy review, findings by severity
 - [docs/release-readiness.md](docs/release-readiness.md): release checklist with evidence and open items
-- [docs/deployment.md](docs/deployment.md): Streamlit Community Cloud preparation (nothing is deployed)
+- [docs/deployment.md](docs/deployment.md): Streamlit Community Cloud deployment: platform facts, configuration, verification, rollback
 
 ```
 main.py                     Streamlit entry point
@@ -300,10 +302,14 @@ missing engine fail the run instead, which is how CI runs them.
 
 ## Continuous integration
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on pushes to the development branch, on pull
-requests to `main`, on manual dispatch, and weekly (Mondays 06:23 UTC, dependency audit only).
-GitHub activates the weekly schedule only from the default branch, so it takes effect after the
-final merge into `main`. The workflow has four jobs:
+GitHub Actions (`.github/workflows/ci.yml`) runs on:
+- pushes to `main` and to `deploy/**` branches;
+- pull requests to `main`;
+- manual dispatch;
+- a weekly schedule (Mondays 06:23 UTC, dependency audit only). GitHub runs scheduled workflows
+  only from the default branch, where this workflow now lives.
+
+The workflow has five jobs:
 
 - **quality:**
   - install from `uv.lock`, and check that `requirements.txt` matches it;
@@ -319,9 +325,14 @@ final merge into `main`. The workflow has four jobs:
 - **docker:** builds the image, checks it runs as non-root, checks that it contains no
   databases, secrets, tests, or tooling and does contain the Research page data, runs real OCR
   inside it, and checks that the app reports healthy.
+- **cloud-parity:** approximates Streamlit Community Cloud in a Debian 11 container. It installs
+  `packages.txt` (Tesseract 4.1.1) and `uv.lock`, runs the real-OCR tests and the bounded limit
+  validation, and starts the app with the configuration the platform enforces.
 
-Actions are pinned to commit SHAs, and the workflow token is read-only. There is no deployment
-workflow.
+Actions are pinned to commit SHAs, and the workflow token is read-only. The workflow does not
+deploy: Streamlit Community Cloud deploys the
+[live demo](https://know-your-fan-app.streamlit.app) from `main` on its own (see
+[docs/deployment.md](docs/deployment.md)).
 
 ## Security and privacy design
 

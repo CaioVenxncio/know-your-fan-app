@@ -1,9 +1,29 @@
 # Deployment: Streamlit Community Cloud
 
-**Nothing has been deployed.** There is no public URL, and no hosting account is connected by this
-project. Creating a deployment, and making it public, each need the owner's explicit approval.
+**Deployed:** the app runs on Streamlit Community Cloud at **https://know-your-fan-app.streamlit.app**, from the `main` branch,
+with the entry point `main.py`. The owner manages the deployment in the Community Cloud
+dashboard; no hosting credentials are stored in this repository.
 
-**Prepared:** 2026-10-13, on branch `deploy/community-cloud-prep`.
+**Read-only check of the live app (2026-10-13, Chromium):** one page load each, with no OCR runs
+and no form input.
+
+| Route | Result |
+|---|---|
+| `/` | Home loads with the "Know Your Fan" title |
+| `/fans` | Fans loads |
+| `/ocr-demo` | OCR demo loads |
+| `/research` | Loads with the scope figures (320 cards, 19,200 OCR runs, 160 test cards, 4 rules) and its charts |
+
+On all four routes:
+- the synthetic-data notice is present;
+- no error message or stack trace appears;
+- the top navigation has four links.
+
+Visitors first pass through the platform's standard redirect, which sets its own cookies (see
+PRIVACY.md).
+
+The rest of this page is the preparation record (branch `deploy/community-cloud-prep`): the
+platform facts it was based on, and the checks to repeat after changes.
 
 **Labels:**
 - **Verified:** checked locally or in CI.
@@ -60,7 +80,7 @@ project. Creating a deployment, and making it public, each need the owner's expl
 - **Isolation between apps:** this is the platform's responsibility and cannot be tested by this
   project.
 
-## Private test deployment: limitation
+## Private test deployment: limitation (preparation record)
 
 A private test is not possible without either a public window or a new repository:
 
@@ -73,7 +93,7 @@ A private test is not possible without either a public window or a new repositor
 | B. Deploy, then restrict immediately | Deploy from this repository and switch sharing to "Only specific people" as soon as the app exists. | The app is public for the minutes it takes to build, under an unannounced URL. It is still a public deployment, so it needs explicit approval. |
 | C. No hosted test | Rely on the Debian 11 parity job and the local test with the enforced configuration, then go live directly when approved. | Platform-only items (mirror, CPU, headers on this app, writability) are checked live. |
 
-## Steps, once approved
+## Deployment steps (as prepared)
 
 1. Merge the deployment PR, if approved.
 2. At share.streamlit.io, choose **Create app**, then **Yup, I have an app**. Enter:
@@ -110,14 +130,6 @@ Run against the app URL, with the owner's authorisation and bounded tests only:
 
 For a private app, the browser checks need a signed-in viewer session, so the owner runs them or
 shares a session. Credentials must not be shared in chat.
-
-## Follow-up: Live Demo link
-
-The app is running on Streamlit Community Cloud, but its URL is not recorded in this repository
-(the GitHub repository's homepage field is empty), so the README has no Live Demo link yet. Once
-the URL is confirmed and the app is intentionally public, add the link near the top of the
-README. The redesigned interface appears there only after its pull request is merged and the
-deployment has updated.
 
 ## Rollback
 
