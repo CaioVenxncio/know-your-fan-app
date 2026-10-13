@@ -521,7 +521,9 @@ def _app_summary(summaries: dict[str, Any], selection: dict[str, Any] | None) ->
                 "n_observations": e3["ocr"][key]["pooled"]["n_observations"],
                 "n_sources": e3["ocr"][key]["pooled"]["n_sources"],
             }
-            for key in {"test/P0_baseline", f"test/{chosen}"}
+            # Ordered (selected strategy, then baseline) so the file is byte-reproducible;
+            # a set here made the key order depend on PYTHONHASHSEED.
+            for key in dict.fromkeys((f"test/{chosen}", "test/P0_baseline"))
         }
         out["test_matching_P0"] = {
             m: {

@@ -11,7 +11,7 @@ from PIL import Image
 
 from know_your_fan import ocr
 from know_your_fan.config import Settings
-from know_your_fan.limits import Clock, OCRGuard, SlidingWindowRateLimiter
+from know_your_fan.limits import GLOBAL_KEY, Clock, OCRGuard, SlidingWindowRateLimiter
 from know_your_fan.models import FanProfile
 from know_your_fan.storage import SyntheticProfileRepository
 from know_your_fan.synthetic import generate_profiles
@@ -21,9 +21,12 @@ SEED_DATASET_SIZE = 25
 SEED_DATASET_SEED = 2025
 MAX_SEARCH_LENGTH = 50
 
-# Per-session limit on adding generated profiles to the shared dataset. It slows a
-# single visitor from filling the dataset; the hard bound remains max_profiles.
+# Limits on adding generated profiles to the shared dataset. The per-session limit
+# is a fairness measure (a new session gets a new budget); the process-wide limit
+# bounds how fast many sessions together can fill the dataset. The hard bound
+# remains max_profiles.
 PROFILE_WRITE_LIMIT = 10
+PROFILE_GLOBAL_WRITE_LIMIT = 60
 PROFILE_WRITE_WINDOW_SECONDS = 600.0
 
 TextExtractor = Callable[[Image.Image], str]
@@ -37,6 +40,7 @@ class Runtime:
     repository: SyntheticProfileRepository
     ocr_guard: OCRGuard
     profile_write_limiter: SlidingWindowRateLimiter
+    profile_global_write_limiter: SlidingWindowRateLimiter
 
 
 def open_repository(settings: Settings) -> SyntheticProfileRepository:
@@ -60,6 +64,9 @@ def build_runtime(settings: Settings, *, clock: Clock = time.monotonic) -> Runti
         ocr_guard=OCRGuard.from_settings(settings, clock=clock),
         profile_write_limiter=SlidingWindowRateLimiter(
             PROFILE_WRITE_LIMIT, PROFILE_WRITE_WINDOW_SECONDS, clock=clock
+        ),
+        profile_global_write_limiter=SlidingWindowRateLimiter(
+            PROFILE_GLOBAL_WRITE_LIMIT, PROFILE_WRITE_WINDOW_SECONDS, clock=clock
         ),
     )
 
@@ -86,12 +93,13 @@ def render_card(profile: FanProfile, blur_radius: float, rotation_degrees: float
 
 
 def add_generated_profile(runtime: Runtime, profile: FanProfile, session_key: str) -> bool:
-    """Add a generated profile, subject to the per-session write limit.
+    """Add a generated profile, subject to the per-session and process-wide write limits.
 
     Raises :class:`~know_your_fan.limits.RateLimitedError` before touching the
-    database when the session exceeds its write budget.
+    database when the session or the process exceeds its write budget.
     """
     runtime.profile_write_limiter.acquire(session_key)
+    runtime.profile_global_write_limiter.acquire(GLOBAL_KEY)
     return runtime.repository.add(profile)
 
 

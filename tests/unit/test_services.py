@@ -199,6 +199,21 @@ def test_profile_writes_are_rate_limited_per_session(tmp_path: Path) -> None:
     assert runtime.repository.count() == services.SEED_DATASET_SIZE + len(fresh)
 
 
+def test_profile_writes_from_many_sessions_hit_the_process_wide_limit(tmp_path: Path) -> None:
+    # Opening new sessions resets the per-session budget but not the process-wide one,
+    # so many sessions together cannot fill the shared dataset faster than this limit.
+    settings = Settings(db_path=tmp_path / "demo.db")
+    runtime = services.build_runtime(settings, clock=lambda: 0.0)
+    fresh = generate_profiles(services.PROFILE_GLOBAL_WRITE_LIMIT + 1, seed=777)
+    for index, p in enumerate(fresh[:-1]):
+        assert services.add_generated_profile(runtime, p, f"session-{index}")
+    with pytest.raises(RateLimitedError):
+        services.add_generated_profile(runtime, fresh[-1], "yet-another-session")
+    assert runtime.repository.count() == (
+        services.SEED_DATASET_SIZE + services.PROFILE_GLOBAL_WRITE_LIMIT
+    )
+
+
 def test_build_runtime_applies_settings(tmp_path: Path) -> None:
     settings = Settings(
         db_path=tmp_path / "demo.db",

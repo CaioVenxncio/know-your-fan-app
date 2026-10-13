@@ -5,6 +5,8 @@ from __future__ import annotations
 import dataclasses
 import logging
 import sqlite3
+import subprocess
+import sys
 import threading
 from collections.abc import Callable
 from pathlib import Path
@@ -212,6 +214,40 @@ def test_concurrent_writers_cannot_exceed_the_cap(tmp_path: Path) -> None:
     assert SyntheticProfileRepository(path).count() == cap
     assert outcomes.count("added") == cap
     assert outcomes.count("limit") == workers * per_worker - cap
+
+
+_PROCESS_WRITER = """
+import sys
+from pathlib import Path
+from know_your_fan.storage import StorageLimitError, SyntheticProfileRepository
+from know_your_fan.synthetic import generate_profiles
+path, cap, seed, count = Path(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
+repo = SyntheticProfileRepository(path, max_profiles=cap, busy_timeout_seconds=20)
+for profile in generate_profiles(count, seed=seed):
+    try:
+        print("added" if repo.add(profile) else "duplicate")
+    except StorageLimitError:
+        print("limit")
+"""
+
+
+def test_writers_in_separate_processes_cannot_exceed_the_cap(tmp_path: Path) -> None:
+    # Several app processes or containers sharing one database file (for example,
+    # replicas on a shared volume) serialize on SQLite's file lock, not a Python lock.
+    cap, processes, per_process = 25, 4, 15
+    path = tmp_path / "demo.db"
+    SyntheticProfileRepository(path).initialize()
+    commands = [
+        [sys.executable, "-c", _PROCESS_WRITER, str(path), str(cap), str(100 + i), str(per_process)]
+        for i in range(processes)
+    ]
+    # Fixed arguments built by the test itself; no shell.
+    running = [subprocess.Popen(c, stdout=subprocess.PIPE, text=True) for c in commands]  # noqa: S603
+    outcomes = [line for p in running for line in p.communicate(timeout=120)[0].split()]
+    assert all(p.returncode == 0 for p in running)
+    assert SyntheticProfileRepository(path).count() == cap
+    assert outcomes.count("added") == cap
+    assert outcomes.count("limit") == processes * per_process - cap
 
 
 def test_concurrent_seeding_inserts_exactly_once(tmp_path: Path) -> None:

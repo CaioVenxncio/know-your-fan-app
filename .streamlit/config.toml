@@ -14,6 +14,9 @@ gatherUsageStats = false
 # text #16181D on #FAF9F6 16.9:1; primary #4338CA on #FAF9F6 7.5:1; white on #4338CA 7.9:1;
 # link/tag #3730A3 9.4:1; pill borders #857F75 3.8:1 (non-text, >= 3:1). The orange accent
 # #C2410C (4.9:1) is decorative only and never the sole carrier of meaning.
+# Phase 6: an axe-core scan found colours Streamlit derives itself below 4.5:1 (captions
+# 4.36:1, success-alert text 4.29:1). Alert text colours are set here (all >= 7.9:1 on the
+# rendered alert backgrounds); captions and input hints are darkened in ui.py.
 [theme]
 base = "light"
 primaryColor = "#4338CA"
@@ -22,6 +25,10 @@ secondaryBackgroundColor = "#F0EEE9"
 textColor = "#16181D"
 borderColor = "#DEDBD3"
 linkColor = "#3730A3"
+greenTextColor = "#14532D"
+yellowTextColor = "#713F12"
+redTextColor = "#7F1D1D"
+blueTextColor = "#1E3A8A"
 font = "sans-serif"
 headingFont = "sans-serif"
 codeFont = "monospace"

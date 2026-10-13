@@ -86,6 +86,12 @@ jobs:
       - name: Coverage threshold for non-UI code
         run: uv run coverage report --omit='src/know_your_fan/app.py' --fail-under=90
 
+      # Integrity of the committed Phase 4 record: config hashes, dataset fingerprints,
+      # manifests, task coverage, frozen selection; then every metric is recomputed from
+      # the committed observations (no OCR) and compared with the committed outputs.
+      - name: Research record verification and re-analysis
+        run: uv run python scripts/verify_research.py --reanalyse
+
       # Run twice to measure the effect of Tesseract's OpenMP threading on
       # concurrent OCR (the Docker image sets OMP_THREAD_LIMIT=1).
       - name: Bounded operational validation (real Tesseract, default threading)
@@ -167,6 +173,21 @@ jobs:
           assert explorer is not None, "research_explorer.json missing or malformed"
           assert presentation.load_results().figures, "research figures missing"
           print("research runs:", presentation.total_ocr_runs(explorer))
+          '
+
+      - name: Image contains no data, secrets, tests, or tooling
+        run: |
+          docker run --rm --entrypoint sh know-your-fan:ci -c '
+          set -eu
+          ls -A /app
+          found="$(find /app \( -name "*.db" -o -name "*.db-*" -o -name ".env*" \
+            -o -name "secrets.toml" -o -name "*.csv" -o -name "*.csv.gz" -o -name "*.pem" \
+            -o -name "*.key" -o -name ".git" -o -name tests -o -name scripts -o -name .github \) \
+            -print)"
+          if [ -n "$found" ]; then echo "unexpected files in the image:"; echo "$found"; exit 1; fi
+          test -z "$(ls -A /app/.data)"
+          test "$(ls -A /app/.streamlit)" = "config.toml"
+          test "$(ls -A /app/experiments/results | tr "\n" " ")" = "research_explorer.json research_summary.json "
           '
 
       - name: Tesseract version and languages inside the image

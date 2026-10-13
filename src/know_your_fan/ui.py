@@ -3,10 +3,14 @@
 Everything rendered through ``st.markdown(..., unsafe_allow_html=True)`` here is
 a **static string** defined in this module. User-controlled or generated values
 are never passed to these helpers; pages render them with ``st.text``,
-``st.code``, ``st.dataframe``, or ``st.metric``.
+``st.code``, ``st.dataframe``, or ``st.metric``. As a second line of defence the
+helpers HTML-escape their text arguments, so a future caller that breaks this
+rule produces visible text, not markup.
 """
 
 from __future__ import annotations
+
+from html import escape
 
 import streamlit as st
 
@@ -50,6 +54,12 @@ _CSS = """
 [data-testid="stRadioOption"][data-focus-visible="true"],
 [data-testid="stRadioOption"]:has(input:focus-visible) { outline: 3px solid #4338CA;
   outline-offset: 2px; }
+/* Streamlit fades captions (opacity .6) and input hints to about 4.4:1, below WCAG AA.
+   Solid #4A4E57 instead: 7.9:1 on the page, 7.2:1 on the secondary background. */
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p,
+[data-testid="InputInstructions"] { color: #4A4E57; opacity: 1; }
+/* Home card titles are h2 (heading order) at the visual size of a subheader. */
+[class*="st-key-home_card_"] h2 { font-size: 1.5rem; padding-top: .25rem; }
 /* Profile card title: the fictional name, rendered as plain text inside a keyed container. */
 [class*="st-key-profile_name_"] [data-testid="stText"] { font-size: 1.45rem; font-weight: 700; }
 @media (max-width: 640px) {
@@ -60,7 +70,7 @@ _CSS = """
 """
 
 _BRAND = """
-<div class="kyf-brand" role="banner">
+<div class="kyf-brand">
   <span class="kyf-wordmark">KNOW YOUR FAN<span>.</span></span>
   <span class="kyf-tag">Synthetic data only</span>
   <span class="kyf-tag">Not identity verification</span>
@@ -78,20 +88,21 @@ def brand_bar() -> None:
 
 def eyebrow(label: str) -> None:
     """Small uppercase section label. ``label`` must be a static string."""
-    st.markdown(f'<p class="kyf-eyebrow">{label}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="kyf-eyebrow">{escape(label)}</p>', unsafe_allow_html=True)
 
 
 def hero(title: str, lead: str) -> None:
     """Page hero. ``title`` and ``lead`` must be static strings."""
     st.markdown(
-        f'<div class="kyf-hero"><h1>{title}</h1><p>{lead}</p></div>', unsafe_allow_html=True
+        f'<div class="kyf-hero"><h1>{escape(title)}</h1><p>{escape(lead)}</p></div>',
+        unsafe_allow_html=True,
     )
 
 
 def step(number: int, title: str) -> None:
     """Numbered step heading. ``title`` must be a static string."""
     st.markdown(
-        f'<span class="kyf-step" aria-hidden="true">{number}</span>'
-        f'<span class="kyf-step-title">Step {number}: {title}</span>',
+        f'<span class="kyf-step" aria-hidden="true">{int(number)}</span>'
+        f'<span class="kyf-step-title">Step {int(number)}: {escape(title)}</span>',
         unsafe_allow_html=True,
     )
