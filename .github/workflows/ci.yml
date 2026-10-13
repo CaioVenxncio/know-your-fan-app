@@ -67,15 +67,21 @@ jobs:
       - name: End-to-end OCR tests (real engine, must not skip)
         env:
           KYF_REQUIRE_OCR: "1"
-        run: uv run pytest -m ocr -v --no-cov
+        run: uv run pytest -m ocr -v --no-cov --junitxml=junit-ocr.xml
 
       - name: Full test suite with coverage
+        # Runs even if the OCR step failed, so every failure is reported in one run.
+        if: ${{ !cancelled() }}
         env:
           KYF_REQUIRE_OCR: "1"
-        run: uv run pytest --cov --cov-report=term-missing
+        run: uv run pytest --cov --cov-report=term-missing --junitxml=junit-all.xml
 
       - name: Coverage threshold for non-UI code
         run: uv run coverage report --omit='src/know_your_fan/app.py' --fail-under=90
+
+      - name: Report test failures as annotations
+        if: ${{ failure() }}
+        run: uv run python .github/scripts/junit_to_annotations.py junit-ocr.xml junit-all.xml
 
   dependency-audit:
     name: Dependency vulnerability audit

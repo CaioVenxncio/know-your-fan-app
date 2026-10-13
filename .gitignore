@@ -53,3 +53,7 @@ desktop.ini
 .idea/
 .vscode/
 *.swp
+
+# Test reports
+junit-*.xml
+coverage.xml
