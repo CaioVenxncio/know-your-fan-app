@@ -225,9 +225,11 @@ software keeps its own license, including:
 | pytesseract | Python dependency | Apache-2.0 |
 | Tesseract OCR and its language data | System program, installed separately | Apache-2.0 |
 | Ruff, mypy, pytest, pytest-cov, pip-audit, pre-commit | Development dependencies | MIT or Apache-2.0 |
+| Aileron Regular font (`src/know_your_fan/assets/fonts/`) | Bundled, unmodified; draws the specimen cards | CC0 1.0 (public domain dedication) |
 
-Specimen cards are drawn with the default font bundled in Pillow (Aileron Regular). No third-party
-source code, fonts, images, or logos are stored in this repository.
+The font is the only third-party file stored in this repository. Its source and checksum are
+recorded in [`assets/fonts/README.md`](src/know_your_fan/assets/fonts/README.md). No third-party
+source code, images, or logos are included.
 
 Game titles that appear in synthetic profiles are trademarks of their respective owners. They are used only to describe
 fan interests and do not imply affiliation or endorsement.

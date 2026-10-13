@@ -7,11 +7,16 @@ Tesseract on the result.
 
 from __future__ import annotations
 
+from functools import cache
+from importlib import resources
+from io import BytesIO
+
 import pytesseract
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 from know_your_fan.models import FanProfile
 
+FONT_RESOURCE = "assets/fonts/Aileron-Regular.otf"
 OCR_LANGUAGE = "por+eng"
 OCR_TIMEOUT_SECONDS = 15
 MAX_IMAGE_PIXELS = 4_000_000
@@ -30,6 +35,21 @@ class InvalidImageError(ValueError):
     """The image is empty or too large for the demo OCR pipeline."""
 
 
+@cache
+def _font_bytes() -> bytes:
+    return resources.files("know_your_fan").joinpath(FONT_RESOURCE).read_bytes()
+
+
+def specimen_font(size: int) -> ImageFont.FreeTypeFont:
+    """Return the bundled card font (Aileron Regular, CC0) at ``size`` points.
+
+    Pillow's built-in default font lacks accented glyphs, so the card uses a
+    bundled font to draw names such as "João" or "Gonçalves" correctly on
+    every platform.
+    """
+    return ImageFont.truetype(BytesIO(_font_bytes()), size)
+
+
 def render_specimen(profile: FanProfile) -> Image.Image:
     """Draw a fictional, watermarked fan card for ``profile``.
 
@@ -38,9 +58,9 @@ def render_specimen(profile: FanProfile) -> Image.Image:
     """
     image = Image.new("RGB", SPECIMEN_SIZE, "white")
     draw = ImageDraw.Draw(image)
-    title_font = ImageFont.load_default(size=40)
-    body_font = ImageFont.load_default(size=30)
-    small_font = ImageFont.load_default(size=22)
+    title_font = specimen_font(40)
+    body_font = specimen_font(30)
+    small_font = specimen_font(22)
 
     draw.rectangle(
         [(10, 10), (SPECIMEN_SIZE[0] - 10, SPECIMEN_SIZE[1] - 10)], outline="black", width=4

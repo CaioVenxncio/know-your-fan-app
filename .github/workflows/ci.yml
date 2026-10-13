@@ -146,12 +146,15 @@ jobs:
       - name: Real OCR on a synthetic specimen inside the image
         run: |
           docker run --rm --entrypoint python know-your-fan:ci -c '
+          import dataclasses
           from know_your_fan import ocr, synthetic, text_matching
-          profile = synthetic.generate_profiles(1, seed=2025)[0]
-          text = ocr.extract_text(ocr.render_specimen(profile))
-          result = text_matching.match_name(profile.name, text)
-          print(profile.name, "->", result)
-          assert result.all_found
+          base = synthetic.generate_profiles(1, seed=2025)[0]
+          for name in (base.name, "João Conceição Gonçalves", "Fábio Falcão Simões"):
+              profile = dataclasses.replace(base, name=name)
+              text = ocr.extract_text(ocr.render_specimen(profile))
+              result = text_matching.match_name(profile.name, text)
+              print(profile.name, "->", result)
+              assert result.all_found, text
           '
 
       - name: Application starts and reports healthy

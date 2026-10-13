@@ -14,6 +14,13 @@ from PIL import Image, ImageChops
 
 from know_your_fan import ocr
 from know_your_fan.models import FanProfile
+from know_your_fan.synthetic import (
+    _ID_ALPHABET,
+    FICTIONAL_CITIES,
+    GAMES,
+    GIVEN_NAMES,
+    SURNAMES,
+)
 
 
 def test_specimen_has_fixed_size_and_is_not_blank(profile: FanProfile) -> None:
@@ -130,3 +137,18 @@ def test_engine_failures_map_to_friendly_errors(
     monkeypatch.setattr(pytesseract, "image_to_string", _raiser(raised))
     with pytest.raises(expected):
         ocr.extract_text(ocr.render_specimen(profile))
+
+
+def test_card_font_has_a_real_glyph_for_every_character_used() -> None:
+    """Regression: Pillow's default font drew accented letters as placeholder glyphs."""
+    font = ocr.specimen_font(30)
+    placeholder = bytes(font.getmask(""))  # private-use code point: never in the font
+    vocabulary = (*GIVEN_NAMES, *SURNAMES, *FICTIONAL_CITIES, *GAMES)
+    labels = "KNOW YOUR FAN - FAN CARD SPECIMEN FICTIONAL DATA Name Demo ID City Favorite game:"
+    characters = {c for c in "".join(vocabulary) + labels + _ID_ALPHABET if not c.isspace()}
+    missing = sorted(c for c in characters if bytes(font.getmask(c)) == placeholder)
+    assert missing == []
+
+
+def test_card_font_is_loaded_from_package_resources() -> None:
+    assert ocr.specimen_font(12).getname() == ("Aileron", "Regular")

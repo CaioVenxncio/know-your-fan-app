@@ -7,6 +7,7 @@ missing language data makes the tests fail instead of skipping silently.
 
 from __future__ import annotations
 
+import dataclasses
 import os
 import shutil
 
@@ -15,7 +16,7 @@ import pytest
 
 from know_your_fan import ocr, services
 from know_your_fan.models import FanProfile
-from know_your_fan.synthetic import generate_profiles
+from know_your_fan.synthetic import GIVEN_NAMES, SURNAMES, generate_profiles, synthetic_violations
 from know_your_fan.text_matching import match_name
 
 REQUIRED = os.environ.get("KYF_REQUIRE_OCR") == "1"
@@ -28,8 +29,25 @@ if not AVAILABLE:
 
 pytestmark = pytest.mark.ocr
 
-# Seeds chosen to include accented given names and surnames.
 PROFILES = generate_profiles(6, seed=2025)
+
+# Valid vocabulary combinations that together use every accented given name and surname
+# (á, é, ã, õ, ç). These regressed when cards were drawn with a font lacking those glyphs.
+ACCENTED_NAMES = (
+    "João Conceição Gonçalves",
+    "Fábio Falcão Simões",
+    "Natália Simões Conceição",
+    "Otávio Gonçalves Falcão",
+    "Valéria Falcão Simões",
+)
+ACCENTED_PROFILES = [dataclasses.replace(PROFILES[0], name=name) for name in ACCENTED_NAMES]
+
+
+def test_accented_profiles_are_valid_synthetic_data() -> None:
+    accented_words = {w for w in (*GIVEN_NAMES, *SURNAMES) if not w.isascii()}
+    used = {w for name in ACCENTED_NAMES for w in name.split()}
+    assert accented_words <= used
+    assert all(synthetic_violations(p) == [] for p in ACCENTED_PROFILES)
 
 
 def test_engine_version_and_language_data() -> None:
@@ -38,7 +56,7 @@ def test_engine_version_and_language_data() -> None:
     assert {"por", "eng"} <= languages, languages
 
 
-@pytest.mark.parametrize("profile", PROFILES, ids=lambda p: p.demo_id)
+@pytest.mark.parametrize("profile", PROFILES + ACCENTED_PROFILES, ids=lambda p: p.name)
 def test_clean_specimen_name_is_recognized(profile: FanProfile) -> None:
     text = ocr.extract_text(ocr.render_specimen(profile))
     result = match_name(profile.name, text)

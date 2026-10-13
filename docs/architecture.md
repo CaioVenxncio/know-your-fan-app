@@ -108,6 +108,10 @@ flowchart LR
     t --> m[match_name]
 ```
 
+- Cards are drawn with a bundled font (Aileron Regular, CC0, in `assets/fonts/`), loaded through
+  `importlib.resources`. Pillow's built-in default font has no accented glyphs, which made names
+  such as "João" render incorrectly. A unit test now checks glyph coverage for every character
+  the card can contain.
 - Images must be non-empty and at most 4 megapixels (`InvalidImageError`).
 - Tesseract errors are mapped to two types:
   - `OCRUnavailableError`: the binary or its language data is missing.

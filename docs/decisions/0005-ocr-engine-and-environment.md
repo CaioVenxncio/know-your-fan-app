@@ -22,6 +22,10 @@ missing locally, so the end-to-end OCR test was skipped, and a skipped test prov
   real OCR on a synthetic specimen inside the image. It is a reproducible local runtime, not a
   deployment configuration.
 - **Streamlit Community Cloud:** `packages.txt` lists the same apt packages.
+- **Rendering font:** specimen cards use a bundled font (Aileron Regular, CC0) instead of a
+  system font or Pillow's default. Pillow's default lacks accented glyphs, and the first CI run
+  with a real engine exposed this: "João" was drawn and read as "JoXo". A bundled font gives
+  identical card images on every platform.
 
 ## Consequences
 
