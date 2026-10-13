@@ -159,6 +159,16 @@ jobs:
       - name: Image runs as a non-root user
         run: test "$(docker run --rm --entrypoint id know-your-fan:ci -u)" != "0"
 
+      - name: Research page data is present and loadable in the image
+        run: |
+          docker run --rm --entrypoint python know-your-fan:ci -c '
+          from know_your_fan.research import presentation
+          explorer = presentation.load_explorer()
+          assert explorer is not None, "research_explorer.json missing or malformed"
+          assert presentation.load_results().figures, "research figures missing"
+          print("research runs:", presentation.total_ocr_runs(explorer))
+          '
+
       - name: Tesseract version and languages inside the image
         run: |
           version="$(docker run --rm --entrypoint tesseract know-your-fan:ci --version 2>&1 | head -n 1)"
