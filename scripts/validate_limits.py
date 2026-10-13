@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import statistics
 import sys
 import tempfile
@@ -116,6 +117,7 @@ def scenario_concurrency(work: Callable[[Image.Image], str], label: str) -> Resu
     image, name = _card()
     outcomes: list[str] = []
     durations: list[float] = []
+    accepted_durations: list[float] = []
     lock = threading.Lock()
     start = threading.Barrier(CONCURRENT_REQUESTS)
 
@@ -129,9 +131,12 @@ def scenario_concurrency(work: Callable[[Image.Image], str], label: str) -> Resu
             outcome = "rejected_busy"
         except Exception as exc:  # any other failure is reported as an error count
             outcome = f"error:{type(exc).__name__}"
+        elapsed = time.perf_counter() - began
         with lock:
             outcomes.append(outcome)
-            durations.append(time.perf_counter() - began)
+            durations.append(elapsed)
+            if outcome == "accepted":
+                accepted_durations.append(elapsed)
 
     threads = [threading.Thread(target=client, args=(i,)) for i in range(CONCURRENT_REQUESTS)]
     wall = time.perf_counter()
@@ -153,6 +158,7 @@ def scenario_concurrency(work: Callable[[Image.Image], str], label: str) -> Resu
         "active_after": guard.concurrency.active,
         "wall_seconds": round(wall, 3),
         "max_request_seconds": round(max(durations), 3),
+        "accepted_request_seconds": sorted(round(d, 3) for d in accepted_durations),
         "ok": guard.concurrency.max_observed <= guard.concurrency.capacity
         and guard.concurrency.active == 0
         and not errors,
@@ -290,7 +296,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--real-ocr", action="store_true", help="use the real Tesseract engine")
     parser.add_argument("--github", action="store_true", help="emit GitHub ::notice annotations")
     parser.add_argument("--json", type=Path, help="also write results to this JSON file")
+    parser.add_argument("--label", default="", help="tag added to annotation titles")
     args = parser.parse_args(argv)
+
+    if args.real_ocr:
+        # Load the engine and language data once so cold-start cost is not
+        # attributed to the concurrency scenario.
+        ocr.extract_text(_card()[0])
+    environment = {"OMP_THREAD_LIMIT": os.environ.get("OMP_THREAD_LIMIT", "(unset)")}
+    print(f"environment: {environment}")
 
     results: dict[str, Result] = {
         "rate_limits": scenario_rate_limits(),
@@ -311,9 +325,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[{status}] {name}: {details}")
         if args.github:
             level = "notice" if result["ok"] else "error"
-            print(f"::{level} title=validate_limits {name}::{details}")
+            tag = f" [{args.label}]" if args.label else ""
+            print(f"::{level} title=validate_limits {name}{tag}::{details}")
     if args.json:
-        args.json.write_text(json.dumps(results, indent=2), encoding="utf-8")
+        payload = {"environment": environment, "label": args.label, "results": results}
+        args.json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return 0 if all(r["ok"] for r in results.values()) else 1
 
 

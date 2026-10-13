@@ -86,8 +86,15 @@ jobs:
       - name: Coverage threshold for non-UI code
         run: uv run coverage report --omit='src/know_your_fan/app.py' --fail-under=90
 
-      - name: Bounded operational validation (real Tesseract)
-        run: uv run python scripts/validate_limits.py --real-ocr --github
+      # Run twice to measure the effect of Tesseract's OpenMP threading on
+      # concurrent OCR (the Docker image sets OMP_THREAD_LIMIT=1).
+      - name: Bounded operational validation (real Tesseract, default threading)
+        run: uv run python scripts/validate_limits.py --real-ocr --github --label default-threads
+
+      - name: Bounded operational validation (real Tesseract, OMP_THREAD_LIMIT=1)
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: uv run python scripts/validate_limits.py --real-ocr --github --label omp-1-thread
 
       - name: Report test failures as annotations
         if: ${{ failure() }}
