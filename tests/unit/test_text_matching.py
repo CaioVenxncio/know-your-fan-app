@@ -6,7 +6,10 @@ import pytest
 
 from know_your_fan.text_matching import (
     MAX_EXPECTED_NAME_LENGTH,
+    contains_token_sequence,
+    line_tokens,
     match_name,
+    match_name_sequence,
     normalize_tokens,
 )
 
@@ -91,3 +94,81 @@ def test_overlong_name_is_rejected() -> None:
 
 def test_name_at_length_limit_is_accepted() -> None:
     assert match_name("a" * MAX_EXPECTED_NAME_LENGTH, "a" * MAX_EXPECTED_NAME_LENGTH).all_found
+
+
+# ------------------------------------------------------------------ Phase 5: M1 is the app rule
+
+
+@pytest.mark.parametrize(
+    ("true_name", "decoy"),
+    [
+        # The three test-split names behind all 33 of M0's false accepts in Phase 4.
+        ("Tânia Tainá Rios Moraes", "Tânia Tânia Rios Moraes"),
+        ("Rosimeire Telles Teles", "Rosimeire Telles Telles"),
+        ("Edu Moura Mourão", "Edu Mourão Mourão"),
+    ],
+)
+def test_m1_rejects_repeated_token_decoys_that_m0_accepted(true_name: str, decoy: str) -> None:
+    card = f"KNOW YOUR FAN - FAN CARD\nName: {true_name}\nCity: Vila Aurora"
+    assert match_name(decoy, card).all_found  # M0 (historical baseline) accepts
+    result = match_name_sequence(decoy, card)
+    assert not result.matched  # the application's rule rejects
+    assert result.verdict == "words_not_in_sequence"
+    assert match_name_sequence(true_name, card).matched
+
+
+def test_m1_requires_order_and_a_single_line() -> None:
+    assert not match_name_sequence("Lima Ana", "Name: Ana Lima").matched
+    assert not match_name_sequence("Ana Lima", "Name: Ana\nLima").matched
+    assert match_name_sequence("Ana Lima", "Name: Ana Lima\nCity: X").matched
+
+
+def test_m1_whole_words_only() -> None:
+    result = match_name_sequence("Ana", "Name: Mariana Santana")
+    assert not result.matched
+    assert result.verdict == "none"
+
+
+def test_m1_folds_accents_case_and_punctuation() -> None:
+    assert match_name_sequence("joão CONCEIÇÃO", "Name: JOAO Conceicao").matched
+    assert match_name_sequence("Ana Conceição-Gonçalves", "Name: Ana Conceição Gonçalves").matched
+
+
+def test_m1_compound_names_with_particles() -> None:
+    card = "Name: Maria da Conceição Prado Lima"
+    assert match_name_sequence("Maria da Conceição Prado Lima", card).matched
+    assert match_name_sequence("Conceição Prado", card).matched  # contiguous part of the line
+    assert not match_name_sequence("Maria Conceição", card).matched  # particle skipped
+
+
+@pytest.mark.parametrize(
+    ("text", "verdict"),
+    [
+        ("Name: Ana Lima Barros", "match"),
+        ("Name: Barros Lima Ana", "words_not_in_sequence"),
+        ("Name: Ana Lima", "partial"),
+        ("Name: Ivo Prado", "none"),
+        ("", "none"),
+    ],
+)
+def test_sequence_match_verdicts(text: str, verdict: str) -> None:
+    assert match_name_sequence("Ana Lima Barros", text).verdict == verdict
+
+
+def test_sequence_match_reports_word_level_feedback() -> None:
+    result = match_name_sequence("Ana Lima Barros", "Name: Ana Lima")
+    assert result.words.found_tokens == ("ana", "lima")
+    assert result.words.missing_tokens == ("barros",)
+
+
+@pytest.mark.parametrize("bad", ["", "   ", "123", "a" * (MAX_EXPECTED_NAME_LENGTH + 1)])
+def test_sequence_match_validates_input_like_the_baseline(bad: str) -> None:
+    with pytest.raises(ValueError):  # noqa: PT011 - messages are covered by the baseline tests
+        match_name_sequence(bad, "anything")
+
+
+def test_line_tokens_and_contains_token_sequence() -> None:
+    assert line_tokens("A b\n\n  \nC") == [["a", "b"], ["c"]]
+    assert contains_token_sequence(["x", "a", "b", "y"], ["a", "b"])
+    assert not contains_token_sequence(["a", "x", "b"], ["a", "b"])
+    assert not contains_token_sequence(["a"], ["a", "b"])

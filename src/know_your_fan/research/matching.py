@@ -21,10 +21,16 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 
 from know_your_fan.research.metrics import levenshtein
-from know_your_fan.text_matching import match_name, normalize_tokens
+from know_your_fan.text_matching import (
+    contains_token_sequence,
+    line_tokens,
+    match_name,
+    normalize_tokens,
+    sequence_on_one_line,
+)
 
 Matcher = Callable[[str, str], bool]
 
@@ -43,22 +49,13 @@ CONFUSABLE_CHARACTERS: dict[str, str] = {
 _M3_TOKEN = re.compile(r"[^\s.,;:()\[\]{}\-_/\\\"'`]+")
 
 
-def _lines(text: str) -> list[list[str]]:
-    return [tokens for line in text.splitlines() if (tokens := normalize_tokens(line))]
-
-
-def _contains_sequence(haystack: Sequence[str], needle: Sequence[str]) -> bool:
-    n = len(needle)
-    return any(list(haystack[i : i + n]) == list(needle) for i in range(len(haystack) - n + 1))
-
-
 def m0_baseline(candidate: str, text: str) -> bool:
     return match_name(candidate, text).all_found
 
 
 def m1_token_sequence(candidate: str, text: str) -> bool:
-    expected = normalize_tokens(candidate)
-    return bool(expected) and any(_contains_sequence(line, expected) for line in _lines(text))
+    """M1 delegates to the application's implementation (identical behaviour)."""
+    return sequence_on_one_line(candidate, text)
 
 
 def normalized_distance(a: str, b: str) -> float:
@@ -79,7 +76,7 @@ def m2_score(candidate: str, text: str) -> float:
         return 1.0
     n = len(expected)
     best = 1.0
-    for line in _lines(text):
+    for line in line_tokens(text):
         for start in range(len(line) - n + 1):
             worst = 0.0
             for e, w in zip(expected, line[start : start + n], strict=True):
@@ -120,7 +117,7 @@ def m3_confusable(candidate: str, text: str) -> bool:
     if not expected:
         return False
     return any(
-        _contains_sequence(tokens, expected)
+        contains_token_sequence(tokens, expected)
         for line in text.splitlines()
         if (tokens := _m3_tokens(line))
     )
