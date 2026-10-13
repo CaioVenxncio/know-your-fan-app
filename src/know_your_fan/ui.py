@@ -1,80 +1,78 @@
-"""Shared visual helpers for the Streamlit pages.
+"""Design system helpers for the Streamlit pages (see docs/design-system.md).
 
-Everything rendered through ``st.markdown(..., unsafe_allow_html=True)`` here is
-a **static string** defined in this module. User-controlled or generated values
-are never passed to these helpers; pages render them with ``st.text``,
-``st.code``, ``st.dataframe``, or ``st.metric``. As a second line of defence the
-helpers HTML-escape their text arguments, so a future caller that breaks this
-rule produces visible text, not markup.
+Colours, fonts, radii and heading sizes are theme tokens in `.streamlit/config.toml`.
+This module adds what the theme cannot express: a small scoped stylesheet, brand
+assets, and a few layout helpers.
+
+Rendering policy: everything passed to ``st.markdown(..., unsafe_allow_html=True)``
+here is either a static string defined in this module or text escaped with
+:func:`html.escape`. Pages render user-controlled and generated values with
+``st.text``, ``st.code``, ``st.dataframe`` or ``st.metric``; the only generated value
+used here is a profile's initials in :func:`monogram`, which are letters only and
+escaped. A test fails if any other module emits raw HTML.
 """
 
 from __future__ import annotations
 
 from html import escape
+from importlib import resources
+from pathlib import Path
 
 import streamlit as st
 
-ACCENT = "#C2410C"
+SYNTHETIC_NOTICE = (
+    "Synthetic-data demonstration. All profiles and documents are fictional. "
+    "Do not enter real names, CPF numbers, addresses, or identity documents."
+)
+PANEL_KEY = "panel"
 PROFILE_NAME_KEY = "profile_name"
 
-# Static stylesheet: layout rhythm, typographic accents, and visible keyboard focus.
+_BRAND = resources.files("know_your_fan").joinpath("assets/brand")
+
+# Scoped stylesheet. Selectors use Streamlit's documented `st-key-<key>` classes for
+# keyed containers, stable `data-testid` attributes, and BaseWeb's `data-baseweb`
+# attributes for form controls. Nothing here changes layout geometry that Streamlit
+# relies on: in particular the main container's top padding is left to Streamlit,
+# because it reserves the space under the fixed app header (see docs/design-system.md,
+# "Header clipping").
 _CSS = """
 <style>
-.block-container { padding-top: 1.6rem; padding-bottom: 3rem; max-width: 1180px; }
-.kyf-brand { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
-  margin-bottom: .2rem; }
-.kyf-wordmark { font-weight: 800; letter-spacing: .02em; font-size: 1.35rem; }
-.kyf-wordmark span { color: #C2410C; }
-.kyf-tag { font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-  color: #3730A3; border: 1px solid #C7C3F4; border-radius: 999px; padding: .1rem .55rem; }
-.kyf-eyebrow { font-size: .76rem; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: #3730A3; margin: 0 0 .25rem 0; }
-.kyf-hero { border-left: 4px solid #C2410C; padding: .2rem 0 .2rem 1rem; margin: .6rem 0 1.2rem 0; }
-.kyf-hero h1 { font-size: 2.3rem; line-height: 1.15; margin: 0 0 .5rem 0; padding: 0; }
-.kyf-hero p { font-size: 1.08rem; max-width: 46rem; margin: 0; color: #2B2E36; }
-.kyf-step { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem;
-  height: 1.6rem; border-radius: 999px; background: #4338CA; color: #FFFFFF; font-weight: 700;
-  font-size: .85rem; margin-right: .5rem; }
-.kyf-step-title { font-weight: 700; font-size: 1.05rem; }
-.kyf-muted { color: #4A4E57; font-size: .92rem; }
-:focus-visible { outline: 3px solid #4338CA !important; outline-offset: 2px !important; }
-/* Horizontal radio groups (navigation, metric toggles) styled as pills. Uses Streamlit's stable
-   test ids and React Aria's data attributes (verified against Streamlit 1.65's DOM). The native
-   radio input stays in the DOM for keyboard and screen-reader use; the selected pill is shown by
-   fill and bold text, not by colour alone. */
-[data-testid="stRadioGroup"][aria-orientation="horizontal"] { gap: .45rem; flex-wrap: wrap; }
-[aria-orientation="horizontal"] [data-testid="stRadioOption"] { border: 1px solid #857F75;
-  border-radius: 999px; padding: .3rem .95rem; background: #FFFFFF; margin: 0 !important; }
-[aria-orientation="horizontal"] [data-testid="stRadioOption"] > div > div:first-child {
-  display: none; }
-[aria-orientation="horizontal"] [data-testid="stRadioOption"][data-selected="true"] {
-  background: #4338CA; border-color: #4338CA; }
-[aria-orientation="horizontal"] [data-testid="stRadioOption"][data-selected="true"] p {
-  color: #FFFFFF; font-weight: 700; }
-[data-testid="stRadioOption"][data-focus-visible="true"],
-[data-testid="stRadioOption"]:has(input:focus-visible) { outline: 3px solid #4338CA;
-  outline-offset: 2px; }
-/* Streamlit fades captions (opacity .6) and input hints to about 4.4:1, below WCAG AA.
-   Solid #4A4E57 instead: 7.9:1 on the page, 7.2:1 on the secondary background. */
-[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p,
-[data-testid="InputInstructions"] { color: #4A4E57; opacity: 1; }
-/* Home card titles are h2 (heading order) at the visual size of a subheader. */
-[class*="st-key-home_card_"] h2 { font-size: 1.5rem; padding-top: .25rem; }
-/* Profile card title: the fictional name, rendered as plain text inside a keyed container. */
-[class*="st-key-profile_name_"] [data-testid="stText"] { font-size: 1.45rem; font-weight: 700; }
-@media (max-width: 640px) {
-  .kyf-hero h1 { font-size: 1.75rem; }
-  .kyf-hero p { font-size: 1rem; }
+:root {
+  --kyf-surface: #242427; --kyf-elevated: #2B2B2F; --kyf-line: #34343A;
+  --kyf-control-line: #6B6B73; --kyf-text-2: #A9A9B0; --kyf-accent: #A99AF0;
+  --kyf-on-accent: #19191B; --kyf-accent-hover: #BDB2F5;
 }
+[data-testid="stMainBlockContainer"] { max-width: 1240px; padding-bottom: 3rem; }
+/* Readable measure for running text. */
+[data-testid="stMainBlockContainer"] [data-testid="stMarkdownContainer"] p { max-width: 72ch; }
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {
+  color: var(--kyf-text-2); opacity: 1; }
+/* Panels: tonal separation first, a hairline second. */
+[class*="st-key-panel"] { background: var(--kyf-elevated); border-color: var(--kyf-line); }
+/* Form controls need a 3:1 boundary (WCAG 1.4.11); structural lines stay subtle. */
+[data-baseweb="input"], [data-baseweb="select"] > div, [data-baseweb="textarea"],
+[data-testid="stNumberInputContainer"] { border-color: var(--kyf-control-line) !important; }
+/* Primary buttons: dark text on the light accent (7.2:1). Streamlit darkens the fill on
+   hover, focus and press (to #6E56E6, 3.5:1 with dark text); on this dark theme those states
+   lighten instead, keeping the label at >= 7:1. */
+[data-testid="stBaseButton-primary"], [data-testid="stBaseButton-primary"] p {
+  color: var(--kyf-on-accent); font-weight: 600; }
+[data-testid="stBaseButton-primary"]:hover, [data-testid="stBaseButton-primary"]:focus,
+[data-testid="stBaseButton-primary"]:focus-visible, [data-testid="stBaseButton-primary"]:active {
+  background-color: var(--kyf-accent-hover); border-color: var(--kyf-accent-hover);
+  color: var(--kyf-on-accent); }
+:focus-visible { outline: 2px solid var(--kyf-accent) !important; outline-offset: 2px !important; }
+/* Monogram for a fictional profile (initials only). */
+.kyf-monogram { display: inline-flex; align-items: center; justify-content: center;
+  width: 2.75rem; height: 2.75rem; border-radius: 0.5rem; background: var(--kyf-surface);
+  border: 1px solid var(--kyf-line); color: var(--kyf-accent); font-weight: 650;
+  letter-spacing: .02em; }
+[class*="st-key-profile_name"] [data-testid="stText"] { font-size: 1.3rem; font-weight: 650;
+  line-height: 1.3; }
+/* Step numbers on Home: tabular figures in the accent colour. */
+.kyf-step-no { font-variant-numeric: tabular-nums; color: var(--kyf-accent); font-weight: 650;
+  font-size: .85rem; letter-spacing: .04em; margin: 0 0 .25rem 0; }
 </style>
-"""
-
-_BRAND = """
-<div class="kyf-brand">
-  <span class="kyf-wordmark">KNOW YOUR FAN<span>.</span></span>
-  <span class="kyf-tag">Synthetic data only</span>
-  <span class="kyf-tag">Not identity verification</span>
-</div>
 """
 
 
@@ -82,27 +80,37 @@ def apply_theme() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
 
 
-def brand_bar() -> None:
-    st.markdown(_BRAND, unsafe_allow_html=True)
-
-
-def eyebrow(label: str) -> None:
-    """Small uppercase section label. ``label`` must be a static string."""
-    st.markdown(f'<p class="kyf-eyebrow">{escape(label)}</p>', unsafe_allow_html=True)
-
-
-def hero(title: str, lead: str) -> None:
-    """Page hero. ``title`` and ``lead`` must be static strings."""
-    st.markdown(
-        f'<div class="kyf-hero"><h1>{escape(title)}</h1><p>{escape(lead)}</p></div>',
-        unsafe_allow_html=True,
+def brand_assets() -> tuple[Path, Path]:
+    """Wordmark and compact mark (local SVG files) for ``st.logo``."""
+    return (
+        Path(str(_BRAND.joinpath("wordmark.svg"))),
+        Path(str(_BRAND.joinpath("mark.svg"))),
     )
 
 
-def step(number: int, title: str) -> None:
-    """Numbered step heading. ``title`` must be a static string."""
+def page_header(title: str, lead: str) -> None:
+    """Page title (h1), a short lead, and the synthetic-data notice (on every page)."""
+    st.title(title, anchor=False)
+    st.markdown(f":gray[{lead}]")
+    st.caption(SYNTHETIC_NOTICE)
+
+
+def step_number(number: int) -> None:
+    st.markdown(f'<p class="kyf-step-no">{int(number):02d}</p>', unsafe_allow_html=True)
+
+
+def initials(name: str) -> str:
+    """Up to two initials, letters only (first and last word)."""
+    words = [w for w in name.split() if w[:1].isalpha()]
+    if not words:
+        return ""
+    picked = words[:1] + words[-1:] if len(words) > 1 else words
+    return "".join(w[0] for w in picked).upper()
+
+
+def monogram(name: str) -> None:
+    """Typographic avatar for a fictional profile. Decorative: hidden from screen readers."""
     st.markdown(
-        f'<span class="kyf-step" aria-hidden="true">{int(number)}</span>'
-        f'<span class="kyf-step-title">Step {int(number)}: {escape(title)}</span>',
+        f'<span class="kyf-monogram" aria-hidden="true">{escape(initials(name))}</span>',
         unsafe_allow_html=True,
     )

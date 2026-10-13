@@ -51,9 +51,10 @@ flowchart TD
 | Module | Responsibility | Depends on |
 |---|---|---|
 | `main.py` | Entry point for `streamlit run`. Falls back to `src/` on the import path when the package is not installed. | `app` |
-| `app.py` | Streamlit shell and pages (Home, Fans, OCR demo), navigation, and user-facing messages. No business rules. | `services`, `config`, `ui`, `research_page`, error types |
+| `app.py` | Streamlit shell (page config, logo, `st.navigation`, error guard) and the Home, Fans and OCR demo pages, with user-facing messages. No business rules. | `services`, `config`, `ui`, `research_page`, error types |
+| `page_scripts/*.py` | One three-line script per section, registered with `st.navigation(position="top")`; each calls its render function. File pages keep the selected page across reruns (ADR 0008). | `app`, `research_page` |
 | `research_page.py` | Interactive Research page (Altair charts and data tables) over precomputed results. | `research.presentation`, `ui` |
-| `ui.py` | Static styling (theme CSS, brand bar, eyebrow/hero/step helpers). Never receives user data. | — |
+| `ui.py` | Design-system helpers: scoped stylesheet, brand assets, page header with the synthetic-data notice, step numbers, profile monogram (escaped initials only). Never renders other user data. | — |
 | `services.py` | Workflows: build the process-wide `Runtime`, open and seed the repository, filter profiles, render cards, run OCR plus matching through admission control, rate-limit dataset additions. | domain modules, `limits` |
 | `config.py` | Builds and validates `Settings` (database path and every operational limit) from environment variables; invalid values raise `ConfigurationError`. | — |
 | `limits.py` | Sliding-window rate limiter, bounded concurrency limiter, and `OCRGuard` (per-session rate, global rate, then a concurrency slot). In-process only. | `config`, `observability` |

@@ -21,10 +21,54 @@
 | **Reproducibility** | Committed observations, manifests, configuration hashes and dataset fingerprints. CI recomputes every reported metric from the committed observations and checks that the outputs match. |
 | **Engineering** | 400+ automated tests (≈98 % coverage), strict mypy, Ruff, real-Tesseract tests in CI, a Docker image check, dependency audit, and full-history secret scanning. |
 | **Safeguards** | OCR rate and concurrency limits, atomic SQLite writes under a dataset cap, privacy-safe logging, plain-text rendering of all generated values. |
-| **Accessibility** | An axe-core scan of 23 page states at desktop and phone widths reports no WCAG 2.2 A/AA violations; this is an automated check, not a certification ([details](docs/ux-accessibility.md)). |
+| **Accessibility** | An axe-core scan of 39 page states (390–1920 px and 200 % zoom) reports no WCAG 2.2 A/AA violations at tablet and desktop widths; on phones the only finding is in Streamlit's own navigation drawer. An automated check, not a certification ([details](docs/ux-accessibility.md)). |
 
 It is a portfolio and research-practice project, not a product: the study is not peer reviewed,
 and nothing here is identity verification.
+
+## Application preview
+
+Screenshots of the running app, taken with Playwright in Chromium (1440×900 unless noted).
+Every name, ID, and card shown is synthetic.
+
+### Home
+
+What the project is, where to start, and the study in brief: 320 synthetic cards, 19,200 OCR runs,
+and four matching rules. The figures are read from the committed results, not typed in.
+
+![Home page: the Know Your Fan title, actions to explore fans, run the OCR demo, or read the study, and a panel with the study's scope](docs/screenshots/home.png)
+
+### Fans
+
+A master–detail explorer of fictional profiles. Search and filter, select a row, and the profile
+opens beside the table. A Generate tab creates a profile from a numeric seed. There are no
+free-text fields that could store visitor input.
+
+![Fans page: a searchable table of fictional fans next to an open profile with a monogram, demo ID, city, games and purchases](docs/screenshots/fans.png)
+
+### OCR demo
+
+A two-panel workspace. On the left, a fictional specimen card with blur and rotation controls. On
+the right, Tesseract's output and the result of the matching rule M1 (the whole name, in order,
+on one line). It is text matching, not identity verification.
+
+![OCR demo: a synthetic specimen card on the left; on the right, a match result, the words found, and the recognised text](docs/screenshots/ocr-demo.png)
+
+### Research
+
+The pre-registered study, presented as a report: question, scope, key findings, then the
+evidence. Every chart has 95 % intervals, sample sizes, and a data table.
+
+![Research page: the question "How reliable is OCR name matching?", a note that the results are synthetic-only, and the study's scope figures](docs/screenshots/research.png)
+
+![Degradations tab: character error rate with 95 % intervals for each of 16 image conditions, for the app's preprocessing and for no preprocessing](docs/screenshots/research-charts.png)
+
+### On a phone
+
+The same pages stack into one column, and the navigation moves into a menu (390 px wide, shown
+at 2× scale).
+
+<img src="docs/screenshots/mobile.png" alt="OCR demo on a phone: the result section with a match message, the words found, and the recognised text" width="300">
 
 ## Purpose
 
@@ -46,15 +90,20 @@ Current scope:
 
 | Page | What it does |
 |---|---|
-| **Home** | What the project is, why all data is synthetic, how the text matching works, and links to each section. |
-| **Fans** | *Browse:* search and filter a seeded dataset of fictional profiles and open a profile card. *Generate:* create a fictional profile from a numeric seed and optionally add it to the local demo dataset (no free-text fields). |
-| **OCR demo** | Three steps: pick a fictional card and blur or rotate it, run Tesseract OCR, and see whether the name appears as a whole sequence of words on one line, with the words found or missing and the extracted text. |
+| **Home** | What the project is, where to start, the study in brief, how the OCR demo works, and the project's boundaries. |
+| **Fans** | *Browse:* search and filter a seeded dataset of fictional profiles; selecting a table row opens the profile beside it. *Generate:* create a fictional profile from a numeric seed and optionally add it to the local demo dataset (no free-text fields). |
+| **OCR demo** | A specimen panel (pick a fictional card, blur or rotate it, run Tesseract OCR) next to a result panel: whether the name appears as a whole sequence of words on one line, the words found or missing, and the recognised text. |
 | **Research** | Interactive view of the precomputed Phase 4 results: degradations, preprocessing, matching rules, FAR/FRR trade-off, method and limits. Nothing is computed on page load. |
 
-The interface uses a small design system (theme tokens in `.streamlit/config.toml`, static styles
-in `src/know_your_fan/ui.py`). It was checked in a real browser at desktop and phone widths; see
-[docs/ux-accessibility.md](docs/ux-accessibility.md) for the UX audit, contrast measurements,
-accessibility notes, and their limits.
+Navigation is Streamlit's top navigation bar, so each section has its own URL (`/fans`,
+`/ocr-demo`, `/research`). The dark interface follows a small documented design system:
+- theme tokens in `.streamlit/config.toml`;
+- one scoped stylesheet in `src/know_your_fan/ui.py`;
+- local system fonts, with no remote assets and no JavaScript.
+
+See [docs/design-system.md](docs/design-system.md) for the design audit, tokens, and decisions,
+including the fix for the clipped header. See [docs/ux-accessibility.md](docs/ux-accessibility.md)
+for accessibility checks and their limits.
 
 ### Synthetic-only data policy
 
@@ -139,7 +188,8 @@ infrastructure modules.
 - [docs/architecture.md](docs/architecture.md): modules, workflows, data and OCR flows, error handling, testing strategy
 - [docs/threat-model.md](docs/threat-model.md): STRIDE analysis, mitigations, residual risks
 - [docs/operations.md](docs/operations.md): resource limits, configuration, logging policy, validation results
-- [docs/ux-accessibility.md](docs/ux-accessibility.md): UX audit, design system, accessibility review, visual validation, UI performance
+- [docs/design-system.md](docs/design-system.md): UI audit, design tokens, components, navigation decision, header-clipping root cause
+- [docs/ux-accessibility.md](docs/ux-accessibility.md): accessibility review, axe-core results, browser checks, limits
 - [docs/decisions/](docs/decisions/): architecture decision records
 - [docs/security-review.md](docs/security-review.md): Phase 6 security and privacy review, findings by severity
 - [docs/release-readiness.md](docs/release-readiness.md): release checklist with evidence and open items
@@ -148,9 +198,11 @@ infrastructure modules.
 ```
 main.py                     Streamlit entry point
 src/know_your_fan/
-  app.py                    Streamlit shell and pages (presentation only)
+  app.py                    Streamlit shell, navigation, and pages (presentation only)
+  page_scripts/             One small script per section, registered with st.navigation
   research_page.py          Interactive Research page (precomputed data)
-  ui.py                     Static styling and layout helpers
+  ui.py                     Design-system helpers and the scoped stylesheet
+  assets/brand/             Wordmark and mark (local SVG)
   services.py               Workflows: runtime, seeding, filtering, OCR + matching
   config.py                 Validated settings from environment variables
   limits.py                 OCR rate limits and concurrency limit (per process)
