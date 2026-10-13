@@ -35,6 +35,7 @@ Current scope:
 | **Fan explorer** | Browse and filter a seeded dataset of fictional fan profiles. |
 | **Profile generator** | Generate a fictional profile from a numeric seed and optionally add it to the local demo dataset. There are no free-text fields. |
 | **Text-matching demo** | Render a fictional, watermarked fan card, optionally blur or rotate it, run Tesseract OCR, and report which words of a name appear in the extracted text. |
+| **Research** | Shows precomputed results of the reproducible OCR study (below). Nothing is computed on page load. |
 
 ### Synthetic-only data policy
 
@@ -55,15 +56,51 @@ Current scope:
 The matcher folds accents and case, splits the expected name into words, and reports which whole
 words appear in the OCR output. A full match only means the OCR engine recognized those words in
 an image the app generated itself. It does **not** show that a document is genuine or unaltered,
-or that it belongs to the person presenting it. The app makes no claims about OCR accuracy;
-accuracy has not been measured yet.
+or that it belongs to the person presenting it. OCR and matching error rates have been measured
+only on synthetic cards; see the research study below.
 
-## Planned work (not implemented)
+## Research study (synthetic data)
 
-Later modernization phases are expected to add the following. **None of it exists yet.**
+`src/know_your_fan/research/` contains a reproducible experiment harness. It is separate from the
+app and is never run by it. The study asks how controlled image degradations, preprocessing, and
+name-matching rules affect OCR transcription errors, name-matching error rates (FAR/FRR), and
+latency on **synthetic** specimen cards.
 
-- a reproducible OCR evaluation harness: preprocessing ablations, engine comparisons, and
-  name-matching error rates on synthetic documents.
+The protocol has four stages:
+
+1. Hypotheses, the design, and the selection rules were committed first
+   ([methodology.md](docs/research/methodology.md)).
+2. Choices were made on dev and val splits and frozen.
+3. The held-out test split was then evaluated once.
+
+| Document | Content |
+|---|---|
+| [docs/research/report.md](docs/research/report.md) | Technical report: method, results, discussion, threats to validity |
+| [docs/research/methodology.md](docs/research/methodology.md) | Pre-registration: questions, hypotheses, design, rules, analysis plan |
+| [docs/research/results.md](docs/research/results.md) | Generated result tables (do not edit) |
+| [docs/research/limitations.md](docs/research/limitations.md) | What the study can and cannot show |
+
+Reproducing it requires Tesseract with `eng` + `por` data, and about 1 h on a 6-core machine.
+
+```bash
+uv run python scripts/run_research.py run      --config experiments/configs/e1_degradation.toml
+uv run python scripts/run_research.py run      --config experiments/configs/e2_preprocessing.toml
+uv run python scripts/run_research.py run      --config experiments/configs/e3_test.toml
+uv run python scripts/run_research.py evaluate --config experiments/configs/<experiment>.toml
+uv run python scripts/run_research.py report
+```
+
+To re-analyse the committed observations without OCR, run only `evaluate` and `report`. The
+runner is resumable, uses at most 4 worker processes with one Tesseract thread each, and records
+the commit, configuration hash, dataset fingerprint, engine version, and model hashes with every
+run. Results are not evidence of performance on real documents, and the study is not identity
+verification.
+
+## Future work (not implemented)
+
+- Comparing a second OCR engine.
+- Capture-realistic degradations: perspective, uneven lighting, compression.
+- More card templates and fonts.
 
 ## Architecture
 
@@ -89,9 +126,12 @@ src/know_your_fan/
   ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
   text_matching.py          Accent-insensitive whole-word name matching
   models.py                 FanProfile dataclass
+  research/                 OCR research harness (dataset, degradations, matching, metrics, runner)
 tests/unit/, tests/integration/
 scripts/validate_limits.py  Bounded operational validation
-docs/                       Architecture, threat model, operations, ADRs
+scripts/run_research.py     Research CLI (run, evaluate, report)
+experiments/                Configs, dataset manifests, committed observation archives
+docs/                       Architecture, threat model, operations, ADRs, research report
 pyproject.toml, uv.lock     Packaging, dependencies, tool configuration
 requirements.txt            Generated from uv.lock for pip-only hosts
 packages.txt, Dockerfile    Tesseract system dependency
@@ -176,7 +216,8 @@ final merge into `main`. The workflow has four jobs:
 - **quality:**
   - install from `uv.lock`, and check that `requirements.txt` matches it;
   - Ruff lint and format check, and mypy;
-  - real-Tesseract OCR tests (which must not skip), and the full test suite;
+  - real-Tesseract OCR tests (which must not skip), including a small research smoke run of the
+    full `run_research.py` pipeline, and the full test suite. The full benchmark never runs in CI;
   - coverage thresholds;
   - bounded operational validation with real Tesseract, run with default threading and with
     `OMP_THREAD_LIMIT=1` (results are published as run annotations).

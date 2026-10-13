@@ -1,8 +1,9 @@
 {
- "status": "preliminary",
+ "status": "final",
  "experiments_available": [
   "e1_degradation",
-  "e2_preprocessing"
+  "e2_preprocessing",
+  "e3_test"
  ],
  "selection": {
   "frozen_utc": "2026-10-13",
@@ -66,5 +67,145 @@
    "n_positives_per_split": 1280
   },
   "m2_note": "With these names, tau = 0.05 accepts no edits (a token would need >= 20 letters for one edit to be within 0.05), so M2 at the selected tau behaves like M1. Reported as a finding; the rule was not changed."
+ },
+ "test_ocr": {
+  "test/P1_none": {
+   "cer": {
+    "estimate": 0.2673018786439214,
+    "ci_low": 0.2630095958447507,
+    "ci_high": 0.27181726145452023,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "wer": {
+    "estimate": 0.331803909428622,
+    "ci_low": 0.32789208265818887,
+    "ci_high": 0.3361221931289343,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "name_token_recall": {
+    "estimate": 0.7034045725646123,
+    "ci_low": 0.6953121070171027,
+    "ci_high": 0.7113276349968048,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "median_latency_ms": 412.146,
+   "n_observations": 2560,
+   "n_sources": 160
+  },
+  "test/P0_baseline": {
+   "cer": {
+    "estimate": 0.2739486611962859,
+    "ci_low": 0.2695219502664315,
+    "ci_high": 0.27855369964628546,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "wer": {
+    "estimate": 0.33196975057491596,
+    "ci_low": 0.3281856639018759,
+    "ci_high": 0.3361691203836593,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "name_token_recall": {
+    "estimate": 0.7050198807157058,
+    "ci_low": 0.6970461480496636,
+    "ci_high": 0.7125018527667984,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "median_latency_ms": 386.342,
+   "n_observations": 2560,
+   "n_sources": 160
+  }
+ },
+ "test_matching_P0": {
+  "M0_baseline": {
+   "far": {
+    "estimate": 0.004296875,
+    "ci_low": 0.0,
+    "ci_high": 0.010026041666666667,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34609375,
+    "ci_low": 0.333984375,
+    "ci_high": 0.3578125,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1674,
+   "fp": 33,
+   "tn": 7647,
+   "fn": 886,
+   "tau": null
+  },
+  "M1_token_sequence": {
+   "far": {
+    "estimate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34921875,
+    "ci_low": 0.3375,
+    "ci_high": 0.360546875,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1666,
+   "fp": 0,
+   "tn": 7680,
+   "fn": 894,
+   "tau": null
+  },
+  "M2_tolerant": {
+   "far": {
+    "estimate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.34921875,
+    "ci_low": 0.3375,
+    "ci_high": 0.360546875,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1666,
+   "fp": 0,
+   "tn": 7680,
+   "fn": 894,
+   "tau": 0.05
+  },
+  "M3_confusable": {
+   "far": {
+    "estimate": 0.008333333333333333,
+    "ci_low": 0.002734375,
+    "ci_high": 0.015364583333333333,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "frr": {
+    "estimate": 0.333984375,
+    "ci_low": 0.324609375,
+    "ci_high": 0.343359375,
+    "n_sources": 160,
+    "resamples_used": 2000
+   },
+   "tp": 1705,
+   "fp": 64,
+   "tn": 7616,
+   "fn": 855,
+   "tau": null
+  }
  }
 }

@@ -232,4 +232,6 @@ Defined in `research/metrics.py`; zero denominators are reported as n/a.
 
 | Date | Change | Reason |
 |---|---|---|
-| — | None yet | — |
+| 2026-10-13 | Per-experiment `summary.json` files are no longer committed; they are regenerated with `run_research.py evaluate`. | They are derived from the committed observation archives and exceeded the repository's 500 KB file limit. This affects storage only, not the analysis. Re-evaluation reproduces every field except matching latency, which is re-measured. |
+| 2026-10-13 | None to the design, rules, hypotheses, or sample sizes. | S1 and S2 were applied as written (see `experiments/configs/frozen_selection.json`). |
+| 2026-10-13 (found after E3) | **Pre-registration inconsistency, not corrected:** H2a's criterion names the *test* split, but E3 by design runs only P0 and the frozen strategy (P1), so P5 was never run on test. H2a is reported as supported on dev/val only and not evaluable on test as worded. | Disclosed rather than repaired after seeing results. |

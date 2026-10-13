@@ -61,6 +61,23 @@ flowchart TD
 | `storage.py` | SQLite repository: schema, insert, count, list. Enforces the allowlist and the size cap. | `models`, `synthetic` |
 | `ocr.py` | Specimen rendering, bounded degradations, preprocessing, Tesseract wrapper, error mapping. | Pillow, pytesseract |
 | `text_matching.py` | Accent- and case-insensitive whole-word name matching. | — |
+| `research/presentation.py` | Read-only loading of precomputed research results for the Research page (standard library only). | — |
+| `research/*` (other modules) | The offline experiment harness: dataset, degradations, preprocessing, matching, metrics, stats, runner, evaluation, reporting. Never imported by the app. | `ocr`, `synthetic`, `text_matching`, numpy; matplotlib for figures |
+
+### Research harness (offline)
+
+The harness reuses the application instead of re-implementing it:
+
+- Cards come from `ocr.render_specimen`.
+- The ground truth is `ocr.specimen_lines`, the same strings the renderer draws.
+- Every OCR call goes through `ocr.recognize`, the engine entry point the app uses after its own
+  preprocessing. Engine settings (language, timeout, error mapping) are therefore identical.
+- The baseline preprocessing P0 is `ocr.preprocess` itself, and the baseline matcher M0 is
+  `text_matching.match_name`.
+
+Experiments run only from `scripts/run_research.py`. They are never run at app start-up or in
+regular CI; CI runs a small real-Tesseract smoke test instead. See
+[research/methodology.md](research/methodology.md) and [research/report.md](research/report.md).
 
 ## Main user workflows
 
@@ -179,6 +196,7 @@ Anything unexpected is still caught by Streamlit, which is configured not to sho
 | Unit | `tests/unit/` | Generator, allowlist, matching, config validation, services, OCR preprocessing and error mapping, rate and concurrency limits (fake clock; threads synchronized with barriers and events, no sleeps), throttled logging, and log privacy. The Tesseract call is replaced only where the test is about error mapping or admission control. |
 | Integration | `tests/integration/test_storage.py` | Real SQLite files in per-test temporary directories: transactions and rollback, connection closing, corrupt files, caps under concurrent writers, concurrent seeding, held-lock busy handling, and log privacy. |
 | UI | `tests/integration/test_app.py` | `streamlit.testing.AppTest` runs the real `main.py`. It checks pages, the absence of sensitive inputs and misleading claims, error paths, rate-limit and busy-engine messages, fail-closed configuration, and that UI flows never log names or OCR text. |
+| Research | `tests/unit/test_research_*.py`, `tests/integration/test_research_smoke.py` | Hand-calculated CER/WER, matcher, and FAR/FRR examples; bootstrap properties; dataset determinism, split disjointness, and leakage; transformation determinism and validation; config validation; resume and provenance; evaluation, reporting, and CLI with a fake engine; a real-Tesseract smoke run of the full CLI (required in CI). |
 | Operational validation | `scripts/validate_limits.py` | Bounded workloads with invariant checks; run in CI with real Tesseract ([operations.md](operations.md#5-bounded-operational-validation)). |
 | End-to-end OCR | `tests/integration/test_ocr_e2e.py` | Runs the real Tesseract engine, with nothing mocked. Invariants (engine, languages, card labels, no false match for an absent name, pipeline) are strict. Name recognition is an aggregate token-recall threshold of at least 90% on 11 clean cards ([ADR 0005](decisions/0005-ocr-engine-and-environment.md)). Skipped locally if Tesseract is missing; **required in CI** (`KYF_REQUIRE_OCR=1`). |
 
@@ -190,6 +208,6 @@ least 90% for non-UI code. Coverage shows which code ran, not that it is correct
 - Resource limits are per process, and per-session limits are a fairness measure only; see
   [operations.md](operations.md#6-limitations-and-remaining-denial-of-service-risks).
 - SQLite on hosts with temporary filesystems loses generator-added profiles on restart.
-- Name matching does not tolerate OCR character errors, and its accuracy has not been measured
-  (planned for the research phase).
+- Name matching does not tolerate OCR character errors. Its error rates were measured only on
+  synthetic cards ([research report](research/report.md)).
 - Degradations are illustrative, not a calibrated capture model.
