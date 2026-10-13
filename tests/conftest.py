@@ -20,3 +20,9 @@ def repo(tmp_path: Path) -> SyntheticProfileRepository:
     repository = SyntheticProfileRepository(tmp_path / "nested" / "demo.db")
     repository.initialize()
     return repository
+
+
+@pytest.fixture(autouse=True)
+def _isolate_engine_thread_setting(monkeypatch: pytest.MonkeyPatch) -> None:
+    """build_runtime() sets OMP_THREAD_LIMIT in os.environ; restore it after each test."""
+    monkeypatch.delenv("OMP_THREAD_LIMIT", raising=False)

@@ -6,6 +6,8 @@ The real engine is exercised in tests/integration/test_ocr_e2e.py.
 from __future__ import annotations
 
 import logging
+import os
+import pathlib
 from collections.abc import Callable
 from typing import NoReturn
 
@@ -13,7 +15,8 @@ import pytesseract
 import pytest
 from PIL import Image, ImageChops
 
-from know_your_fan import ocr
+from know_your_fan import ocr, services
+from know_your_fan.config import Settings
 from know_your_fan.models import FanProfile
 from know_your_fan.synthetic import (
     _ID_ALPHABET,
@@ -262,3 +265,23 @@ def test_ocr_failure_logs_contain_no_engine_messages_or_paths(
     assert "SECRET" not in logged
     assert "tess_" not in logged  # pytesseract temporary-file prefix
     assert profile.name not in logged
+
+
+def test_engine_threads_default_to_one() -> None:
+    env: dict[str, str] = {}
+    assert ocr.limit_engine_threads(env) == "1"
+    assert env == {"OMP_THREAD_LIMIT": "1"}
+
+
+def test_operator_thread_setting_is_respected() -> None:
+    env = {"OMP_THREAD_LIMIT": "4"}
+    assert ocr.limit_engine_threads(env) == "4"
+    assert env == {"OMP_THREAD_LIMIT": "4"}
+
+
+def test_build_runtime_limits_engine_threads(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path
+) -> None:
+    monkeypatch.delenv("OMP_THREAD_LIMIT", raising=False)
+    services.build_runtime(Settings(db_path=tmp_path / "demo.db"))
+    assert os.environ["OMP_THREAD_LIMIT"] == "1"

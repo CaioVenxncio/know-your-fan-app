@@ -52,6 +52,8 @@ def open_repository(settings: Settings) -> SyntheticProfileRepository:
 
 
 def build_runtime(settings: Settings, *, clock: Clock = time.monotonic) -> Runtime:
+    """Create the process-wide runtime. Also caps Tesseract's per-process threads."""
+    ocr.limit_engine_threads()
     return Runtime(
         settings=settings,
         repository=open_repository(settings),

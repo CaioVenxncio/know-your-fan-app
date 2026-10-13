@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import logging
 import math
+import os
+from collections.abc import MutableMapping
 from functools import cache
 from importlib import resources
 from io import BytesIO
@@ -27,7 +29,26 @@ MAX_IMAGE_PIXELS = DEFAULT_MAX_IMAGE_PIXELS
 MAX_IMAGE_SIDE = 8_000
 SPECIMEN_SIZE = (900, 520)
 
+OMP_THREAD_LIMIT_ENV = "OMP_THREAD_LIMIT"
+
 _logger = logging.getLogger(f"{LOGGER_NAME}.ocr")
+
+
+def limit_engine_threads(environ: MutableMapping[str, str] | None = None) -> str:
+    """Limit each Tesseract process to one OpenMP thread unless the operator set a value.
+
+    Tesseract's OpenMP build starts one thread per CPU core. With several
+    concurrent OCR jobs this oversubscribes the CPU: in CI, two concurrent jobs
+    took about 6.3 s each with default threading versus about 0.36 s with
+    ``OMP_THREAD_LIMIT=1`` (sequential runs were unaffected); see
+    docs/operations.md. pytesseract passes ``os.environ`` to the Tesseract
+    subprocess, so this takes effect for every later OCR call. Call it at
+    application start-up, not at import time. Returns the effective value.
+    """
+    env = os.environ if environ is None else environ
+    value = env.setdefault(OMP_THREAD_LIMIT_ENV, "1")
+    _logger.info("Tesseract OpenMP thread limit: %s", value)
+    return value
 
 
 class OCRUnavailableError(RuntimeError):
