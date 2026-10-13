@@ -82,11 +82,31 @@ def specimen_font(size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(BytesIO(_font_bytes()), size)
 
 
+SPECIMEN_TITLE = "KNOW YOUR FAN - FAN CARD"
+SPECIMEN_NOTICE = "SPECIMEN - FICTIONAL DATA - NOT AN IDENTITY DOCUMENT"
+SPECIMEN_FOOTER = "Synthetic sample generated for demonstration only."
+
+
+def specimen_fields(profile: FanProfile) -> list[str]:
+    """The labelled field lines drawn on a card, in order (e.g. ``"Name: Ana Lima"``)."""
+    return [
+        f"Name: {profile.name}",
+        f"Demo ID: {profile.demo_id}",
+        f"City: {profile.city}",
+        f"Favorite game: {profile.interests[0]}",
+    ]
+
+
+def specimen_lines(profile: FanProfile) -> list[str]:
+    """Every text line drawn on the card, in reading order (the OCR ground truth)."""
+    return [SPECIMEN_TITLE, SPECIMEN_NOTICE, *specimen_fields(profile), SPECIMEN_FOOTER]
+
+
 def render_specimen(profile: FanProfile) -> Image.Image:
     """Draw a fictional, watermarked fan card for ``profile``.
 
     The layout is intentionally generic and does not imitate any official
-    identity document.
+    identity document. The text drawn is exactly :func:`specimen_lines`.
     """
     image = Image.new("RGB", SPECIMEN_SIZE, "white")
     draw = ImageDraw.Draw(image)
@@ -97,29 +117,13 @@ def render_specimen(profile: FanProfile) -> Image.Image:
     draw.rectangle(
         [(10, 10), (SPECIMEN_SIZE[0] - 10, SPECIMEN_SIZE[1] - 10)], outline="black", width=4
     )
-    draw.text((40, 35), "KNOW YOUR FAN - FAN CARD", fill="black", font=title_font)
-    draw.text(
-        (40, 90),
-        "SPECIMEN - FICTIONAL DATA - NOT AN IDENTITY DOCUMENT",
-        fill="dimgray",
-        font=small_font,
-    )
-    lines = [
-        ("Name", profile.name),
-        ("Demo ID", profile.demo_id),
-        ("City", profile.city),
-        ("Favorite game", profile.interests[0]),
-    ]
+    draw.text((40, 35), SPECIMEN_TITLE, fill="black", font=title_font)
+    draw.text((40, 90), SPECIMEN_NOTICE, fill="dimgray", font=small_font)
     y = 160
-    for label, value in lines:
-        draw.text((40, y), f"{label}: {value}", fill="black", font=body_font)
+    for line in specimen_fields(profile):
+        draw.text((40, y), line, fill="black", font=body_font)
         y += 70
-    draw.text(
-        (40, SPECIMEN_SIZE[1] - 60),
-        "Synthetic sample generated for demonstration only.",
-        fill="dimgray",
-        font=small_font,
-    )
+    draw.text((40, SPECIMEN_SIZE[1] - 60), SPECIMEN_FOOTER, fill="dimgray", font=small_font)
     return image
 
 
@@ -179,14 +183,32 @@ def extract_text(
     timeout_seconds: float = OCR_TIMEOUT_SECONDS,
     max_pixels: int = MAX_IMAGE_PIXELS,
 ) -> str:
-    """Run Tesseract on ``image`` and return the extracted text.
+    """Preprocess ``image`` (:func:`preprocess`) and run Tesseract on it.
 
     On timeout pytesseract terminates the Tesseract subprocess and removes its
     temporary files before raising; this function maps that to
     :class:`OCRTimeoutError`. Logs record event types only, never image
     contents, extracted text, or engine messages.
     """
-    prepared = preprocess(image, max_pixels)
+    return recognize(
+        preprocess(image, max_pixels), timeout_seconds=timeout_seconds, max_pixels=max_pixels
+    )
+
+
+def recognize(
+    prepared: Image.Image,
+    *,
+    timeout_seconds: float = OCR_TIMEOUT_SECONDS,
+    max_pixels: int = MAX_IMAGE_PIXELS,
+) -> str:
+    """Run Tesseract on an already-prepared image, with the app's engine settings.
+
+    This is the single place where the engine is invoked (language, timeout,
+    error mapping). :func:`extract_text` uses it after the app's default
+    preprocessing; the research harness uses it after alternative
+    preprocessing, so both share identical engine behaviour.
+    """
+    check_image(prepared, max_pixels)
     try:
         text = pytesseract.image_to_string(prepared, lang=OCR_LANGUAGE, timeout=timeout_seconds)
     except pytesseract.TesseractNotFoundError as exc:

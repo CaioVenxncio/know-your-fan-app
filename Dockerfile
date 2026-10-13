@@ -23,12 +23,12 @@ WORKDIR /app
 
 # Dependencies first, for layer caching.
 COPY pyproject.toml uv.lock README.md LICENSE ./
-RUN uv sync --locked --no-dev --no-install-project
+RUN uv sync --locked --no-default-groups --no-install-project
 
 COPY src ./src
 COPY main.py ./
 COPY .streamlit ./.streamlit
-RUN uv sync --locked --no-dev
+RUN uv sync --locked --no-default-groups
 
 RUN useradd --create-home --uid 10001 kyf \
     && mkdir -p /app/.data \

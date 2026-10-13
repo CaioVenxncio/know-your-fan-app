@@ -18,6 +18,7 @@ dependencies = [
     "streamlit>=1.60",   # st.dataframe(width="stretch"); lowest version tested
     "pillow>=11.3",      # includes the fix for CVE-2025-48379; ImageFont.load_default(size=...)
     "pytesseract>=0.3.13",  # image_to_string(timeout=...), Python 3.13 support
+    "numpy>=2.0",  # seeded noise and bootstrap in the research harness (already a Streamlit dependency)
 ]
 
 [project.urls]
@@ -32,6 +33,13 @@ dev = [
     "pytest-cov>=7.1",
     "ruff>=0.17",
 ]
+# Figures for the research report. Not needed to run the app.
+research = [
+    "matplotlib>=3.10",
+]
+
+[tool.uv]
+default-groups = ["dev", "research"]
 
 [build-system]
 requires = ["hatchling>=1.27"]
@@ -66,6 +74,7 @@ select = [
 # Synthetic data generation is intentionally non-cryptographic and seeded for reproducibility.
 "src/know_your_fan/synthetic.py" = ["S311"]
 "src/know_your_fan/app.py" = ["S311"]
+"src/know_your_fan/research/dataset.py" = ["S311"]
 
 # ---------------------------------------------------------------- mypy
 [tool.mypy]

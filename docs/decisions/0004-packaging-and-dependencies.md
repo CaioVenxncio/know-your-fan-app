@@ -28,7 +28,7 @@ still start with `streamlit run main.py`, including on hosts that only run
    catches packaging mistakes. `main.py` adds `src/` to the import path only when the package
    is not installed.
 5. **`requirements.txt` is generated,** not edited:
-   `uv export --no-dev --no-emit-project --no-hashes --format requirements-txt -o requirements.txt`.
+   `uv export --no-default-groups --no-emit-project --no-hashes --format requirements-txt -o requirements.txt`.
    It exists for hosts that expect it, such as Streamlit Community Cloud. CI fails if it drifts
    from `uv.lock`.
 6. **Python 3.13** is the supported version (`requires-python = ">=3.13"`) and the only one
