@@ -67,6 +67,22 @@ passes `os.environ` to the subprocess, so every OCR call inherits it. Evidence f
 This is a single run on one runner type, not a statistical benchmark. It does show that the
 concurrency limit alone did not prevent CPU oversubscription.
 
+Across later CI runs, the default-threading arm varied widely, while the `OMP_THREAD_LIMIT=1` arm
+stayed at about 0.4 s whenever it ran:
+
+| CI run | Two concurrent jobs, default threading |
+|---|---|
+| 38387254881 | 8.67 s (no warm-up) |
+| 38387536577 | 6.23 s / 6.36 s |
+| 38388256877 | 2.87 s / 2.95 s |
+| 38399044083 | Both jobs exceeded the **15 s OCR timeout** |
+
+In the last run the timeout was handled correctly: the slots were released and the next request
+succeeded. The validation script originally counted those timeouts as safety-invariant failures
+and failed the step before the `OMP_THREAD_LIMIT=1` arm ran. It now records timeouts as a measured
+outcome (`timeouts`) in Phase 4. The invariants themselves are unchanged: concurrency never above
+capacity, all slots released, no unexpected errors.
+
 ### OCR failures and image safety (`ocr.py`)
 
 - Timeouts raise `OCRTimeoutError`; other engine errors raise `OCRFailedError`; a missing engine

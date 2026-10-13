@@ -5,7 +5,8 @@ data only) and reports what happened. It exits with status 1 if a safety
 invariant is violated:
 
 * no more OCR requests accepted than the rate limits allow;
-* never more simultaneous OCR jobs than the configured capacity;
+* never more simultaneous OCR jobs than the configured capacity (OCR timeouts
+  under load are recorded as an outcome, not counted as a violation);
 * the profile cap is never exceeded under concurrent writers;
 * OCR capacity is fully released after failures and timeouts;
 * no Tesseract temporary files are left behind (real-OCR mode).
@@ -129,6 +130,10 @@ def scenario_concurrency(work: Callable[[Image.Image], str], label: str) -> Resu
             outcome = "accepted"
         except CapacityExceededError:
             outcome = "rejected_busy"
+        except ocr.OCRTimeoutError:
+            # A performance outcome (engine slower than the timeout), handled by the
+            # safeguards: recorded and published, not a safety-invariant violation.
+            outcome = "timeout"
         except Exception as exc:  # any other failure is reported as an error count
             outcome = f"error:{type(exc).__name__}"
         elapsed = time.perf_counter() - began
@@ -153,6 +158,7 @@ def scenario_concurrency(work: Callable[[Image.Image], str], label: str) -> Resu
         "simultaneous_requests": CONCURRENT_REQUESTS,
         "accepted": outcomes.count("accepted"),
         "rejected_busy": outcomes.count("rejected_busy"),
+        "timeouts": outcomes.count("timeout"),
         "errors": len(errors),
         "max_concurrent_observed": guard.concurrency.max_observed,
         "active_after": guard.concurrency.active,
