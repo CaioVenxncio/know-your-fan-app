@@ -487,13 +487,14 @@ def build_report(root: Path = REPO_ROOT) -> list[Path]:
             sections += [f"### {experiment}", "", environment_table(meta), ""]
     results_md = root / RESULTS_MD
     results_md.parent.mkdir(parents=True, exist_ok=True)
-    results_md.write_text("\n".join(sections), encoding="utf-8")
+    results_md.write_text("\n".join(sections).rstrip() + "\n", encoding="utf-8", newline="\n")
     written.append(results_md)
     app_summary = root / APP_SUMMARY
     app_summary.parent.mkdir(parents=True, exist_ok=True)
     app_summary.write_text(
-        json.dumps(_app_summary(summaries, selection), indent=1, ensure_ascii=False),
+        json.dumps(_app_summary(summaries, selection), indent=1, ensure_ascii=False) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     written.append(app_summary)
     return written

@@ -14,6 +14,7 @@ __pycache__
 htmlcov
 tests
 docs
+!docs/research/figures
 .streamlit/secrets.toml
 .env
 .env.*

@@ -460,7 +460,11 @@ def evaluate_experiment(
     summary["experiment_id"] = config.experiment_id
     summary["dataset_fingerprint"] = dataset.fingerprint()
     path = directory / "summary.json"
-    path.write_text(json.dumps(summary, indent=1, ensure_ascii=False), encoding="utf-8")
+    path.write_text(
+        json.dumps(summary, indent=1, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return path
 
 

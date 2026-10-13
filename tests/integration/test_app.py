@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -13,6 +14,7 @@ from streamlit.testing.v1 import AppTest
 from know_your_fan import app as app_module
 from know_your_fan import ocr, services
 from know_your_fan.config import DB_PATH_ENV
+from know_your_fan.research import presentation
 from know_your_fan.storage import StorageError, StorageLimitError, SyntheticProfileRepository
 
 MAIN = str(Path(__file__).resolve().parents[2] / "main.py")
@@ -275,3 +277,78 @@ def test_ui_flows_do_not_log_names_or_ocr_text(
     assert not at.exception
     for sensitive in (ocr_output, name, "Zeferino", "Typed Name"):
         assert sensitive not in caplog.text
+
+
+# ------------------------------------------------------------------ Phase 4: research page
+
+
+def _write_research_files(root: Path, *, status: str = "final") -> None:
+    summary = {
+        "status": status,
+        "test_ocr": {
+            "test/P0_baseline": {
+                "cer": {"estimate": 0.25, "ci_low": 0.2, "ci_high": 0.3},
+                "wer": {"estimate": 0.4, "ci_low": 0.35, "ci_high": 0.45},
+                "name_token_recall": {"estimate": 0.7, "ci_low": 0.65, "ci_high": 0.75},
+                "median_latency_ms": 480.0,
+                "n_observations": 2560,
+                "n_sources": 160,
+            }
+        },
+        "test_matching_P0": {
+            "M0_baseline": {
+                "far": {"estimate": 0.0, "ci_low": 0.0, "ci_high": 0.0},
+                "frr": {"estimate": 0.31, "ci_low": 0.28, "ci_high": 0.34},
+                "tp": 1, "fp": 0, "tn": 3, "fn": 0, "tau": None,
+            }
+        },
+    }  # fmt: skip
+    path = root / presentation.SUMMARY_PATH
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(summary), encoding="utf-8")
+    figure = root / presentation.FIGURES_DIR / presentation.FIGURES[0][0]
+    figure.parent.mkdir(parents=True)
+    Image.new("RGB", (40, 20), "white").save(figure)
+
+
+@pytest.fixture
+def research_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+    root = tmp_path / "repo"
+    monkeypatch.setattr(presentation, "REPO_ROOT", root)
+    app_module._research_results.clear()
+    yield root
+    app_module._research_results.clear()
+
+
+def test_research_page_without_results(at: AppTest, research_root: Path) -> None:
+    goto(at, "Research")
+    assert any("No research results" in w.value for w in at.warning)
+    assert any("not identity-verification" in i.value for i in at.info)
+
+
+def test_research_page_shows_precomputed_results(at: AppTest, research_root: Path) -> None:
+    _write_research_files(research_root)
+    goto(at, "Research")
+    assert any("Final results" in s.value for s in at.success)
+    assert len(at.dataframe) == 2
+    assert at.get("image")  # the figure is rendered
+    assert not at.exception
+
+
+def test_research_page_marks_preliminary_results(at: AppTest, research_root: Path) -> None:
+    _write_research_files(research_root, status="preliminary")
+    goto(at, "Research")
+    assert any("Preliminary results" in w.value for w in at.warning)
+
+
+def test_research_page_never_runs_experiments(
+    at: AppTest, research_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def forbidden(*args: object, **kwargs: object) -> str:
+        raise AssertionError("the research page must not run OCR")
+
+    monkeypatch.setattr(ocr, "recognize", forbidden)
+    monkeypatch.setattr(ocr, "extract_text", forbidden)
+    _write_research_files(research_root)
+    goto(at, "Research")
+    assert not at.exception

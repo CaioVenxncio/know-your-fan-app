@@ -28,6 +28,9 @@ RUN uv sync --locked --no-default-groups --no-install-project
 COPY src ./src
 COPY main.py ./
 COPY .streamlit ./.streamlit
+# Precomputed research results for the read-only Research page (no experiment data or tooling).
+COPY experiments/results/research_summary.json ./experiments/results/
+COPY docs/research/figures ./docs/research/figures
 RUN uv sync --locked --no-default-groups
 
 RUN useradd --create-home --uid 10001 kyf \

@@ -378,3 +378,12 @@ def test_observation_archive_is_byte_reproducible(tmp_path: Path) -> None:
     assert evaluation.load_observation_rows(tmp_path)[0]["task_id"] == "a"
     path.unlink()  # evaluation falls back to the committed archive
     assert evaluation.load_observation_rows(tmp_path)[0]["status"] == "ok"
+
+
+def test_generated_json_and_markdown_end_with_a_single_lf_newline(tmp_path: Path) -> None:
+    for path in reporting.build_report(root=tmp_path):
+        if path.suffix in {".json", ".md"}:
+            data = path.read_bytes()
+            assert data.endswith(b"\n")
+            assert not data.endswith(b"\n\n")
+            assert b"\r\n" not in data

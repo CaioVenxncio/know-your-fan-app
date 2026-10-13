@@ -26,6 +26,7 @@ from know_your_fan.ocr import (
     OCRFailedError,
     OCRUnavailableError,
 )
+from know_your_fan.research import presentation
 from know_your_fan.storage import StorageBusyError, StorageError, StorageLimitError
 from know_your_fan.synthetic import GAMES, generate_profile
 from know_your_fan.text_matching import MAX_EXPECTED_NAME_LENGTH
@@ -38,7 +39,7 @@ SYNTHETIC_NOTICE = (
 )
 MATCHING_DISCLAIMER = "Text matching demonstration — not identity verification."
 
-PAGES = ("About", "Fan explorer", "Profile generator", "Text-matching demo")
+PAGES = ("About", "Fan explorer", "Profile generator", "Text-matching demo", "Research")
 
 
 _logger = logging.getLogger(f"{LOGGER_NAME}.app")
@@ -209,6 +210,68 @@ def page_text_matching(runtime: services.Runtime) -> None:
     st.code(outcome.extracted_text or "(no text recognized)", language=None)
 
 
+@st.cache_data(show_spinner=False)
+def _research_results() -> presentation.ResearchResults:
+    return presentation.load_results()
+
+
+def page_research() -> None:
+    st.header("Research: OCR text matching on synthetic cards")
+    st.info(
+        "Synthetic-data study. These results describe OCR transcription and name matching on "
+        "fictional cards rendered by this app. They are not identity-verification, "
+        "document-authentication, or fraud-detection performance."
+    )
+    results = _research_results()
+    if not results.available or results.summary is None:
+        st.warning("No research results are available in this deployment.")
+        return
+    if results.is_final:
+        st.success("Final results: held-out test split, choices frozen on dev/val beforehand.")
+    else:
+        st.warning("Preliminary results: the held-out test evaluation is not complete.")
+    st.subheader("Question")
+    st.write(
+        "How do controlled image degradations and text-matching strategies affect the "
+        "reliability, error rates, and computational cost of OCR-based name matching on "
+        "synthetic specimen cards?"
+    )
+    st.subheader("Method in brief")
+    st.write(
+        "- Fictional names in disjoint dev / val / test splits (80 / 80 / 160 cards), "
+        "1 true name and 3 decoy names per card.\n"
+        "- 16 controlled degradations (blur, rotation, noise, resolution, combinations), "
+        "8 preprocessing strategies, 4 matching strategies, real Tesseract OCR.\n"
+        "- Choices (preprocessing, matching threshold) were frozen on dev/val before the test "
+        "run; 95% intervals use a card-level bootstrap.\n"
+        "- Hypotheses and selection rules were committed before the main experiments ran."
+    )
+    summary = results.summary
+    if summary.get("test_ocr"):
+        st.subheader("OCR on the held-out test split")
+        st.dataframe(presentation.ocr_rows(summary), hide_index=True, width="stretch")
+    if summary.get("test_matching_P0"):
+        st.subheader("Name matching on the test split (baseline preprocessing)")
+        st.caption(
+            "FAR: decoy names accepted. FRR: true names rejected. "
+            "Lower is better for both; they trade off against each other."
+        )
+        st.dataframe(presentation.matching_rows(summary), hide_index=True, width="stretch")
+    for path, caption in results.figures:
+        st.image(str(path), caption=caption)
+    st.subheader("Limitations")
+    st.write(
+        "- One synthetic card layout and font; results do not transfer to real documents or "
+        "photographs.\n"
+        "- Degradations are simulated, not calibrated to real cameras.\n"
+        "- One OCR engine and model set on one machine; latency is machine-specific."
+    )
+    st.caption(
+        f"Full report: {presentation.REPORT_PATH} in the repository "
+        f"({presentation.REPOSITORY_URL})."
+    )
+
+
 def main() -> None:
     st.set_page_config(page_title="Know Your Fan (synthetic demo)", layout="wide")
     st.title("Know Your Fan — synthetic demo")
@@ -233,6 +296,8 @@ def main() -> None:
             page_explorer(runtime)
         elif page == "Profile generator":
             page_generator(runtime)
+        elif page == "Research":
+            page_research()
         else:
             page_text_matching(runtime)
     except StorageError as exc:
