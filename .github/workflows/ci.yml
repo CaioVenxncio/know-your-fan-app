@@ -238,6 +238,11 @@ jobs:
 
       - name: Install the apt packages listed in packages.txt
         run: |
+          # Debian 11 is end-of-life: its security updates are listed by deb.debian.org but
+          # their files now return 404 there, so read them from archive.debian.org.
+          # (Container-only workaround; it says nothing about Community Cloud's mirrors.)
+          sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' \
+            /etc/apt/sources.list
           apt-get update -q
           # shellcheck disable=SC2046
           apt-get install -y --no-install-recommends ca-certificates curl $(grep -v '^[[:space:]]*#' packages.txt)
