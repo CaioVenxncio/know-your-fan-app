@@ -21,8 +21,8 @@ flowchart LR
   is untrusted.
 - **Trust boundary 2:** repository to CI, and package registries to the build. Third-party code
   and actions are untrusted until pinned and verified.
-- **Out of scope:** the host platform's TLS, network, and access logs. There is no deployment
-  at present.
+- **Out of scope:** the host platform's TLS, network, and access logs. The public demo runs on
+  Streamlit Community Cloud (https://know-your-fan-app.streamlit.app).
 
 ## Protected assets
 
@@ -96,5 +96,6 @@ flowchart LR
    and a weekly scheduled audit is configured, but it activates only after the workflow reaches
    the default branch (the final merge).
 5. The historical password remains in Git history; it is compromised and must not be reused.
-6. The behaviour on Streamlit Community Cloud is unverified because nothing has been deployed.
+6. Platform behaviour on Streamlit Community Cloud (headers, logs, resource limits) is
+   controlled by the host and only partly observable; see docs/deployment.md.
 7. Streamlit sends no browser security headers; the host must add them (see docs/deployment.md).

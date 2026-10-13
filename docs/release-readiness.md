@@ -1,5 +1,8 @@
 # Release readiness (Phase 6)
 
+> **Status update:** the app has since been merged and deployed on Streamlit Community Cloud
+> (https://know-your-fan-app.streamlit.app); see [deployment.md](deployment.md). The assessment below is the Phase 6 snapshot.
+
 **Assessed:** 2026-10-13, on branch `phase-1/security-privacy-foundation`.
 
 **Code under review:** commit `da6c1ac`. The commit that adds this document changes documentation
