@@ -31,8 +31,8 @@ Please do **not** include real personal data in reports.
   appears in Git history; it is considered compromised and must never be reused.
 - **No real personal data.** Public workflows offer no fields for CPF, identity documents,
   addresses, or passwords, and no file upload widget.
-- **Write path restricted to synthetic records.** The repository rejects any record without a
-  `KYF-DEMO-` identifier and caps the dataset at 500 profiles.
+- **Write path restricted to synthetic records.** The repository accepts a profile only if every
+  value comes from the generator's own vocabulary (an allowlist), and caps the dataset at 500 profiles.
 - **Safe rendering.** Values are shown with plain-text widgets, never interpolated into
   Markdown or HTML.
 - **Bounded OCR.** Images are limited to 4 megapixels, and Tesseract runs with a 15-second timeout.
@@ -40,8 +40,15 @@ Please do **not** include real personal data in reports.
 - **Parameterized SQL.** All queries use bound parameters, and each connection is short-lived.
 - **Repository hygiene.** Databases, environment files, Streamlit secrets and Python caches are
   ignored by Git.
+- **Automated checks.** On every push to the development branch, CI runs `pip-audit` on the
+  locked dependencies and gitleaks on the full Git history. GitHub Actions are pinned to commit
+  SHAs and run with a read-only token. Pre-commit runs gitleaks before each local commit.
+- **Container.** The optional Docker image runs as a non-root user.
+
+The full analysis is in [docs/threat-model.md](docs/threat-model.md).
 
 ## Known gaps
 
-- There is no automated dependency or secret scanning in CI yet (planned for Phase 2).
-- The app does no rate limiting. Generator writes are capped by dataset size only.
+- The app does no rate limiting. OCR requests are bounded per request (image size, 15-second
+  timeout) but not per visitor.
+- Dependency audits run only when CI runs; there are no scheduled audits yet.

@@ -62,71 +62,123 @@ accuracy has not been measured yet.
 
 Later modernization phases are expected to add the following. **None of it exists yet.**
 
-- packaging metadata (`pyproject.toml`, lockfile), continuous integration, linting and type checking;
 - a reproducible OCR evaluation harness: preprocessing ablations, engine comparisons, and
   name-matching error rates on synthetic documents;
-- containerized local execution.
+- further hardening of the public demo (for example, rate limiting).
+
+## Architecture
+
+The app is a small modular monolith: one Streamlit process and one package in `src/know_your_fan/`.
+Presentation (`app.py`) is separate from workflows (`services.py`) and from the domain and
+infrastructure modules.
+
+- [docs/architecture.md](docs/architecture.md): modules, workflows, data and OCR flows, error handling, testing strategy
+- [docs/threat-model.md](docs/threat-model.md): STRIDE analysis, mitigations, residual risks
+- [docs/decisions/](docs/decisions/): architecture decision records
+
+```
+main.py                     Streamlit entry point
+src/know_your_fan/
+  app.py                    Streamlit pages (presentation only)
+  services.py               Workflows: seeding, filtering, OCR + matching
+  config.py                 Settings from environment variables
+  synthetic.py              Deterministic generator and synthetic-data allowlist
+  storage.py                SQLite repository (synthetic profiles only)
+  ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
+  text_matching.py          Accent-insensitive whole-word name matching
+  models.py                 FanProfile dataclass
+tests/unit/, tests/integration/
+docs/                       Architecture, threat model, ADRs
+pyproject.toml, uv.lock     Packaging, dependencies, tool configuration
+requirements.txt            Generated from uv.lock for pip-only hosts
+packages.txt, Dockerfile    Tesseract system dependency
+```
 
 ## Requirements
 
-- **Python 3.13.** This is the version used for testing; other recent versions may work but are untested.
-- **Tesseract OCR** (a system program, not a Python package) with English and Portuguese language
-  data. Only the text-matching page needs it. Without it, the other pages work normally and the text-matching
-  page shows an "OCR is unavailable" message.
+- **Python 3.13** (`requires-python = ">=3.13"`; CI tests 3.13 only).
+- **[uv](https://docs.astral.sh/uv/)** for development. Running the app also works with plain pip.
+- **Tesseract OCR 5.x** (a system program, not a Python package) with English and Portuguese language
+  data. Only the text-matching page needs it. Without it, the other pages work normally and the
+  text-matching page shows an "OCR is unavailable" message.
 
 | OS | Install Tesseract |
 |---|---|
-| Debian / Ubuntu | `sudo apt install tesseract-ocr tesseract-ocr-por` |
+| Debian / Ubuntu | `sudo apt install tesseract-ocr tesseract-ocr-por tesseract-ocr-eng` |
 | macOS (Homebrew) | `brew install tesseract tesseract-lang` |
 | Windows | Install the [UB Mannheim build](https://github.com/UB-Mannheim/tesseract/wiki), select *Portuguese* under additional language data, and add the install folder to `PATH`. |
+| Any OS with Docker | Use the provided `Dockerfile` (see below); it includes Tesseract and the language data. |
 
 Check the installation with `tesseract --list-langs`; the output should include `eng` and `por`.
-`packages.txt` lists the same system packages for Debian-based hosts such as Streamlit Community
-Cloud. No public deployment exists at present.
+CI tests the Tesseract 5.x packages from Ubuntu 24.04 and, through Docker, Debian 13. The Windows
+and macOS installs are documented but not tested in CI.
 
 ## Running locally
+
+With uv (recommended):
 
 ```bash
 git clone https://github.com/CaioVenxncio/know-your-fan-app.git
 cd know-your-fan-app
+uv sync --locked            # creates .venv from uv.lock, including dev tools
+uv run streamlit run main.py
+```
+
+With pip only:
+
+```bash
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run main.py
 ```
 
-Then open http://localhost:8501.
-
-On first start the app creates a local SQLite file at `.data/kyf_demo.db` and seeds it with 25
-fictional profiles. Set the `KYF_DB_PATH` environment variable to use a different location.
-Database files are ignored by Git.
-
-## Tests
+With Docker (includes Tesseract):
 
 ```bash
-pip install -r requirements-dev.txt
-pytest
+docker build -t know-your-fan .
+docker run --rm -p 8501:8501 know-your-fan
 ```
 
-The suite covers the synthetic generator, storage, text matching, OCR error handling, and the
-Streamlit pages (via `streamlit.testing`). The end-to-end OCR test is skipped automatically
-when Tesseract is not installed. There is no continuous integration yet.
+Then open http://localhost:8501. On first start the app creates a local SQLite file at
+`.data/kyf_demo.db` and seeds it with 25 fictional profiles. Set `KYF_DB_PATH` to use another
+location. Database files are ignored by Git.
 
-## Project layout
+## Development
 
-```
-main.py                     Streamlit entry point
-know_your_fan/
-  app.py                    Streamlit pages
-  synthetic.py              Deterministic fictional-profile generator
-  storage.py                SQLite repository (synthetic profiles only)
-  ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
-  text_matching.py          Accent-insensitive whole-word name matching
-  models.py                 FanProfile dataclass
-tests/                      pytest suite
-.streamlit/config.toml      Hides error details from visitors, disables usage stats
-packages.txt                Tesseract system packages for Debian-based hosts
-```
+| Task | Command |
+|---|---|
+| Lint | `uv run ruff check .` |
+| Format | `uv run ruff format .` (check only: `--check`) |
+| Type-check (strict) | `uv run mypy` |
+| Tests | `uv run pytest` |
+| Tests with coverage | `uv run pytest --cov` (fails below 90%) |
+| Non-UI coverage | `uv run coverage report --omit=src/know_your_fan/app.py --fail-under=90` |
+| Dependency audit | `uv run pip-audit --skip-editable` |
+| Pre-commit hooks | `uv run pre-commit install`, then `uv run pre-commit run --all-files` |
+| Update dependencies | `uv lock --upgrade`, then regenerate `requirements.txt` with the `uv export` command in its header |
+
+The end-to-end OCR tests (`tests/integration/test_ocr_e2e.py`) run the real Tesseract engine.
+They are skipped locally when Tesseract is not installed. Setting `KYF_REQUIRE_OCR=1` makes a
+missing engine fail the run instead, which is how CI runs them.
+
+## Continuous integration
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on pushes to the development branch, on pull
+requests to `main`, and on manual dispatch. It has four jobs:
+
+- **quality:**
+  - install from `uv.lock`, and check that `requirements.txt` matches it;
+  - Ruff lint and format check, and mypy;
+  - real-Tesseract OCR tests (which must not skip), and the full test suite;
+  - coverage thresholds.
+- **dependency-audit:** `pip-audit` on the locked environment.
+- **secret-scan:** gitleaks on the full Git history (the binary's checksum is verified).
+- **docker:** builds the image, checks it runs as non-root, runs real OCR inside it, and checks
+  that the app reports healthy.
+
+Actions are pinned to commit SHAs, and the workflow token is read-only. There is no deployment
+workflow.
 
 ## Security and privacy design
 
@@ -137,10 +189,10 @@ project is not production software.
   generated by the app itself.
 - There are no file uploads. OCR runs only on images the app renders from synthetic profiles.
 - The only free-text inputs (search box, expected name) are length-limited and never stored.
-- Stored records must carry a synthetic `KYF-DEMO-` identifier, and the dataset is capped at 500 profiles.
+- Stored profiles must pass an allowlist (every value comes from the generator), and the dataset is capped at 500 profiles.
 - User-visible values are rendered as plain text, never as Markdown or HTML.
 
-See [SECURITY.md](SECURITY.md) and [PRIVACY.md](PRIVACY.md).
+See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](docs/threat-model.md).
 
 ## Known limitations
 
@@ -151,7 +203,6 @@ See [SECURITY.md](SECURITY.md) and [PRIVACY.md](PRIVACY.md).
 - The local SQLite file isn't persistent on hosts with temporary filesystems. The demo reseeds itself,
   so only profiles added through the generator would be lost.
 - There is no rate limiting. Writes are bounded only by the 500-profile cap.
-- There is no continuous integration yet. Tests run locally.
 
 ## History
 
@@ -173,7 +224,7 @@ software keeps its own license, including:
 | Pillow | Python dependency | MIT-CMU |
 | pytesseract | Python dependency | Apache-2.0 |
 | Tesseract OCR and its language data | System program, installed separately | Apache-2.0 |
-| pytest | Development dependency | MIT |
+| Ruff, mypy, pytest, pytest-cov, pip-audit, pre-commit | Development dependencies | MIT or Apache-2.0 |
 
 Specimen cards are drawn with the default font bundled in Pillow (Aileron Regular). No third-party
 source code, fonts, images, or logos are stored in this repository.
