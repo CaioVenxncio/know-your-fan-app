@@ -196,11 +196,11 @@ def scenario_failure_recovery(real_ocr: bool) -> Result:
         "kind": "real Tesseract timeouts" if real_ocr else "simulated timeouts",
         "timeouts_triggered": failures,
         "active_slots_after_failures": active_after_failures,
-        "next_request_succeeded": outcome.match.all_found,
+        "next_request_succeeded": outcome.match.matched,
         "tesseract_temp_files_leaked": len(leaked),
         "ok": failures == guard.concurrency.capacity + 2
         and active_after_failures == 0
-        and outcome.match.all_found
+        and outcome.match.matched
         and not leaked,
     }
 

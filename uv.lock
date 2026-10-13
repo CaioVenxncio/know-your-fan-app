@@ -801,6 +801,7 @@ version = "0.3.0"
 source = { editable = "." }
 default-groups = ["dev", "research"]
 dependencies = [
+    { name = "altair" },
     { name = "numpy" },
     { name = "pillow" },
     { name = "pytesseract" },
@@ -822,6 +823,7 @@ research = [
 
 [package.metadata]
 requires-dist = [
+    { name = "altair", specifier = ">=5.5" },
     { name = "numpy", specifier = ">=2.0" },
     { name = "pillow", specifier = ">=11.3" },
     { name = "pytesseract", specifier = ">=0.3.13" },

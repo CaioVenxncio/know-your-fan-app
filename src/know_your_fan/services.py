@@ -15,7 +15,7 @@ from know_your_fan.limits import Clock, OCRGuard, SlidingWindowRateLimiter
 from know_your_fan.models import FanProfile
 from know_your_fan.storage import SyntheticProfileRepository
 from know_your_fan.synthetic import generate_profiles
-from know_your_fan.text_matching import MatchResult, match_name
+from know_your_fan.text_matching import SequenceMatch, match_name_sequence
 
 SEED_DATASET_SIZE = 25
 SEED_DATASET_SEED = 2025
@@ -98,7 +98,7 @@ def add_generated_profile(runtime: Runtime, profile: FanProfile, session_key: st
 @dataclass(frozen=True, slots=True)
 class TextMatchingOutcome:
     extracted_text: str
-    match: MatchResult
+    match: SequenceMatch
 
 
 def run_text_matching(
@@ -123,7 +123,7 @@ def run_text_matching(
         ocr.OCRUnavailableError, ocr.OCRFailedError (incl. OCRTimeoutError).
     """
     config = settings or Settings()
-    match_name(expected_name, "")  # validate input cheaply before running OCR
+    match_name_sequence(expected_name, "")  # validate input cheaply before running OCR
     ocr.check_image(image, config.max_image_pixels)
     extractor = extract or partial(
         ocr.extract_text,
@@ -135,4 +135,4 @@ def run_text_matching(
     else:
         with guard.admit(session_key):
             text = extractor(image)
-    return TextMatchingOutcome(extracted_text=text, match=match_name(expected_name, text))
+    return TextMatchingOutcome(extracted_text=text, match=match_name_sequence(expected_name, text))

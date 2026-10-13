@@ -9,3 +9,22 @@ maxUploadSize = 1
 
 [browser]
 gatherUsageStats = false
+
+# Visual identity (Phase 5). WCAG contrast ratios computed with the WCAG 2.x formula:
+# text #16181D on #FAF9F6 16.9:1; primary #4338CA on #FAF9F6 7.5:1; white on #4338CA 7.9:1;
+# link/tag #3730A3 9.4:1; pill borders #857F75 3.8:1 (non-text, >= 3:1). The orange accent
+# #C2410C (4.9:1) is decorative only and never the sole carrier of meaning.
+[theme]
+base = "light"
+primaryColor = "#4338CA"
+backgroundColor = "#FAF9F6"
+secondaryBackgroundColor = "#F0EEE9"
+textColor = "#16181D"
+borderColor = "#DEDBD3"
+linkColor = "#3730A3"
+font = "sans-serif"
+headingFont = "sans-serif"
+codeFont = "monospace"
+baseRadius = "0.6rem"
+showWidgetBorder = true
+chartCategoricalColors = ["#4338CA", "#C2410C", "#0F766E", "#A16207", "#6B7280", "#BE185D", "#1D4ED8", "#4D7C0F"]

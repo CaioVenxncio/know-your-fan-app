@@ -31,11 +31,15 @@ Current scope:
 
 | Page | What it does |
 |---|---|
-| **About** | Explains the scope and limits of the demo. |
-| **Fan explorer** | Browse and filter a seeded dataset of fictional fan profiles. |
-| **Profile generator** | Generate a fictional profile from a numeric seed and optionally add it to the local demo dataset. There are no free-text fields. |
-| **Text-matching demo** | Render a fictional, watermarked fan card, optionally blur or rotate it, run Tesseract OCR, and report which words of a name appear in the extracted text. |
-| **Research** | Shows precomputed results of the reproducible OCR study (below). Nothing is computed on page load. |
+| **Home** | What the project is, why all data is synthetic, how the text matching works, and links to each section. |
+| **Fans** | *Browse:* search and filter a seeded dataset of fictional profiles and open a profile card. *Generate:* create a fictional profile from a numeric seed and optionally add it to the local demo dataset (no free-text fields). |
+| **OCR demo** | Three steps: pick a fictional card and blur or rotate it, run Tesseract OCR, and see whether the name appears as a whole sequence of words on one line, with the words found or missing and the extracted text. |
+| **Research** | Interactive view of the precomputed Phase 4 results: degradations, preprocessing, matching rules, FAR/FRR trade-off, method and limits. Nothing is computed on page load. |
+
+The interface uses a small design system (theme tokens in `.streamlit/config.toml`, static styles
+in `src/know_your_fan/ui.py`). It was checked in a real browser at desktop and phone widths; see
+[docs/ux-accessibility.md](docs/ux-accessibility.md) for the UX audit, contrast measurements,
+accessibility notes, and their limits.
 
 ### Synthetic-only data policy
 
@@ -53,9 +57,15 @@ Current scope:
 
 *Text matching demonstration — not identity verification.*
 
-The matcher folds accents and case, splits the expected name into words, and reports which whole
-words appear in the OCR output. A full match only means the OCR engine recognized those words in
-an image the app generated itself. It does **not** show that a document is genuine or unaltered,
+The app accepts a name only when its **whole sequence of words (order and repeats included)
+appears on one line** of the OCR text. Accents and case are folded, and only whole words count, so
+"Ana" never matches inside "Mariana". This rule (M1) replaced the original "every word appears
+anywhere" rule (M0) after the Phase 4 study showed M0 accepting decoy names that repeat a token of
+the true name. Preprocessing is unchanged (grayscale + autocontrast), because the study found no
+name-level benefit in changing it. See [ADR 0007](docs/decisions/0007-research-informed-matching-and-preprocessing.md).
+
+A match only means the OCR engine recognized those words, in that order, in an image the app
+generated itself. It does **not** show that a document is genuine or unaltered,
 or that it belongs to the person presenting it. OCR and matching error rates have been measured
 only on synthetic cards; see the research study below.
 
@@ -111,12 +121,15 @@ infrastructure modules.
 - [docs/architecture.md](docs/architecture.md): modules, workflows, data and OCR flows, error handling, testing strategy
 - [docs/threat-model.md](docs/threat-model.md): STRIDE analysis, mitigations, residual risks
 - [docs/operations.md](docs/operations.md): resource limits, configuration, logging policy, validation results
+- [docs/ux-accessibility.md](docs/ux-accessibility.md): UX audit, design system, accessibility review, visual validation, UI performance
 - [docs/decisions/](docs/decisions/): architecture decision records
 
 ```
 main.py                     Streamlit entry point
 src/know_your_fan/
-  app.py                    Streamlit pages (presentation only)
+  app.py                    Streamlit shell and pages (presentation only)
+  research_page.py          Interactive Research page (precomputed data)
+  ui.py                     Static styling and layout helpers
   services.py               Workflows: runtime, seeding, filtering, OCR + matching
   config.py                 Validated settings from environment variables
   limits.py                 OCR rate limits and concurrency limit (per process)

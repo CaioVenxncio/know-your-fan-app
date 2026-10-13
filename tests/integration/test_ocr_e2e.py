@@ -103,5 +103,5 @@ def test_service_pipeline_with_real_engine() -> None:
     image = services.render_card(profile, blur_radius=0, rotation_degrees=0)
     outcome = services.run_text_matching(image, profile.name)
     assert "SPECIMEN" in outcome.extracted_text.upper()
-    assert outcome.match.expected_tokens == match_name(profile.name, "").expected_tokens
-    assert outcome.match.found_tokens, outcome.extracted_text
+    assert outcome.match.words.expected_tokens == match_name(profile.name, "").expected_tokens
+    assert outcome.match.words.found_tokens, outcome.extracted_text

@@ -51,7 +51,9 @@ flowchart TD
 | Module | Responsibility | Depends on |
 |---|---|---|
 | `main.py` | Entry point for `streamlit run`. Falls back to `src/` on the import path when the package is not installed. | `app` |
-| `app.py` | Streamlit pages, widgets, and user-facing messages. No business rules. | `services`, `config`, error types |
+| `app.py` | Streamlit shell and pages (Home, Fans, OCR demo), navigation, and user-facing messages. No business rules. | `services`, `config`, `ui`, `research_page`, error types |
+| `research_page.py` | Interactive Research page (Altair charts and data tables) over precomputed results. | `research.presentation`, `ui` |
+| `ui.py` | Static styling (theme CSS, brand bar, eyebrow/hero/step helpers). Never receives user data. | — |
 | `services.py` | Workflows: build the process-wide `Runtime`, open and seed the repository, filter profiles, render cards, run OCR plus matching through admission control, rate-limit dataset additions. | domain modules, `limits` |
 | `config.py` | Builds and validates `Settings` (database path and every operational limit) from environment variables; invalid values raise `ConfigurationError`. | — |
 | `limits.py` | Sliding-window rate limiter, bounded concurrency limiter, and `OCRGuard` (per-session rate, global rate, then a concurrency slot). In-process only. | `config`, `observability` |
@@ -60,7 +62,7 @@ flowchart TD
 | `synthetic.py` | Deterministic profile generator and the synthetic-data allowlist (`synthetic_violations`). | `models` |
 | `storage.py` | SQLite repository: schema, insert, count, list. Enforces the allowlist and the size cap. | `models`, `synthetic` |
 | `ocr.py` | Specimen rendering, bounded degradations, preprocessing, Tesseract wrapper, error mapping. | Pillow, pytesseract |
-| `text_matching.py` | Accent- and case-insensitive whole-word name matching. | — |
+| `text_matching.py` | Name matching. `match_name_sequence` (M1: whole name, in order, on one line) is the app's rule; `match_name` (M0: words anywhere) is the original rule, kept as baseline and for word-level feedback. Accent- and case-insensitive, whole words only. | — |
 | `research/presentation.py` | Read-only loading of precomputed research results for the Research page (standard library only). | — |
 | `research/*` (other modules) | The offline experiment harness: dataset, degradations, preprocessing, matching, metrics, stats, runner, evaluation, reporting. Never imported by the app. | `ocr`, `synthetic`, `text_matching`, numpy; matplotlib for figures |
 
@@ -145,17 +147,20 @@ flowchart LR
 
 ## Text matching
 
-`match_name(expected, text)` works as follows:
+Both rules first NFKD-normalize the text, remove combining marks, case-fold, and split into
+alphabetic tokens. Only whole words count, so "Ana" never matches inside "Mariana".
 
-1. NFKD-normalizes both strings, removes combining marks, and case-folds them.
-2. Splits them into alphabetic tokens.
-3. Removes duplicate expected tokens.
-4. Reports which tokens appear as whole words in the text.
+- **`match_name_sequence(expected, text)`, the app's rule (M1, since Phase 5):** a match requires
+  the full token sequence of the name, order and repeats included, on a single OCR line. It returns
+  a `SequenceMatch` with the decision, a verdict (`match`, `words_not_in_sequence`, `partial`,
+  `none`), and word-level feedback for the UI.
+- **`match_name(expected, text)`, the original rule (M0):** it reports which distinct tokens appear
+  anywhere in the text. It is kept unchanged as the research baseline and for feedback. Phase 4
+  showed that it accepts decoys that repeat a token of the true name.
 
 Names that are blank, longer than 100 characters, or have no letters are rejected with a
-`ValueError` before OCR runs. Whole-word matching avoids the substring false positives of the
-original version, such as "Ana" matching inside "Mariana". The matcher has no tolerance for OCR
-character errors.
+`ValueError` before OCR runs. Neither rule tolerates OCR character errors; the reasons are in
+[ADR 0007](decisions/0007-research-informed-matching-and-preprocessing.md).
 
 ## Configuration and dependencies
 

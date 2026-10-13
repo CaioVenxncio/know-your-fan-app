@@ -10,14 +10,16 @@ from pathlib import Path
 import pytest
 from PIL import Image
 from streamlit.testing.v1 import AppTest
+from streamlit.testing.v1.element_tree import Button
 
 from know_your_fan import app as app_module
-from know_your_fan import ocr, services
+from know_your_fan import ocr, research_page, services
 from know_your_fan.config import DB_PATH_ENV
 from know_your_fan.research import presentation
 from know_your_fan.storage import StorageError, StorageLimitError, SyntheticProfileRepository
 
-MAIN = str(Path(__file__).resolve().parents[2] / "main.py")
+ROOT = Path(__file__).resolve().parents[2]
+MAIN = str(ROOT / "main.py")
 FORBIDDEN_INPUT_WORDS = ("cpf", "rg", "cnh", "address", "password", "senha", "upload")
 MISLEADING_CLAIMS = (
     "documento válido",
@@ -41,8 +43,12 @@ def at(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[AppTest]:
 
 
 def goto(at: AppTest, page: str) -> None:
-    at.sidebar.radio[0].set_value(page).run()
+    at.radio(key=app_module.NAV_KEY).set_value(page).run()
     assert not at.exception
+
+
+def button(at: AppTest, label: str) -> Button:
+    return next(b for b in at.button if b.label == label)
 
 
 def all_text(at: AppTest) -> str:
@@ -51,6 +57,9 @@ def all_text(at: AppTest) -> str:
         at.info, at.success, at.warning, at.error, at.code,
     )  # fmt: skip
     return "\n".join(str(element.value) for group in groups for element in group).casefold()
+
+
+# ------------------------------------------------------------------ privacy boundaries
 
 
 @pytest.mark.parametrize("page", app_module.PAGES)
@@ -63,51 +72,133 @@ def test_pages_have_no_sensitive_inputs_or_claims(at: AppTest, page: str) -> Non
     assert not at.get("file_uploader")
     assert not at.get("camera_input")
     text = all_text(at)
-    assert "synthetic" in text
+    assert app_module.SYNTHETIC_NOTICE.casefold() in text  # notice on every page
+    assert "synthetic data only" in text  # brand bar label
     assert not any(claim in text for claim in MISLEADING_CLAIMS)
 
 
+# ------------------------------------------------------------------ navigation
+
+
+def test_home_is_the_default_page_and_links_to_sections(at: AppTest) -> None:
+    assert at.radio(key=app_module.NAV_KEY).value == "Home"
+    assert "not identity verification" in all_text(at)
+    button(at, "Open OCR demo").click().run()
+    assert at.radio(key=app_module.NAV_KEY).value == "OCR demo"
+    assert any(h.value == "OCR demo" for h in at.header)
+    button_labels = {b.label for b in at.button}
+    assert "Extract text and compare" in button_labels
+
+
+def test_home_research_card_uses_measured_run_count(at: AppTest) -> None:
+    explorer = presentation.load_explorer()
+    assert explorer is not None
+    assert f"{presentation.total_ocr_runs(explorer):,} real ocr runs" in all_text(at)
+
+
+# ------------------------------------------------------------------ fans
+
+
 def test_explorer_lists_seeded_profiles_and_filters(at: AppTest) -> None:
-    goto(at, "Fan explorer")
+    goto(at, "Fans")
     total = services.SEED_DATASET_SIZE
     assert any(f"{total} of {total} fictional profiles" in c.value for c in at.caption)
-    at.text_input[0].set_value("zzz-no-such-fan").run()
+    search = next(t for t in at.text_input if t.label == "Search name or city")
+    search.set_value("zzz-no-such-fan").run()
     assert any(f"0 of {total} fictional profiles" in c.value for c in at.caption)
+    assert any("No fictional fans match" in i.value for i in at.info)  # empty state
 
 
-def test_explorer_shows_details_as_plain_text(at: AppTest) -> None:
-    goto(at, "Fan explorer")
-    assert any(t.value.startswith("Demo ID: KYF-DEMO-") for t in at.text)
+def test_profile_card_renders_generated_values_as_plain_text(at: AppTest) -> None:
+    goto(at, "Fans")
+    profiles = app_module.get_runtime().repository.list_all()
+    texts = {t.value for t in at.text}
+    assert any(p.demo_id in texts for p in profiles)  # full ID, never truncated
+    assert any(p.name in texts for p in profiles)
 
 
 def test_generator_adds_profile_once(at: AppTest) -> None:
-    goto(at, "Profile generator")
+    goto(at, "Fans")
     at.number_input[0].set_value(42).run()
-    at.button[0].click().run()
-    at.button[1].click().run()
+    button(at, "Generate profile").click().run()
+    button(at, "Add to demo dataset").click().run()
     assert any("added" in s.value for s in at.success)
-    at.button[1].click().run()
+    button(at, "Add to demo dataset").click().run()
     assert any("already" in i.value for i in at.info)
     assert app_module.get_runtime().repository.count() == services.SEED_DATASET_SIZE + 1
 
 
-def test_text_matching_success_path(at: AppTest, monkeypatch: pytest.MonkeyPatch) -> None:
-    goto(at, "Text-matching demo")
-    name = at.text_input[0].value
+def test_generator_reports_storage_limit(at: AppTest, monkeypatch: pytest.MonkeyPatch) -> None:
+    def full(self: object, profile: object) -> bool:
+        raise StorageLimitError("The demo dataset is limited to 500 profiles.")
+
+    monkeypatch.setattr(SyntheticProfileRepository, "add", full)
+    goto(at, "Fans")
+    button(at, "Generate profile").click().run()
+    button(at, "Add to demo dataset").click().run()
+    assert not at.exception
+    assert any("limited to 500" in w.value for w in at.warning)
+
+
+# ------------------------------------------------------------------ OCR demo (M1 decisions)
+
+
+def _name_input(at: AppTest) -> str:
+    value = next(t for t in at.text_input if t.label == "Name to look for").value
+    assert value
+    return value
+
+
+def run_ocr(at: AppTest) -> None:
+    button(at, "Extract text and compare").click().run()
+    assert not at.exception
+
+
+def test_ocr_match_path(at: AppTest, monkeypatch: pytest.MonkeyPatch) -> None:
+    goto(at, "OCR demo")
+    name = _name_input(at)
     monkeypatch.setattr(ocr, "extract_text", lambda image, **_: f"Name: {name}")
-    at.button[0].click().run()
-    assert any("All words of the name were found" in s.value for s in at.success)
+    run_ocr(at)
+    assert any("Match: the full name appears" in s.value for s in at.success)
     assert any(i.value == app_module.MATCHING_DISCLAIMER for i in at.info)
 
 
-def test_text_matching_blank_name_shows_friendly_error(
+def test_ocr_rejects_words_that_are_present_but_not_in_sequence(
     at: AppTest, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """M0 accepted this (all words anywhere); the app's M1 rule does not."""
+    goto(at, "OCR demo")
+    words = _name_input(at).split()
+    scrambled = "Name: " + " ".join(reversed(words)) + "\nCity: Vila Aurora"
+    monkeypatch.setattr(ocr, "extract_text", lambda image, **_: scrambled)
+    run_ocr(at)
+    assert not at.success
+    assert any("every word appears somewhere" in w.value for w in at.warning)
+
+
+@pytest.mark.parametrize(
+    ("ocr_text", "expected_message"),
+    [
+        ("first-word-only", "only some of the words"),
+        ("Unrelated text", "none of the words"),
+    ],
+)
+def test_ocr_partial_and_no_match_messages(
+    at: AppTest, monkeypatch: pytest.MonkeyPatch, ocr_text: str, expected_message: str
+) -> None:
+    goto(at, "OCR demo")
+    text = ocr_text.replace("first-word-only", _name_input(at).split()[0])
+    monkeypatch.setattr(ocr, "extract_text", lambda image, **_: text)
+    run_ocr(at)
+    messages = [w.value for w in at.warning] + [e.value for e in at.error]
+    assert any(expected_message in m for m in messages)
+
+
+def test_ocr_blank_name_shows_friendly_error(at: AppTest, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(ocr, "extract_text", lambda image, **_: "Name: someone")
-    goto(at, "Text-matching demo")
-    at.text_input[0].set_value("   ").run()
-    at.button[0].click().run()
-    assert not at.exception
+    goto(at, "OCR demo")
+    next(t for t in at.text_input if t.label == "Name to look for").set_value("   ").run()
+    run_ocr(at)
     assert any("at least one letter" in e.value for e in at.error)
 
 
@@ -115,20 +206,35 @@ def test_text_matching_blank_name_shows_friendly_error(
     ("error", "message"),
     [
         (ocr.OCRUnavailableError("not installed"), "OCR is unavailable"),
-        (ocr.OCRFailedError("timed out"), "OCR failed"),
+        (ocr.OCRFailedError("engine crashed"), "OCR failed"),
+        (ocr.OCRTimeoutError("OCR timed out."), "took too long"),
     ],
 )
-def test_text_matching_ocr_errors_are_friendly(
+def test_ocr_errors_are_friendly(
     at: AppTest, monkeypatch: pytest.MonkeyPatch, error: Exception, message: str
 ) -> None:
     def failing(image: Image.Image, **_: object) -> str:
         raise error
 
     monkeypatch.setattr(ocr, "extract_text", failing)
-    goto(at, "Text-matching demo")
-    at.button[0].click().run()
-    assert not at.exception
+    goto(at, "OCR demo")
+    run_ocr(at)
     assert any(message in e.value for e in at.error)
+    assert "traceback" not in all_text(at)
+
+
+def test_ocr_result_persists_until_inputs_change(
+    at: AppTest, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    goto(at, "OCR demo")
+    name = _name_input(at)
+    monkeypatch.setattr(ocr, "extract_text", lambda image, **_: f"Name: {name}")
+    run_ocr(at)
+    at.run()  # an unrelated rerun keeps the result
+    assert any("Match:" in s.value for s in at.success)
+    at.slider[0].set_value(1.0).run()  # changing the capture clears it
+    assert not at.success
+    assert any("Run OCR to see" in c.value for c in at.caption)
 
 
 def test_unavailable_database_shows_error_instead_of_crashing(
@@ -143,38 +249,6 @@ def test_unavailable_database_shows_error_instead_of_crashing(
     assert not test.exception
     assert any("demo dataset is unavailable" in e.value for e in test.error)
     app_module.get_runtime.clear()
-
-
-@pytest.mark.parametrize(
-    ("ocr_text", "expected_message"),
-    [
-        ("first-word-only", "Some words were found"),
-        ("Unrelated text", "None of the words"),
-    ],
-)
-def test_text_matching_partial_and_no_match_messages(
-    at: AppTest, monkeypatch: pytest.MonkeyPatch, ocr_text: str, expected_message: str
-) -> None:
-    goto(at, "Text-matching demo")
-    name = at.text_input[0].value
-    assert name
-    first_name = name.split()[0]
-    text = ocr_text.replace("first-word-only", first_name)
-    monkeypatch.setattr(ocr, "extract_text", lambda image, **_: text)
-    at.button[0].click().run()
-    assert any(expected_message in w.value for w in at.warning)
-
-
-def test_generator_reports_storage_limit(at: AppTest, monkeypatch: pytest.MonkeyPatch) -> None:
-    def full(self: object, profile: object) -> bool:
-        raise StorageLimitError("The demo dataset is limited to 500 profiles.")
-
-    monkeypatch.setattr(SyntheticProfileRepository, "add", full)
-    goto(at, "Profile generator")
-    at.button[0].click().run()
-    at.button[1].click().run()
-    assert not at.exception
-    assert any("limited to 500" in w.value for w in at.warning)
 
 
 # ------------------------------------------------------------------ Phase 3: limits in the UI
@@ -211,10 +285,9 @@ def test_ocr_rate_limit_is_enforced_in_the_ui(
 
     monkeypatch.setattr(ocr, "extract_text", counting_extract)
     at = make_app({"KYF_OCR_SESSION_LIMIT": "2", "KYF_OCR_GLOBAL_LIMIT": "2"})
-    goto(at, "Text-matching demo")
+    goto(at, "OCR demo")
     for _ in range(3):
-        at.button[0].click().run()
-    assert not at.exception
+        run_ocr(at)
     assert len(calls) == 2  # the third request never reached the OCR engine
     assert any("Too many requests" in w.value for w in at.warning)
 
@@ -228,11 +301,10 @@ def test_busy_ocr_engine_message(
     guard.concurrency.wait_seconds = 0
     guard.concurrency.acquire()  # another session is using the only OCR slot
     try:
-        goto(at, "Text-matching demo")
-        at.button[0].click().run()
+        goto(at, "OCR demo")
+        run_ocr(at)
     finally:
         guard.concurrency.release()
-    assert not at.exception
     assert any("busy" in w.value for w in at.warning)
 
 
@@ -241,7 +313,7 @@ def test_invalid_configuration_fails_closed_with_generic_message(
 ) -> None:
     at = make_app({"KYF_OCR_MAX_CONCURRENCY": "1000"})
     assert any("misconfigured" in e.value for e in at.error)
-    assert not at.sidebar.radio  # the app stopped before rendering any page
+    assert not at.radio  # the app stopped before rendering navigation or any page
     assert "1000" not in all_text(at)
 
 
@@ -252,7 +324,7 @@ def test_storage_failure_while_rendering_a_page_is_handled(
         raise StorageError("A demo database operation failed.")
 
     monkeypatch.setattr(SyntheticProfileRepository, "list_all", failing_list)
-    goto(at, "Fan explorer")
+    goto(at, "Fans")
     assert not at.exception
     assert any("temporarily unavailable" in e.value for e in at.error)
 
@@ -266,58 +338,37 @@ def test_ui_flows_do_not_log_names_or_ocr_text(
         raise ocr.OCRTimeoutError("OCR timed out.")
 
     with caplog.at_level(logging.DEBUG, logger="know_your_fan"):
-        goto(at, "Text-matching demo")
-        name = at.text_input[0].value
-        assert name
+        goto(at, "OCR demo")
+        name = _name_input(at)
         monkeypatch.setattr(ocr, "extract_text", lambda image, **_: ocr_output)
-        at.button[0].click().run()
+        run_ocr(at)
         monkeypatch.setattr(ocr, "extract_text", timing_out)
-        at.text_input[0].set_value("Zeferino Typed Name").run()
-        at.button[0].click().run()
-    assert not at.exception
+        next(t for t in at.text_input if t.label == "Name to look for").set_value(
+            "Zeferino Typed Name"
+        ).run()
+        run_ocr(at)
     for sensitive in (ocr_output, name, "Zeferino", "Typed Name"):
         assert sensitive not in caplog.text
 
 
-# ------------------------------------------------------------------ Phase 4: research page
-
-
-def _write_research_files(root: Path, *, status: str = "final") -> None:
-    summary = {
-        "status": status,
-        "test_ocr": {
-            "test/P0_baseline": {
-                "cer": {"estimate": 0.25, "ci_low": 0.2, "ci_high": 0.3},
-                "wer": {"estimate": 0.4, "ci_low": 0.35, "ci_high": 0.45},
-                "name_token_recall": {"estimate": 0.7, "ci_low": 0.65, "ci_high": 0.75},
-                "median_latency_ms": 480.0,
-                "n_observations": 2560,
-                "n_sources": 160,
-            }
-        },
-        "test_matching_P0": {
-            "M0_baseline": {
-                "far": {"estimate": 0.0, "ci_low": 0.0, "ci_high": 0.0},
-                "frr": {"estimate": 0.31, "ci_low": 0.28, "ci_high": 0.34},
-                "tp": 1, "fp": 0, "tn": 3, "fn": 0, "tau": None,
-            }
-        },
-    }  # fmt: skip
-    path = root / presentation.SUMMARY_PATH
-    path.parent.mkdir(parents=True)
-    path.write_text(json.dumps(summary), encoding="utf-8")
-    figure = root / presentation.FIGURES_DIR / presentation.FIGURES[0][0]
-    figure.parent.mkdir(parents=True)
-    Image.new("RGB", (40, 20), "white").save(figure)
+# ------------------------------------------------------------------ research page
 
 
 @pytest.fixture
 def research_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
     root = tmp_path / "repo"
     monkeypatch.setattr(presentation, "REPO_ROOT", root)
-    app_module._research_results.clear()
+    research_page.research_data.clear()
     yield root
-    app_module._research_results.clear()
+    research_page.research_data.clear()
+
+
+def _install_explorer(root: Path, **changes: object) -> None:
+    data = json.loads((ROOT / presentation.EXPLORER_PATH).read_text(encoding="utf-8"))
+    data.update(changes)
+    target = root / presentation.EXPLORER_PATH
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(data), encoding="utf-8")
 
 
 def test_research_page_without_results(at: AppTest, research_root: Path) -> None:
@@ -326,17 +377,41 @@ def test_research_page_without_results(at: AppTest, research_root: Path) -> None
     assert any("not identity-verification" in i.value for i in at.info)
 
 
+def test_research_page_with_malformed_results(at: AppTest, research_root: Path) -> None:
+    target = research_root / presentation.EXPLORER_PATH
+    target.parent.mkdir(parents=True)
+    target.write_text('{"status": "final"}', encoding="utf-8")  # missing required sections
+    goto(at, "Research")
+    assert any("No research results" in w.value for w in at.warning)
+
+
 def test_research_page_shows_precomputed_results(at: AppTest, research_root: Path) -> None:
-    _write_research_files(research_root)
+    _install_explorer(research_root)
     goto(at, "Research")
     assert any("Final results" in s.value for s in at.success)
-    assert len(at.dataframe) == 2
-    assert at.get("image")  # the figure is rendered
+    metrics = {m.label: m.value for m in at.metric}
+    assert metrics["Real OCR runs"] == "19,200"
+    assert metrics["Held-out test cards"] == "160"
+    assert len(at.tabs) == 4
+    assert len(at.get("vega_lite_chart")) >= 4  # degradation, preprocessing x2, sweep
+    assert len(at.dataframe) >= 4  # every chart has a data table, plus the matching table
+
+
+def test_research_page_controls_filter_the_data(at: AppTest, research_root: Path) -> None:
+    _install_explorer(research_root)
+    goto(at, "Research")
+    family = next(s for s in at.selectbox if s.label == "Degradation family")
+    family.set_value("rotation").run()
+    assert not at.exception
+    tables = [df.value for df in at.dataframe]
+    rotation_table = next(t for t in tables if "Condition" in t.columns)
+    assert set(rotation_table["Condition"]) == {"rot_-3", "rot_+3", "rot_-8", "rot_+8"}
+    at.radio(key="deg_metric").set_value("WER").run()
     assert not at.exception
 
 
 def test_research_page_marks_preliminary_results(at: AppTest, research_root: Path) -> None:
-    _write_research_files(research_root, status="preliminary")
+    _install_explorer(research_root, status="preliminary")
     goto(at, "Research")
     assert any("Preliminary results" in w.value for w in at.warning)
 
@@ -349,6 +424,26 @@ def test_research_page_never_runs_experiments(
 
     monkeypatch.setattr(ocr, "recognize", forbidden)
     monkeypatch.setattr(ocr, "extract_text", forbidden)
-    _write_research_files(research_root)
+    _install_explorer(research_root)
     goto(at, "Research")
+    for tab_family in ("blur", "noise", "all"):
+        next(s for s in at.selectbox if s.label == "Degradation family").set_value(tab_family).run()
     assert not at.exception
+
+
+def test_home_falls_back_when_research_data_is_missing(at: AppTest, research_root: Path) -> None:
+    at.run()
+    assert "a pre-registered ocr study" in all_text(at)
+
+
+def test_committed_explorer_file_exists_and_is_loadable() -> None:
+    assert (ROOT / presentation.EXPLORER_PATH).is_file()
+    assert presentation.load_explorer(ROOT) is not None
+
+
+def test_both_profile_cards_render_together(at: AppTest) -> None:
+    """Regression: the Browse and Generate cards once shared a widget key and crashed."""
+    goto(at, "Fans")
+    button(at, "Generate profile").click().run()
+    assert not at.exception
+    assert len([c for c in at.caption if c.value == "Demo ID"]) == 2

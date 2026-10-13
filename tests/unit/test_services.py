@@ -57,15 +57,15 @@ def test_run_text_matching_uses_extractor_output(profile: FanProfile) -> None:
     image = services.render_card(profile, 0, 0)
     outcome = services.run_text_matching(image, profile.name, extract=lambda _: profile.name)
     assert outcome.extracted_text == profile.name
-    assert outcome.match.all_found
+    assert outcome.match.matched
 
 
 def test_run_text_matching_reports_partial_matches(profile: FanProfile) -> None:
     image = services.render_card(profile, 0, 0)
     first = profile.name.split()[0]
     outcome = services.run_text_matching(image, profile.name, extract=lambda _: first)
-    assert not outcome.match.all_found
-    assert outcome.match.found_tokens
+    assert not outcome.match.matched
+    assert outcome.match.words.found_tokens
 
 
 @pytest.mark.parametrize("bad_name", ["", "   ", "1234"])
@@ -96,7 +96,7 @@ def test_run_text_matching_defaults_to_the_ocr_module_with_configured_limits(
         services.render_card(profile, 0, 0), profile.name, settings=settings
     )
     assert outcome.extracted_text == "nothing relevant"
-    assert not outcome.match.found_tokens
+    assert not outcome.match.words.found_tokens
     assert seen == {"timeout_seconds": 7.0, "max_pixels": 2_000_000}
 
 
@@ -184,7 +184,7 @@ def test_ocr_timeout_releases_capacity(profile: FanProfile) -> None:
     outcome = services.run_text_matching(
         image, profile.name, CountingExtractor(profile.name), guard=guard, session_key="s"
     )
-    assert outcome.match.all_found
+    assert outcome.match.matched
 
 
 def test_profile_writes_are_rate_limited_per_session(tmp_path: Path) -> None:

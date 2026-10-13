@@ -285,3 +285,21 @@ def test_build_runtime_limits_engine_threads(
     monkeypatch.delenv("OMP_THREAD_LIMIT", raising=False)
     services.build_runtime(Settings(db_path=tmp_path / "demo.db"))
     assert os.environ["OMP_THREAD_LIMIT"] == "1"
+
+
+def test_app_ocr_uses_the_p0_preprocessing_path(
+    monkeypatch: pytest.MonkeyPatch, profile: FanProfile
+) -> None:
+    """Phase 5 decision (ADR 0007): the app keeps P0; only the matching rule changed."""
+    seen: list[Image.Image] = []
+
+    def capture(prepared: Image.Image, **_: object) -> str:
+        seen.append(prepared)
+        return ""
+
+    monkeypatch.setattr(ocr, "recognize", capture)
+    card = ocr.render_specimen(profile)
+    ocr.extract_text(card)
+    expected = ocr.preprocess(card)
+    assert seen[0].mode == "L"
+    assert ImageChops.difference(seen[0], expected).getbbox() is None

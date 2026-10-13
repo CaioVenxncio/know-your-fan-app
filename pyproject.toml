@@ -18,7 +18,8 @@ dependencies = [
     "streamlit>=1.60",   # st.dataframe(width="stretch"); lowest version tested
     "pillow>=11.3",      # includes the fix for CVE-2025-48379; ImageFont.load_default(size=...)
     "pytesseract>=0.3.13",  # image_to_string(timeout=...), Python 3.13 support
-    "numpy>=2.0",  # seeded noise and bootstrap in the research harness (already a Streamlit dependency)
+    "numpy>=2.0",   # seeded noise and bootstrap in the research harness (via Streamlit too)
+    "altair>=5.5",  # Research page charts (already installed via Streamlit)
 ]
 
 [project.urls]
