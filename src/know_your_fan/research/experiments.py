@@ -206,6 +206,15 @@ def _tessdata_dir() -> Path | None:
     return None
 
 
+def redact_home(path: Path) -> str:
+    """Path with the user's home directory replaced by ``~`` (no username in provenance)."""
+    resolved = Path(path).expanduser()
+    try:
+        return "~/" + resolved.relative_to(Path.home()).as_posix()
+    except ValueError:
+        return resolved.as_posix()
+
+
 def capture_environment(label: str) -> dict[str, Any]:
     """Software, hardware, and data provenance for one experiment run."""
     tessdata = _tessdata_dir()
@@ -242,7 +251,7 @@ def capture_environment(label: str) -> dict[str, Any]:
         "tesseract_version": tesseract_version,
         "tesseract_languages": languages,
         "ocr_language_setting": ocr.OCR_LANGUAGE,
-        "tessdata_dir": str(tessdata) if tessdata else None,
+        "tessdata_dir": redact_home(tessdata) if tessdata else None,
         "traineddata_sha256": models,
         "omp_thread_limit": os.environ.get("OMP_THREAD_LIMIT"),
         "packages": {

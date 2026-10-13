@@ -387,3 +387,46 @@ def test_generated_json_and_markdown_end_with_a_single_lf_newline(tmp_path: Path
             assert data.endswith(b"\n")
             assert not data.endswith(b"\n\n")
             assert b"\r\n" not in data
+
+
+def test_provenance_redacts_the_home_directory(monkeypatch: pytest.MonkeyPatch) -> None:
+    home = Path.home()
+    assert experiments.redact_home(home / "AppData" / "tessdata") == "~/AppData/tessdata"
+    outside = Path(home.anchor) / "opt" / "tessdata"
+    assert experiments.redact_home(outside) == outside.as_posix()
+    monkeypatch.setenv("TESSDATA_PREFIX", str(home / "models"))
+    env = experiments.capture_environment("unit")
+    assert env["tessdata_dir"] == "~/models"
+    assert home.name not in json.dumps(env["tessdata_dir"])
+
+
+def test_export_explorer_copies_summary_values(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    with pytest.raises(FileNotFoundError, match="evaluate"):
+        reporting.export_explorer(root=tmp_path)
+    monkeypatch.setattr(ocr, "recognize", lambda image, **_: "Name: Ana Lima")
+    for experiment_id, changes in {
+        "e1_degradation": {"splits": ["dev", "val"], "strategies": ["P0_baseline"]},
+        "e2_preprocessing": {"splits": ["dev", "val"], "strategies": ["P0_baseline", "P1_none"]},
+        "e3_test": {"splits": ["test"], "strategies": ["P0_baseline", "P1_none"]},
+    }.items():
+        config = experiments.parse_config(
+            _config(experiment_id=experiment_id, max_sources_per_split=2, **changes)
+        )
+        experiments.run_experiment(config, root=tmp_path, environment_label="unit")
+        evaluation.evaluate_experiment(config, root=tmp_path, tau=0.05)
+    (tmp_path / reporting.SELECTION).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / reporting.SELECTION).write_text(
+        json.dumps({"preprocessing": "P1_none", "m2_tau": 0.05}), encoding="utf-8"
+    )
+    path = reporting.export_explorer(root=tmp_path)
+    explorer = json.loads(path.read_text(encoding="utf-8"))
+    e3 = json.loads((experiments.results_dir(tmp_path, "e3_test") / "summary.json").read_text())
+    assert (
+        explorer["test_ocr"]["P0_baseline"]["pooled"]["cer"]
+        == (e3["ocr"]["test/P0_baseline"]["pooled"]["cer"])
+    )
+    assert explorer["runs"]["e3_test"]["ocr_runs"] == 2 * 2 * 2
+    assert explorer["selection"]["preprocessing"] == "P1_none"
+    assert path.read_bytes().endswith(b"\n")

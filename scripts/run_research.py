@@ -41,6 +41,11 @@ def main(argv: list[str] | None = None) -> int:
     report = commands.add_parser("report", help="regenerate tables and figures")
     report.add_argument("--root", type=Path, default=experiments.REPO_ROOT)
 
+    explorer = commands.add_parser(
+        "export-explorer", help="write the app's interactive research data from the summaries"
+    )
+    explorer.add_argument("--root", type=Path, default=experiments.REPO_ROOT)
+
     args = parser.parse_args(argv)
     if args.command == "run":
         config = experiments.load_config(args.config)
@@ -56,6 +61,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     from know_your_fan.research import reporting
 
+    if args.command == "export-explorer":
+        print(f"wrote {reporting.export_explorer(root=args.root)}")
+        return 0
     written = reporting.build_report(root=args.root)
     print("\n".join(f"wrote {p}" for p in written))
     return 0

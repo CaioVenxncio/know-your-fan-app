@@ -98,3 +98,93 @@ def matching_rows(summary: dict[str, Any]) -> list[dict[str, str]]:
             }
         )
     return rows
+
+
+EXPLORER_PATH = Path("experiments") / "results" / "research_explorer.json"
+_REQUIRED_EXPLORER_KEYS = (
+    "selection",
+    "runs",
+    "conditions",
+    "test_ocr",
+    "devval_preprocessing",
+    "test_matching",
+    "tau_sweep",
+)
+
+
+def load_explorer(root: Path | None = None) -> dict[str, Any] | None:
+    """Load the precomputed interactive research data, or None if absent or malformed."""
+    path = (REPO_ROOT if root is None else root) / EXPLORER_PATH
+    if not path.is_file():
+        return None
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(loaded, dict) or any(k not in loaded for k in _REQUIRED_EXPLORER_KEYS):
+        return None
+    return loaded
+
+
+def total_ocr_runs(explorer: dict[str, Any]) -> int:
+    return sum(int(run["ocr_runs"]) for run in explorer["runs"].values())
+
+
+def condition_rows(
+    explorer: dict[str, Any], metric: str, family: str | None = None
+) -> list[dict[str, Any]]:
+    """Long-format rows (one per condition x strategy) for the test split."""
+    families = {c["name"]: c["family"] for c in explorer["conditions"]}
+    rows = []
+    for strategy, data in explorer["test_ocr"].items():
+        for condition, entry in data["by_condition"].items():
+            if family and families[condition] != family:
+                continue
+            value = entry[metric]
+            rows.append(
+                {
+                    "condition": condition,
+                    "family": families[condition],
+                    "strategy": strategy,
+                    "estimate": value["estimate"],
+                    "ci_low": value["ci_low"],
+                    "ci_high": value["ci_high"],
+                    "n_cards": entry["n_sources"],
+                }
+            )
+    order = [c["name"] for c in explorer["conditions"]]
+    return sorted(rows, key=lambda r: (order.index(r["condition"]), r["strategy"]))
+
+
+def preprocessing_rows(explorer: dict[str, Any], metric: str) -> list[dict[str, Any]]:
+    rows = []
+    for split, strategies in explorer["devval_preprocessing"].items():
+        for strategy, entry in strategies.items():
+            value = entry[metric]
+            rows.append(
+                {
+                    "split": split,
+                    "strategy": strategy,
+                    "estimate": value["estimate"],
+                    "ci_low": value["ci_low"],
+                    "ci_high": value["ci_high"],
+                    "median_latency_ms": entry["median_latency_ms"],
+                    "n_cards": entry["n_sources"],
+                }
+            )
+    return rows
+
+
+def sweep_rows(explorer: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "split": split,
+            "tau": r["tau"],
+            "far": r["far"],
+            "frr": r["frr"],
+            "n_negatives": r["n_negatives"],
+            "n_positives": r["n_positives"],
+        }
+        for split, sweep in explorer["tau_sweep"].items()
+        for r in sweep
+    ]

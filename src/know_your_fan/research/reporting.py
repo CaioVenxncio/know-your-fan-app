@@ -531,3 +531,119 @@ def _app_summary(summaries: dict[str, Any], selection: dict[str, Any] | None) ->
             for m in MATCHER_LABELS
         }
     return out
+
+
+# ---------------------------------------------------------------- explorer export
+
+EXPLORER_PATH = Path("experiments") / "results" / "research_explorer.json"
+_OCR_FIELDS = ("cer", "wer", "name_token_recall", "exact_rate")
+
+
+def _ocr_entry(entry: dict[str, Any]) -> dict[str, Any]:
+    latency = entry["latency_ms"]["preprocess_plus_ocr"]
+    return {
+        **{field: entry[field] for field in _OCR_FIELDS},
+        "median_latency_ms": latency["median"],
+        "p95_latency_ms": latency["p95"],
+        "n_observations": entry["n_observations"],
+        "n_sources": entry["n_sources"],
+    }
+
+
+def _matching_entry(entry: dict[str, Any]) -> dict[str, Any]:
+    keys = ("tau", "tp", "fp", "tn", "fn", "far", "frr", "precision", "recall", "f1")
+    return {
+        **{k: entry[k] for k in keys},
+        "far_by_negative_kind": entry["far_by_negative_kind"],
+    }
+
+
+def export_explorer(root: Path = REPO_ROOT) -> Path:
+    """Write a compact, display-ready subset of the final results for the app.
+
+    Values are copied verbatim from the experiment summaries (no new computation)
+    and carry their sample sizes. Raises FileNotFoundError if a summary is missing.
+    """
+    summaries: dict[str, dict[str, Any]] = {}
+    for experiment in EXPERIMENTS:
+        loaded = _load(root, experiment)
+        if loaded is None:
+            raise FileNotFoundError(f"{experiment}/summary.json is missing; run `evaluate` first")
+        summaries[experiment] = loaded
+    e2, e3 = summaries["e2_preprocessing"], summaries["e3_test"]
+    selection = json.loads((root / SELECTION).read_text(encoding="utf-8"))
+    runs = {}
+    for experiment in EXPERIMENTS:
+        meta = _metadata(root, experiment)
+        assert meta is not None  # noqa: S101 - a summary exists, so its metadata does
+        env = meta["runs"][-1]["environment"]
+        runs[experiment] = {
+            "ocr_runs": sum(r["tasks_run"] for r in meta["runs"]),
+            "splits": meta["config"]["splits"],
+            "strategies": meta["config"]["strategies"],
+            "n_conditions": len(meta["config"]["conditions"]),
+            "git_commit": env["git_commit"],
+            "tesseract_version": env["tesseract_version"],
+            "dataset_fingerprint": meta["dataset"]["fingerprint"],
+        }
+    conditions = [
+        {
+            "name": name,
+            "family": d.family,
+            "blur_sigma": d.blur_sigma,
+            "rotation_degrees": d.rotation_degrees,
+            "noise_sigma": d.noise_sigma,
+            "scale": d.scale,
+        }
+        for name, d in degradations.CONDITIONS.items()
+    ]
+    explorer = {
+        "status": "final",
+        "note": "Synthetic cards only. Copied from the Phase 4 summaries; see docs/research.",
+        "selection": {"preprocessing": selection["preprocessing"], "m2_tau": selection["m2_tau"]},
+        "runs": runs,
+        "conditions": conditions,
+        "test_ocr": {
+            strategy: {
+                "pooled": _ocr_entry(e3["ocr"][f"test/{strategy}"]["pooled"]),
+                "by_condition": {
+                    c: _ocr_entry(v)
+                    for c, v in e3["ocr"][f"test/{strategy}"]["by_condition"].items()
+                },
+            }
+            for strategy in ("P0_baseline", selection["preprocessing"])
+        },
+        "devval_preprocessing": {
+            split: {
+                key.split("/")[1]: {
+                    **_ocr_entry(entry["pooled"]),
+                    "delta_cer_vs_P0": e2["paired"]["preprocessing_vs_P0"]
+                    .get(key, {})
+                    .get("delta_cer"),
+                }
+                for key, entry in e2["ocr"].items()
+                if key.startswith(f"{split}/")
+            }
+            for split in ("dev", "val")
+        },
+        "test_matching": {
+            strategy: {
+                m: _matching_entry(v)
+                for m, v in e3["matching"][f"test/{strategy}"]["pooled"].items()
+            }
+            for strategy in ("P0_baseline", selection["preprocessing"])
+        },
+        "test_matching_delta_vs_M0": e3["paired"]["matchers_vs_M0"]["test/P0_baseline"],
+        "tau_sweep": {
+            "dev": summaries["e1_degradation"]["tau_sweep"]["dev/P0_baseline"],
+            "test": e3["tau_sweep"]["test/P0_baseline"],
+        },
+        "matching_latency_us": e3["matching"]["test/P0_baseline"]["pooled"]["M0_baseline"][
+            "match_latency_us_all_matchers"
+        ],
+    }
+    path = root / EXPLORER_PATH
+    path.write_text(
+        json.dumps(explorer, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n"
+    )
+    return path

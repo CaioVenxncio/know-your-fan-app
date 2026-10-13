@@ -63,3 +63,58 @@ def test_existing_figures_are_listed_in_order(tmp_path: Path) -> None:
     (tmp_path / presentation.SUMMARY_PATH).write_text(json.dumps({"status": "x"}), "utf-8")
     results = presentation.load_results(tmp_path)
     assert [p.name for p, _ in results.figures] == [n for n, _ in presentation.FIGURES]
+
+
+# ------------------------------------------------------------------ Phase 5: explorer data
+
+REPO = presentation.REPO_ROOT
+
+
+def test_committed_explorer_agrees_with_the_frozen_phase4_summary() -> None:
+    """Integrity: the interactive data must equal the committed Phase 4 numbers."""
+    explorer = presentation.load_explorer(REPO)
+    summary = presentation.load_results(REPO).summary
+    assert explorer is not None
+    assert summary is not None
+    for key, entry in summary["test_ocr"].items():
+        strategy = key.split("/")[1]
+        for metric in ("cer", "wer", "name_token_recall"):
+            assert explorer["test_ocr"][strategy]["pooled"][metric] == entry[metric]
+    for matcher, entry in summary["test_matching_P0"].items():
+        for field in ("far", "frr", "tp", "fp", "tn", "fn", "tau"):
+            assert explorer["test_matching"]["P0_baseline"][matcher][field] == entry[field]
+    assert explorer["selection"] == {"preprocessing": "P1_none", "m2_tau": 0.05}
+
+
+def test_committed_explorer_has_no_local_paths_or_usernames() -> None:
+    raw = (REPO / presentation.EXPLORER_PATH).read_text(encoding="utf-8")
+    for marker in (":\\\\", "Users", "/home/", "AppData", str(Path.home().name)):
+        assert marker not in raw, marker
+
+
+def test_explorer_helpers_shape_the_data() -> None:
+    explorer = presentation.load_explorer(REPO)
+    assert explorer is not None
+    assert presentation.total_ocr_runs(explorer) == 2560 + 11520 + 5120
+    rows = presentation.condition_rows(explorer, "cer")
+    assert len(rows) == 16 * 2
+    blur = presentation.condition_rows(explorer, "wer", "blur")
+    assert {r["condition"] for r in blur} == {"blur_1", "blur_2", "blur_3"}
+    assert all(r["ci_low"] <= r["estimate"] <= r["ci_high"] for r in rows)
+    assert all(r["n_cards"] == 160 for r in rows)
+    pre = presentation.preprocessing_rows(explorer, "cer")
+    assert {(r["split"], r["n_cards"]) for r in pre} == {("dev", 80), ("val", 80)}
+    assert len(pre) == 16
+    sweep = presentation.sweep_rows(explorer)
+    assert {r["split"] for r in sweep} == {"dev", "test"}
+    taus = [r["tau"] for r in sweep if r["split"] == "test"]
+    assert taus == sorted(taus)
+
+
+def test_malformed_explorer_is_rejected(tmp_path: Path) -> None:
+    path = tmp_path / presentation.EXPLORER_PATH
+    path.parent.mkdir(parents=True)
+    for content in ("not json", "[]", json.dumps({"runs": {}})):
+        path.write_text(content, encoding="utf-8")
+        assert presentation.load_explorer(tmp_path) is None
+    assert presentation.load_explorer(tmp_path / "missing") is None
