@@ -38,7 +38,17 @@ were identified.** That does not mean the application cannot be compromised.
 | F10 | INFO | Docker | Base images are referenced by tag (`python:3.13-slim-trixie`, `uv:0.13.0`), not by digest, so rebuilds are not bit-for-bit reproducible | Accepted trade-off: tags pick up security updates. Pin digests if exact rebuilds are needed |
 | F11 | INFO | Error handling | `_run_ocr` maps known OCR and limit errors to messages. An unexpected `OSError` (for example from temporary files) would reach Streamlit, which shows a generic error without details (`showErrorDetails = "none"`) | Accepted |
 | F12 | INFO | Working-tree scan | gitleaks reports 216 `generic-api-key` matches, all inside the untracked local `.venv` (third-party package files) | Not tracked, not in the image. No action |
-| F13 | INFO | Hosting | On Streamlit Community Cloud, `uv.lock` takes priority over `requirements.txt`. The documentation does not say which dependency groups are installed, so the development tools may be installed | NOT VERIFIED; listed as a deployment prerequisite |
+| F13 | INFO | Hosting | On Streamlit Community Cloud, `uv.lock` takes priority over `requirements.txt`. The documentation does not say which dependency groups are installed, so the development tools may be installed | `uv sync --locked` verified on Debian 11 in CI; platform installer not verified |
+
+## Deployment preparation addendum (2026-10-13, branch `deploy/community-cloud-prep`)
+
+| ID | Severity | Component | Finding | Status |
+|---|---|---|---|---|
+| D1 | MEDIUM | Error display on Community Cloud | The platform enforces `client.showErrorDetails = false`, which Streamlit 1.65 renders as "stacktrace". It overrides `"none"`, so any uncaught exception would show visitors its type and a stack trace with server paths | **Fixed:** `main()` catches every unexpected error, shows a fixed message, and logs the type only. The test uses the enforced value and fails without the fix |
+| D2 | LOW | Privacy on Community Cloud | The platform enforces usage statistics. The browser then contacts Streamlit telemetry (`data.streamlit.io`, `webhooks.fivetran.com`, observed locally with the same setting). The platform also sets its own cookies, including a ~31-day tracking id | Documented in PRIVACY.md; cannot be disabled by the app |
+| D3 | LOW | Response headers on Community Cloud | Observed on a public Community Cloud app: `nosniff` present; no CSP, `X-Frame-Options`, or HSTS header (the `.app` TLD is HSTS-preloaded) | Accepted (F3); the app cannot set headers |
+| D4 | INFO | Debian 11 end of life | The platform runs Debian 11 and installs `packages.txt` with apt. Debian 11's security-update files now return 404 on `deb.debian.org`; the Tesseract packages themselves are still served | Platform mirror not verified; check the first build log |
+| D5 | INFO | CI coverage of `main` | CI did not run on pushes to `main`, so the PR #1 merge commit had no run of its own (its tree equals the tested head) | **Fixed:** CI also runs on pushes to `main` and `deploy/**` |
 
 ## Area summaries
 

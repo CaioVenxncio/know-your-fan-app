@@ -32,7 +32,7 @@ separate approval.
 | Research integrity | PASS | `verify_research.py --reanalyse` on a clean export installed from `uv.lock`: config hashes, fingerprints, manifests, 19,200 runs, frozen selection, and E3 test-only with frozen strategies all match. `results.md`, `research_summary.json`, and all 6 figures byte-identical; explorer equal except re-measured matching latency. Also passes in CI | PNG byte-identity on Linux CI runners is not asserted (non-strict); values are |
 | Frozen record unchanged | PASS | `git diff b8649f2 HEAD -- experiments docs/research` only adds `research_explorer.json` (Phase 5) | Historical metadata kept as is, by the owner's decision |
 | Documentation | PASS | README overview, security review, deployment preparation, privacy statement, threat model, operations, accessibility updated; stale statements corrected | — |
-| Deployment prerequisites | NOT VERIFIED | Entry point, Python version, dependencies, `packages.txt`, configuration, and assets are documented and validated locally/CI | Dependency file selection, Tesseract version, resource limits, and headers on Community Cloud need a test deployment |
+| Deployment prerequisites | PASS WITH LIMITATIONS (updated during deployment preparation) | Community Cloud requirements checked against current documentation; Debian 11 parity CI job passes (Tesseract 4.1.1, `uv.lock` install, real OCR tests, limits, start-up under the enforced configuration); error traces are suppressed even with the platform's `showErrorDetails = false` | Not verified on the platform: apt mirror, CPU, response headers of this app, writable `.data/`. See [deployment.md](deployment.md) |
 | Main branch | PASS | `main` = `origin/main` = `e9224c9`, unchanged | — |
 
 ## Release blockers
