@@ -196,8 +196,9 @@ See [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md) and the [threat model](
 
 ## Known limitations
 
-- Name matching is a simple whole-word check. It does not handle OCR character errors (for example
-  `0` read instead of `O`) and has no tuned threshold.
+- Name matching is a simple whole-word check with no tuned threshold. It does not tolerate OCR
+  character errors. For example, in CI, Ubuntu 24.04's Tesseract 5.3.4 reads the "ç" on one card as
+  "g", so "Gonçalves" is reported as missing.
 - OCR accuracy has not been measured and depends on the installed Tesseract version and language data.
 - The degradations (blur, rotation) are illustrative, not a realistic capture model.
 - The local SQLite file isn't persistent on hosts with temporary filesystems. The demo reseeds itself,

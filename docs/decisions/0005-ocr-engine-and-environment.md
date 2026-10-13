@@ -32,8 +32,16 @@ missing locally, so the end-to-end OCR test was skipped, and a skipped test prov
 - Versions differ by platform. Ubuntu 24.04 and Debian 13 ship different 5.x releases, and both
   are tested in CI (directly and via Docker). Windows and macOS installs are documented but not
   tested in CI.
-- End-to-end OCR assertions are limited to clean specimens, where recognition is reliable.
-  Measuring accuracy under degradation is research work (Phase 4), not a pass/fail test.
+- End-to-end OCR tests separate **invariants** from **measurements**:
+  - Invariants are asserted strictly: the engine and its languages are present, the fixed card
+    labels are recognized, an absent name is never found, and the service pipeline works.
+  - Name recognition is checked as aggregate token recall over 11 clean cards, which must be at
+    least 90%; every misread is listed in the failure message.
+
+  Requiring every token on every card would be an implicit 100% accuracy claim. Evidence for
+  this: Ubuntu 24.04's Tesseract 5.3.4 reads one "ç" as "g" ("Gongalves"), while Debian 13's
+  Tesseract 5.5 reads the same names correctly. Measuring accuracy and tolerating confusable
+  characters are research work (Phase 4).
 - Locally, without Tesseract or Docker, the OCR tests skip with a visible reason.
 
 ## Alternatives considered

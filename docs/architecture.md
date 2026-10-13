@@ -165,7 +165,7 @@ Anything unexpected is still caught by Streamlit, which is configured not to sho
 | Unit | `tests/unit/` | Generator, allowlist, matching, config, services, and OCR preprocessing. The Tesseract call is replaced only where the test is about error mapping. |
 | Integration | `tests/integration/test_storage.py` | Real SQLite files in per-test temporary directories: transactions, connection closing, corrupt files, caps. |
 | UI | `tests/integration/test_app.py` | `streamlit.testing.AppTest` runs the real `main.py`. It checks pages, the absence of sensitive inputs and misleading claims, and error paths. |
-| End-to-end OCR | `tests/integration/test_ocr_e2e.py` | Runs the real Tesseract engine, with nothing mocked. Skipped locally if Tesseract is missing; **required in CI** (`KYF_REQUIRE_OCR=1`). |
+| End-to-end OCR | `tests/integration/test_ocr_e2e.py` | Runs the real Tesseract engine, with nothing mocked. Invariants (engine, languages, card labels, no false match for an absent name, pipeline) are strict. Name recognition is an aggregate token-recall threshold of at least 90% on 11 clean cards ([ADR 0005](decisions/0005-ocr-engine-and-environment.md)). Skipped locally if Tesseract is missing; **required in CI** (`KYF_REQUIRE_OCR=1`). |
 
 Coverage is measured with branch coverage. CI enforces at least 90% overall, and separately at
 least 90% for non-UI code. Coverage shows which code ran, not that it is correct.
