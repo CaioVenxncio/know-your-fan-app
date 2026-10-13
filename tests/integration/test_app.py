@@ -329,6 +329,37 @@ def test_storage_failure_while_rendering_a_page_is_handled(
     assert any("temporarily unavailable" in e.value for e in at.error)
 
 
+@pytest.mark.parametrize("page", ["Fans", "OCR demo"])
+def test_unexpected_errors_show_no_details_under_community_cloud_config(
+    at: AppTest,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    page: str,
+) -> None:
+    # Community Cloud enforces client.showErrorDetails = false, which Streamlit renders
+    # as "stacktrace". The app must not let any exception reach Streamlit's renderer.
+    from streamlit import config as st_config
+
+    marker = "/mount/src/secret-path/never-shown.py SECRET-MARKER"
+
+    def broken(self: object) -> list[object]:
+        raise RuntimeError(marker)
+
+    original = st_config.get_option("client.showErrorDetails")
+    st_config.set_option("client.showErrorDetails", False)
+    try:
+        monkeypatch.setattr(SyntheticProfileRepository, "list_all", broken)
+        with caplog.at_level(logging.DEBUG):
+            goto(at, page)
+    finally:
+        st_config.set_option("client.showErrorDetails", original)
+    assert not at.exception
+    assert [e.value for e in at.error] == [app_module.UNEXPECTED_ERROR_MESSAGE]
+    assert "secret-marker" not in all_text(at)
+    assert "SECRET-MARKER" not in caplog.text
+    assert "RuntimeError" in caplog.text
+
+
 def test_ui_flows_do_not_log_names_or_ocr_text(
     at: AppTest, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ) -> None:

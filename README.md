@@ -176,7 +176,7 @@ packages.txt, Dockerfile    Tesseract system dependency
 
 - **Python 3.13** (`requires-python = ">=3.13"`; CI tests 3.13 only).
 - **[uv](https://docs.astral.sh/uv/)** for development. Running the app also works with plain pip.
-- **Tesseract OCR 5.x** (a system program, not a Python package) with English and Portuguese language
+- **Tesseract OCR 5.x, or 4.1** (a system program, not a Python package) with English and Portuguese language
   data. Only the text-matching page needs it. Without it, the other pages work normally and the
   text-matching page shows an "OCR is unavailable" message.
 
@@ -188,7 +188,8 @@ packages.txt, Dockerfile    Tesseract system dependency
 | Any OS with Docker | Use the provided `Dockerfile` (see below); it includes Tesseract and the language data. |
 
 Check the installation with `tesseract --list-langs`; the output should include `eng` and `por`.
-CI tests the Tesseract 5.x packages from Ubuntu 24.04 and, through Docker, Debian 13. The Windows
+CI tests the Tesseract 5.x packages from Ubuntu 24.04 and, through Docker, Debian 13, and Tesseract
+4.1.1 from Debian 11, the system used by Streamlit Community Cloud ([docs/deployment.md](docs/deployment.md)). The Windows
 and macOS installs are documented but not tested in CI.
 
 ## Running locally

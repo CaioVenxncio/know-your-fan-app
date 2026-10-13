@@ -41,6 +41,7 @@ SYNTHETIC_NOTICE = (
     "Do not enter real names, CPF numbers, addresses, or identity documents."
 )
 MATCHING_DISCLAIMER = "Text matching demonstration — not identity verification."
+UNEXPECTED_ERROR_MESSAGE = "Something went wrong on this page. Please reload or try another page."
 
 PAGES = ("Home", "Fans", "OCR demo", "Research")
 NAV_KEY = "nav"
@@ -395,6 +396,10 @@ def main() -> None:
     except StorageError as exc:
         st.error(f"The demo dataset is unavailable: {exc}")
         st.stop()
+    except Exception as exc:
+        _logger.error("Unexpected error during start-up (%s)", type(exc).__name__)
+        st.error(UNEXPECTED_ERROR_MESSAGE)
+        st.stop()
     if st.session_state.get(NAV_KEY) not in PAGES:
         st.session_state[NAV_KEY] = PAGES[0]
     page = st.radio("Section", PAGES, horizontal=True, key=NAV_KEY, label_visibility="collapsed")
@@ -409,6 +414,13 @@ def main() -> None:
             page_research()
     except StorageError as exc:
         st.error(f"The demo dataset is temporarily unavailable: {exc}")
+    except Exception as exc:
+        # Last line of defence: never let Streamlit render an uncaught exception.
+        # Streamlit Community Cloud enforces client.showErrorDetails = false, which
+        # Streamlit treats as "stacktrace", overriding .streamlit/config.toml.
+        # Streamlit's stop/rerun signals derive from BaseException and pass through.
+        _logger.error("Unexpected error while rendering a page (%s)", type(exc).__name__)
+        st.error(UNEXPECTED_ERROR_MESSAGE)
     st.divider()
     st.caption(
         "Independent portfolio project. Not affiliated with any esports organization. "
