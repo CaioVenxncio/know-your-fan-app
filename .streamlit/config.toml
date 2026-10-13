@@ -1,0 +1,11 @@
+[client]
+# Never show stack traces to visitors.
+showErrorDetails = "none"
+toolbarMode = "minimal"
+
+[server]
+# The public demo has no file uploads; keep the limit minimal (MB).
+maxUploadSize = 1
+
+[browser]
+gatherUsageStats = false

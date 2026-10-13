@@ -1,107 +1,143 @@
-# Know Your Fan 🧠 - FURIA Edition
+# Know Your Fan
 
-**Stand-alone Streamlit application for e-sports fan registration and validation**
+**A synthetic-data demonstration of esports fan profiles and document-text matching, built with Python and Streamlit.**
 
----
-
-## 📝 Description
-This project is a stand-alone web application built with **Streamlit** and **SQLite** to:
-
-- Collect data from e-sports fans (name, CPF, address, interests, activities, purchases, social links, and e-sports profiles).
-- Validate documents (RG/CNH) via OCR using **pytesseract**.
-- List registered fans in a panel accessible only with an admin password.
-
-The application does not require a separate backend (like FastAPI); all persistence and validation logic is embedded in the **`main.py`** script.
+> **Synthetic data only.** Every profile and document in this application is fictional.
+> The app does not accept real names, CPF numbers, addresses, or identity documents, and it
+> does **not** verify identity or authenticate documents.
+>
+> Independent portfolio project. Not affiliated with, endorsed by, or sponsored by any esports organization.
 
 ---
 
-## ⚙️ Key Features
+## Purpose
 
-1. **Registration Form**  
-   - Validation of required fields (name and CPF).  
-   - CPF format validation (digit check algorithm).  
-   - Local SQLite database storage (`fans.db`).
+Know Your Fan started as a fan-registration app that collected personal data and ran OCR on
+uploaded identity documents. Phase 1 of its modernization turned it into a public demonstration that keeps the
+original ideas (fan profiles and document-text processing) while never handling real
+personal information.
 
-2. **Document Validation**  
-   - Upload of RG/CNH image (JPG, PNG, JPEG).  
-   - Image preprocessing (grayscale + inversion).  
-   - Text extraction via OCR with `pytesseract`.  
-   - Check if the registered name is present in the document.
+## Implemented features
 
-3. **Registered Fans Panel**  
-   - Access restricted by admin password.  
-   - Display of all records with details using accordions.
+| Page | What it does |
+|---|---|
+| **About** | Explains the scope and limits of the demo. |
+| **Fan explorer** | Browse and filter a seeded dataset of fictional fan profiles. |
+| **Profile generator** | Generate a fictional profile from a numeric seed and optionally add it to the local demo dataset. There are no free-text fields. |
+| **Text-matching demo** | Render a fictional, watermarked fan card, optionally blur or rotate it, run Tesseract OCR, and report which words of a name appear in the extracted text. |
 
----
+How synthetic data is kept apart from real data:
 
-## 🛠️ Requirements
+- Demo identifiers look like `KYF-DEMO-7FQA-91CZ`. They always contain letters, so they cannot be
+  confused with an 11-digit CPF or another government number.
+- Cities are fictional, and links use the reserved `.example` domain (RFC 2606).
+- The specimen card is a generic layout labelled *"SPECIMEN - FICTIONAL DATA - NOT AN IDENTITY
+  DOCUMENT"*. It does not imitate any official document.
 
-- Python 3.7 or higher  
-- Python libraries (see **`requirements.txt`**):
-  ```bash
-  streamlit
-  pytesseract
-  pillow
-  sqlite3 (included in Python standard library)
-  ```
-- **Tesseract OCR** installed on the system:
-  - **Windows**: Install via official installer and configure PATH  
-  - **macOS**: `brew install tesseract`  
-  - **Linux (Ubuntu/Debian)**: `sudo apt install tesseract-ocr`
+### About the text matching
 
----
+*Text matching demonstration — not identity verification.*
 
-## 🚀 Local Installation and Execution
+The matcher folds accents and case, splits the expected name into words, and reports which whole
+words appear in the OCR output. A full match only means the OCR engine recognized those words.
+It does **not** show that a document is genuine, unaltered, or belongs to the person
+presenting it.
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/your-username/know-your-fan.git
-   cd know-your-fan
-   ```
+## Planned work (not implemented yet)
 
-2. (Optional) Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # macOS/Linux
-   venv\Scripts\Activate      # Windows
-   ```
+Phases 2 and later are expected to add:
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- a structured package layout, CI, linting and type checking;
+- a reproducible OCR evaluation harness (preprocessing ablations, engine comparison, name-matching error rates on synthetic documents);
+- containerized deployment.
 
-4. Run the application:
-   ```bash
-   streamlit run main.py
-   ```
+None of this exists yet.
 
-5. Open in your browser: [http://localhost:8501](http://localhost:8501)
+## Requirements
 
----
+- **Python 3.13** (other 3.10+ versions may work but are not tested).
+- **Tesseract OCR** with English and Portuguese language data. This is needed only for the
+  text-matching page; the rest of the app runs without it.
 
-## 🔐 Admin Access
+| OS | Install Tesseract |
+|---|---|
+| Debian / Ubuntu | `sudo apt install tesseract-ocr tesseract-ocr-por` |
+| macOS (Homebrew) | `brew install tesseract tesseract-lang` |
+| Windows | Install the [UB Mannheim build](https://github.com/UB-Mannheim/tesseract/wiki), select *Portuguese* under additional language data, and add the install folder to `PATH`. |
 
-To view the **"Registered Fans"** tab, enter the admin password in the sidebar:
+Check the installation with `tesseract --list-langs`; the output should include `eng` and `por`.
 
-```
-🔒 Admin Access: minhasenhafuria
+Streamlit Community Cloud installs the system packages listed in `packages.txt`.
+
+## Running locally
+
+```bash
+git clone https://github.com/CaioVenxncio/know-your-fan-app.git
+cd know-your-fan-app
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run main.py
 ```
 
-Replace `minhasenhafuria` with a more secure password in production.
+Then open http://localhost:8501.
 
----
+On first start the app creates a local SQLite file at `.data/kyf_demo.db` and seeds it with 25
+fictional profiles. Set the `KYF_DB_PATH` environment variable to use a different location.
+Database files are ignored by Git.
 
-## ☁️ Deploying to Streamlit Community Cloud
+## Tests
 
-1. Push the project to a GitHub repository.  
-2. Go to [share.streamlit.io](https://share.streamlit.io) and connect your repo.  
-3. Point to the `main.py` file and click **Deploy**.  
-4. Share the generated link (`https://share.streamlit.io/...`) with your users.
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
 
----
+The suite covers the synthetic generator, storage, text matching, OCR error handling and the
+Streamlit pages (via `streamlit.testing`). The end-to-end OCR test is skipped automatically
+when Tesseract is not installed.
 
+## Project layout
 
-## 📄 Licença
-Concedido sob a [MIT License](LICENSE).
+```
+main.py                     Streamlit entry point
+know_your_fan/
+  app.py                    Streamlit pages
+  synthetic.py              Deterministic fictional-profile generator
+  storage.py                SQLite repository (synthetic profiles only)
+  ocr.py                    Specimen rendering, preprocessing, Tesseract wrapper
+  text_matching.py          Accent-insensitive whole-word name matching
+  models.py                 FanProfile dataclass
+tests/                      pytest suite
+.streamlit/config.toml      Hides error details from visitors, disables usage stats
+packages.txt                System packages for Streamlit Community Cloud
+```
 
+## Security and privacy boundaries
+
+- No authentication exists because there is nothing private to protect: the only stored data is
+  generated by the app itself.
+- There are no file uploads. OCR runs only on images the app renders from synthetic profiles.
+- The only free-text inputs (search box, expected name) are length-limited and never stored.
+- Stored records must carry a synthetic `KYF-DEMO-` identifier, and the dataset is capped at 500 profiles.
+- User-visible values are rendered as plain text, never as Markdown or HTML.
+
+See [SECURITY.md](SECURITY.md) and [PRIVACY.md](PRIVACY.md).
+
+## Known limitations
+
+- The local SQLite file isn't persistent on hosts with temporary filesystems.
+  The demo reseeds itself, so this only loses profiles added through the generator.
+- OCR quality depends on the installed Tesseract version and language data.
+- The degradations (blur, rotation) are illustrative, not a realistic capture model.
+
+## History
+
+The first version of this repository (commits before Phase 1) collected real-format personal
+data, stored it in SQLite, and protected an admin view with a password that was hardcoded and
+published. That workflow has been removed. The old password must be considered compromised and
+must never be reused. Git history is preserved as-is.
+
+## License
+
+No license has been granted yet. Until a `LICENSE` file is added, all rights are reserved by the author.
